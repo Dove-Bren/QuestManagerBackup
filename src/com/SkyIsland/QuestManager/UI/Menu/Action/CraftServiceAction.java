@@ -73,7 +73,7 @@ public class CraftServiceAction implements MenuAction {
 			
 			p.getInventory().addItem(trade.getResult());
 			
-			p.playSound(p.getLocation(), Sound.ANVIL_USE, 1, 1);
+			p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1, 1);
 			
 			TitleManager.sendTimings(p, 20, 40, 20);
 			

@@ -60,7 +60,7 @@ public class OfferServiceAction implements MenuAction {
 
 		player.addMoney(offer.getPrice());
 		
-		p.playSound(p.getLocation(), Sound.ORB_PICKUP, 1, 1);
+		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 		
 		TitleManager.sendTimings(p, 10, 25, 10);
 		

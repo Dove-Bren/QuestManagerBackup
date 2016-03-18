@@ -128,7 +128,7 @@ public class ForgeAction implements MenuAction {
 			
 			player.addMoney(-cost);
 			
-			p.playSound(p.getLocation(), Sound.ANVIL_USE, 1, 0);
+			p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1, 0);
 			
 			TitleManager.sendTimings(p, 20, 40, 20);
 			

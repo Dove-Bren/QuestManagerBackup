@@ -50,7 +50,7 @@ public class LevelupManaAction implements MenuAction {
 		player.levelUp(0, manaAmount);
 		player.addFame(-cost);
 		
-		p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1);
+		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
 		ChargeEffect ef = new ChargeEffect(Effect.WITCH_MAGIC);
 		ef.play(p, p.getLocation());
 		

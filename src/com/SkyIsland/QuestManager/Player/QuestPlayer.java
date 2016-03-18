@@ -406,7 +406,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		if (getPlayer().isOnline()) {
 			Player p = getPlayer().getPlayer();
-			p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, 1.2f);
+			p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1.2f);
 		}
 	}
 	
@@ -562,7 +562,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
         TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
         		ChatColor.GREEN + "Title Unlocked!"));
         
-        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.FIREWORK_TWINKLE, 10, 1);
+        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 10, 1);
 	}
 
 	public void addSpell(String spellName) {
@@ -593,7 +593,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
         TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
         		ChatColor.GREEN + "Spell Learned!"));
         
-        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.FIREWORK_TWINKLE, 10, 1);
+        getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 10, 1);
 	}
 	
 //	/**

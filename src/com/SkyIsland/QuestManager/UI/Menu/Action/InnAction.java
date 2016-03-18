@@ -80,7 +80,7 @@ public class InnAction implements MenuAction {
 	        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
 	        		ChatColor.GREEN + "Sweet Dreams"));
 	        
-	        p.playSound(p.getLocation(), Sound.LEVEL_UP, 1, .5f);
+	        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, .5f);
 			
 		} else {
 			//not enough money

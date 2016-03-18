@@ -103,7 +103,7 @@ public class LocationState implements ConfigurationSerializable {
 		config.put(fields.PITCH.getKey(), location.getPitch());
 		config.put(fields.YAW.getKey(), location.getYaw());
 		config.put(fields.WORLD.getKey(), location.getWorld().getName());
-		return null;
+		return config;
 	}
 	
 	/**

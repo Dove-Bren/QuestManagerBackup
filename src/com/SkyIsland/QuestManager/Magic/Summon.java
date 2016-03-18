@@ -131,7 +131,7 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 			location.getWorld().playEffect(location, Effect.SMOKE, 0);
 		}
 		
-		location.getWorld().playSound(location, Sound.GLASS, 1, 1.35f);
-		location.getWorld().playSound(location, Sound.FIREWORK_LARGE_BLAST, 1, 1.35f);
+		location.getWorld().playSound(location, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
+		location.getWorld().playSound(location, Sound.ENTITY_FIREWORK_LARGE_BLAST, 1, 1.35f);
 	}
 }
