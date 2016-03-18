@@ -115,7 +115,8 @@ public class VanquishRequirement extends Requirement implements Listener, Statek
 		equipment.setChestplate(econ.getChest());
 		equipment.setLeggings(econ.getLegs());
 		equipment.setBoots(econ.getBoots());
-		equipment.setItemInHand(econ.getHeld());
+		equipment.setItemInMainHand(econ.getHeldMain());
+		equipment.setItemInOffHand(econ.getHeldOff());
 		
 		//special checks
 		if (foe instanceof Guardian) {

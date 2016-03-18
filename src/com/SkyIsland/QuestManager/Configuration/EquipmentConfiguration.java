@@ -24,7 +24,9 @@ public class EquipmentConfiguration {
 	
 	private ItemStack boots;
 	
-	private ItemStack held;
+	private ItemStack heldMain;
+	
+	private ItemStack heldOff;
 	
 	public EquipmentConfiguration() {
 		; //default everything to null;
@@ -32,11 +34,17 @@ public class EquipmentConfiguration {
 	
 	public EquipmentConfiguration(ItemStack head, ItemStack chest, ItemStack legs, 
 			ItemStack boots, ItemStack held) {
+		this(head, chest, legs, boots, held, null);
+	}
+	
+	public EquipmentConfiguration(ItemStack head, ItemStack chest, ItemStack legs,
+			ItemStack boots, ItemStack mainhand, ItemStack offhand) {
 		this.head = head;
 		this.chest = chest;
 		this.legs = legs;
 		this.boots = boots;
-		this.held = held;
+		this.heldMain = mainhand;
+		this.heldOff = offhand;
 	}
 	
 	public EquipmentConfiguration(EntityEquipment equips) {
@@ -44,7 +52,8 @@ public class EquipmentConfiguration {
 		this.chest = equips.getChestplate();
 		this.legs = equips.getLeggings();
 		this.boots = equips.getBoots();
-		this.held = equips.getItemInHand();
+		this.heldMain = equips.getItemInMainHand();
+		this.heldOff = equips.getItemInOffHand();
 	}
 	
 	public void save(File file) throws IOException {
@@ -58,7 +67,8 @@ public class EquipmentConfiguration {
 		state.set("chest", chest);
 		state.set("legs", legs);
 		state.set("boots", boots);
-		state.set("held", held);
+		state.set("main", heldMain);
+		state.set("offhand", heldOff);
 		
 		state.save(file);
 	}
@@ -74,7 +84,8 @@ public class EquipmentConfiguration {
 		state.set("chest", chest);
 		state.set("legs", legs);
 		state.set("boots", boots);
-		state.set("held", held);
+		state.set("main", heldMain);
+		state.set("offhand", heldOff);
 		
 		return state;
 	}
@@ -89,7 +100,14 @@ public class EquipmentConfiguration {
 		chest = config.getItemStack("chest");
 		legs = config.getItemStack("legs");
 		boots = config.getItemStack("boots");
-		held = config.getItemStack("held");
+		
+		if (config.contains("held")) {
+			heldMain = config.getItemStack("held");
+			heldOff = null;
+		} else {
+			heldMain = config.getItemStack("main");
+			heldOff = config.getItemStack("offhand");
+		}
 		
 		
 	}
@@ -150,18 +168,20 @@ public class EquipmentConfiguration {
 		this.boots = boots;
 	}
 
-	/**
-	 * @return the held
-	 */
-	public ItemStack getHeld() {
-		return held;
+	public ItemStack getHeldMain() {
+		return heldMain;
 	}
 
-	/**
-	 * @param held the held to set
-	 */
-	public void setHeld(ItemStack held) {
-		this.held = held;
+	public void setHeldMain(ItemStack heldMain) {
+		this.heldMain = heldMain;
+	}
+
+	public ItemStack getHeldOff() {
+		return heldOff;
+	}
+
+	public void setHeldOff(ItemStack heldOff) {
+		this.heldOff = heldOff;
 	}
 	
 	
