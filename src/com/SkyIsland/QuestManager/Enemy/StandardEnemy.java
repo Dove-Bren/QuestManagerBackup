@@ -5,8 +5,12 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.CommandBlock;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -51,20 +55,27 @@ public class StandardEnemy extends NormalEnemy {
 		}
 	}
 	
-	private ItemStack head, chest, legs, boots, hands;
+	private ItemStack head, chest, legs, boots, mainhand, offhand;
 	
-	public StandardEnemy(String name, String type, double hp, double attack) {
+	public StandardEnemy(String name, EntityType type, double hp, double attack) {
 		this(name, type, hp, attack, null, null, null, null, null);
 	}
 	
-	public StandardEnemy(String name, String type, double hp, double attack,
+	@Deprecated
+	public StandardEnemy(String name, EntityType type, double hp, double attack,
 			ItemStack head, ItemStack chest, ItemStack legs, ItemStack boots, ItemStack hands) {
+		this(name, type, hp, attack, head, chest, legs, boots, hands, null);
+	}
+	
+	public StandardEnemy(String name, EntityType type, double hp, double attack,
+			ItemStack head, ItemStack chest, ItemStack legs, ItemStack boots, ItemStack mainhand, ItemStack offhand) {
 		super(name, type, hp, attack);
 		this.head = head;
 		this.chest = chest;
 		this.legs = legs;
 		this.boots = boots;
-		this.hands = hands;
+		this.mainhand = mainhand;
+		this.offhand = offhand;
 		
 	}
 	
@@ -80,20 +91,28 @@ public class StandardEnemy extends NormalEnemy {
 		map.put("chest", chest);
 		map.put("legs", legs);
 		map.put("boots", boots);
-		map.put("hands", hands);
+		map.put("mainhand", mainhand);
+		map.put("offhand", offhand);
 		
 		return map;
 	}
 	
 	public static StandardEnemy valueOf(Map<String, Object> map) {
 		
-		String type = (String) map.get("type");
+		EntityType type;
+		try {
+			type = EntityType.valueOf((String) map.get("type"));
+		} catch (Exception e) {
+			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to get EntityType " + 
+					(String) map.get("type") + ", so defaulting to ZOMBIE");
+			type = EntityType.ZOMBIE;
+		}
 		
 		String name = (String) map.get("name");
 		Double hp = (Double) map.get("hp");
 		Double attack = (Double) map.get("attack");
-		ItemStack head, chest, legs, boots, hands;
-		head = chest = legs = boots = hands = null;
+		ItemStack head, chest, legs, boots, mainhand, offhand;
+		head = chest = legs = boots = mainhand = offhand = null;
 		
 		if (map.containsKey("head")) {
 			head = new ItemStack(Material.valueOf((String) map.get("head")));
@@ -112,41 +131,72 @@ public class StandardEnemy extends NormalEnemy {
 		}
 		
 		if (map.containsKey("hands")) {
-			hands = new ItemStack(Material.valueOf((String) map.get("hands")));
+			mainhand = new ItemStack(Material.valueOf((String) map.get("hands")));
+		} else if (map.containsKey("mainhand") && map.containsKey("offhand")) {
+			mainhand = new ItemStack(Material.valueOf((String) map.get("mainhand")));
+			offhand = new ItemStack(Material.valueOf((String) map.get("offhand")));
+			
 		}
 		
-		return new StandardEnemy(name, type, hp, attack, head, chest, legs, boots, hands);
+		return new StandardEnemy(name, type, hp, attack, head, chest, legs, boots, mainhand, offhand);
 	}
 	
 	@Override
 	public void spawn(Location loc) {
+			
+
+		Entity e = loc.getWorld().spawnEntity(loc, type);
+		e.setCustomName(name);
+		e.setCustomNameVisible(true);
 		
-		String cmd = "summon "
-				+ this.type + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ() + " "
-				+ "{CustomName:" + name + ",CustomNameVisible:1,Attributes:["
-				+ "{Name:generic.maxHealth,Base:" + hp + "},"
-				+ "{Name:generic.attackDamage,Base:" + attack + "}],"
-				+ "Equipment:[" + equipmentString(hands) + "," + equipmentString(boots) + "," 
-				+ equipmentString(legs) + "," + equipmentString(chest) + "," + equipmentString(head) 
-				+ "],DropChances:[0.0F,0.0F,0.0F,0.0F,0.0F]}";
+		if (!(e instanceof LivingEntity)) {
+			return;
+		}
 		
-		CommandBlock sender = QuestManagerPlugin.questManagerPlugin.getManager().getAnchor(loc.getWorld().getName());
-		Location ol = sender.getLocation().clone().add(0,1,0);
-		sender.setCommand(cmd);
-		ol.getBlock().setType(Material.REDSTONE_BLOCK);
-		ol.getBlock().getState().update(true);
-		sender.update(true);
-		ol.getBlock().setType(Material.STONE);
+		LivingEntity entity = (LivingEntity) e;
+		entity.setMaxHealth(hp);
+		entity.setHealth(hp);
+		entity.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(attack);
+		
+		EntityEquipment eq = entity.getEquipment();
+		eq.setHelmet(head);
+		eq.setChestplate(chest);
+		eq.setLeggings(legs);
+		eq.setBoots(boots);
+		eq.setItemInMainHand(mainhand);
+		eq.setItemInOffHand(offhand);
+		eq.setHelmetDropChance(0f);
+		eq.setChestplateDropChance(0f);
+		eq.setLeggingsDropChance(0f);
+		eq.setBootsDropChance(0f);
+		eq.setItemInMainHandDropChance(0f);
+		eq.setItemInOffHandDropChance(0f);
+		
 		
 	}
 	
-	@SuppressWarnings("deprecation")
-	protected String equipmentString(ItemStack equip) {
-		if (equip == null || equip.getType() == Material.AIR) {
-			return "{}";
-		}
-		
-		return "{Count:1,id:" + equip.getTypeId() + "}";
-	}
+	//LEGACY CODE LEFT HERE FOR LULZ
+//	@Override
+//	public void spawn(Location loc) {
+//		
+//		String cmd = "summon "
+//				+ this.type + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ() + " "
+//				+ "{CustomName:" + name + ",CustomNameVisible:1,Attributes:["
+//				+ "{Name:generic.maxHealth,Base:" + hp + "},"
+//				+ "{Name:generic.attackDamage,Base:" + attack + "}],"
+//				+ "Equipment:[" + equipmentString(hands) + "," + equipmentString(boots) + "," 
+//				+ equipmentString(legs) + "," + equipmentString(chest) + "," + equipmentString(head) 
+//				+ "],DropChances:[0.0F,0.0F,0.0F,0.0F,0.0F]}";
+//		
+//		CommandBlock sender = QuestManagerPlugin.questManagerPlugin.getManager().getAnchor(loc.getWorld().getName());
+//		Location ol = sender.getLocation().clone().add(0,1,0);
+//		sender.setCommand(cmd);
+//		ol.getBlock().setType(Material.REDSTONE_BLOCK);
+//		ol.getBlock().getState().update(true);
+//		sender.update(true);
+//		ol.getBlock().setType(Material.STONE);
+//		
+//	}
+	
 	
 }
