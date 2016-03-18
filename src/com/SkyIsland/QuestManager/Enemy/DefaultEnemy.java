@@ -66,7 +66,7 @@ public class DefaultEnemy extends Enemy {
 		String type = (String) map.get("type");
 		EntityType et;
 		try {
-			et = EntityType.valueOf(type);
+			et = EntityType.valueOf(type.toUpperCase());
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Invalid entity type: " + type + "! Defaulting to Zombie!");
