@@ -14,6 +14,12 @@ package com.SkyIsland.QuestManager.Player.Skill;
  */
 public abstract class Skill {
 	
+	public enum Type {
+		COMBAT,
+		TRADE,
+		OTHER
+	}
+	
 	/**
 	 * The current level of the skill. This level is relative to the {@link SkillManager#skillLevelCap skillLevelCap}
 	 */
@@ -86,4 +92,6 @@ public abstract class Skill {
 	public void perform() {
 		perform(level, false);
 	}
+	
+	public abstract Type getType();
 }
