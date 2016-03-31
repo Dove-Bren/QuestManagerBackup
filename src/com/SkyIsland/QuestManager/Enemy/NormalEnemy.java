@@ -13,7 +13,8 @@ import org.bukkit.entity.LivingEntity;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 
 /**
- * Enemy type with very limited, straightforward customization; namely attributes
+ * Enemy type with very limited, straightforward customization; namely attributes.
+ * Also supports loot specification
  * @author Skyler
  *
  */
