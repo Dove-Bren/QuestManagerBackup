@@ -58,6 +58,7 @@ public class PluginConfiguration {
 		SAVEDIR("saveDir"),
 		ENEMYDIR("enemyDir"),
 		SPELLDIR("spellDir"),
+		SKILLDIR("skillDir"),
 		SUMMONLIMIT("summonLimit");
 		
 		
@@ -344,6 +345,10 @@ public class PluginConfiguration {
 		return config.getString(PluginConfigurationKey.SPELLDIR.key);
 	}
 	
+	public String getSkillPath() {
+		return config.getString(PluginConfigurationKey.SKILLDIR.key);
+	}
+	
 	/**
 	 * Gets the name of the spell holders
 	 * @return
@@ -423,6 +428,7 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.SAVEDIR.key, "savedata/");
 		config.set(PluginConfigurationKey.ENEMYDIR.key, "enemies/");
 		config.set(PluginConfigurationKey.SPELLDIR.key, "spells/");
+		config.set(PluginConfigurationKey.SKILLDIR.key, "skills/");
 				
 		try {
 			config.save(configFile);

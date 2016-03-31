@@ -51,6 +51,7 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
+import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
@@ -158,6 +159,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private CompassTrackable compassTarget;
 	
+	private Map<Skill, Integer> skillLevels;
+	
+	private Map<Skill, Float> skillXP;
+	
 	/**
 	 * Registers this class as configuration serializable with all defined 
 	 * {@link aliases aliases}
@@ -248,6 +253,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		this.journalNotes = new LinkedList<String>();
 		this.spells = new LinkedList<>();
 		this.storedSpells = new HashMap<>();
+		this.skillLevels = new HashMap<>();
+		this.skillXP = new HashMap<>();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
@@ -656,6 +663,21 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 		map.put("storedspells", stored);
 		
+		Map<String, Map<String, Object>> skillMap = new TreeMap<>();
+		if (!skillLevels.isEmpty()) {
+			for (Skill skill : skillLevels.keySet()) {
+				Map<String, Object> detailMap = new TreeMap<>();
+				detailMap.put("level", skillLevels.get(skill));
+				detailMap.put("xp", skillXP.get(skill));
+				
+				skillMap.put(skill.getConfigKey(), detailMap);
+			}
+			
+			map.put("skills", skillMap);
+		}
+		
+		
+		
 		return map;
 	}
 	
@@ -735,6 +757,31 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			}
 			
 			qp.storedSpells = stored;
+		}
+		
+		////////Update code 2///////////
+		if (map.containsKey("skills")) {
+			Map<String, Object> skillMap = (Map<String, Object>) map.get("skills");
+			for (String skillName : skillMap.keySet()) {
+				for (Skill skill : QuestManagerPlugin.questManagerPlugin.getSkillManager().getAllSkills()) {
+					if (skill.getConfigKey().equals(skillName)) {
+						try {
+							Map<String, Object> detailMap = (Map<String, Object>) skillMap.get(skillName);
+							qp.setSkillLevel(skill, (int) detailMap.get("level"));
+							if (detailMap.get("xp") == null) {
+								qp.setSkillExperience(skill, 0f);
+							} else {
+								qp.setSkillExperience(skill, (float) detailMap.get("xp"));
+							}
+						} catch (Exception e) {
+							QuestManagerPlugin.questManagerPlugin.getLogger().warning("Failed to load skill configuration for skill " + skillName);
+						}
+						
+						break;
+						
+					}
+				}
+			}
 		}
 		
 		////////////////////////////////
@@ -1589,6 +1636,30 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			((SelfSpell) spell).cast(this);
 			return;
 		}
+	}
+	
+	public void setSkillLevel(Skill skill, int level) {
+		this.skillLevels.put(skill, level);
+	}
+	
+	public void setSkillExperience(Skill skill, float progress) {
+		this.skillXP.put(skill, progress);
+	}
+	
+	public int getSkillLevel(Skill skill) {
+		if (!skillLevels.containsKey(skill)) {
+			skillLevels.put(skill, skill.getStartingLevel());
+		}
+		
+		return skillLevels.get(skill);
+	}
+	
+	public float getSkillExperience(Skill skill) {
+		if (!skillXP.containsKey(skill)) {
+			skillXP.put(skill, 0.0f);
+		}
+		
+		return skillXP.get(skill);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)

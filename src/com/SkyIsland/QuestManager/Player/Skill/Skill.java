@@ -1,5 +1,9 @@
 package com.SkyIsland.QuestManager.Player.Skill;
 
+import java.util.Random;
+
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
+
 /**
  * A player skill. Skills can pertain to any aspect of the game, from combat to crafting.<br />
  * Implementations are responsible for catching events and acting on them. Implementations are <b>heavily
@@ -20,40 +24,8 @@ public abstract class Skill {
 		OTHER
 	}
 	
-	/**
-	 * The current level of the skill. This level is relative to the {@link SkillManager#skillLevelCap skillLevelCap}
-	 */
-	protected int level;
-	
-	/**
-	 * Current progress to next level. This should be [0-1)
-	 */
-	protected float experience;
-	
-	protected Skill(int startingLevel) {
-		this(startingLevel, 0f);
-	}
-	
-	protected Skill(int startingLevel, float experience) {
-		this.level = startingLevel;
-		this.experience = experience;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
-	public float getExperience() {
-		return experience;
-	}
-
-	public void setExperience(float experience) {
-		this.experience = experience;
-	}
+	//Courtesy random
+	public static final Random random = new Random();
 	
 	/**
 	 * Adds experience to the skill, standardized as the specified amount for performing an action of
@@ -61,7 +33,7 @@ public abstract class Skill {
 	 * @param actionLevel The level of the action that was performed. Maybe cooking salmon is a lvl 30 task, for example
 	 * @param fail whether or not the action was failed. May or not award xp on failure, as determined by config
 	 */
-	public void perform(int actionLevel, boolean fail) {
+	public void perform(QuestPlayer participant, int actionLevel, boolean fail) {
 		//TODO
 	}
 	
@@ -71,8 +43,8 @@ public abstract class Skill {
 	 * In other words, {@link #perform(int, boolean) perform(actionLevel, false)};
 	 * @param actionLevel
 	 */
-	public void perform(int actionLevel) {
-		perform(actionLevel, false);
+	public void perform(QuestPlayer participant, int actionLevel) {
+		perform(participant, actionLevel, false);
 	}
 	
 	/**
@@ -81,17 +53,29 @@ public abstract class Skill {
 	 * In other words, {@link #perform(int, boolean) perform(this.level, fail)};
 	 * @param fail
 	 */
-	public void perform(boolean fail) {
-		perform(level, fail);
+	public void perform(QuestPlayer participant, boolean fail) {
+		perform(participant, participant.getSkillLevel(this), fail);
 	}
 	
 	/**
 	 * Awards experience equivalent of performing an action of the same level as the skill and succeeding.<br />
 	 * In other words, {@link #perform(int, boolean) perform(this.level, false)};
 	 */
-	public void perform() {
-		perform(level, false);
+	public void perform(QuestPlayer participant) {
+		perform(participant, participant.getSkillLevel(this), false);
 	}
 	
 	public abstract Type getType();
+	
+	public abstract int getStartingLevel();
+	
+	@Override
+	public abstract boolean equals(Object o);
+	
+	/**
+	 * Returns a key that can be used to figure out what skill information is being looked at in a player config file.<br />
+	 * The key can be simple, but should try to be unique. For example, two-handed skill could have "two_handed"
+	 * @return
+	 */
+	public abstract String getConfigKey();
 }

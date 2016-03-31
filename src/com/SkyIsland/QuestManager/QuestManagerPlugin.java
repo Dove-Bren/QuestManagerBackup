@@ -56,6 +56,8 @@ import com.SkyIsland.QuestManager.NPC.Utils.ServiceCraft;
 import com.SkyIsland.QuestManager.NPC.Utils.ServiceOffer;
 import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.SkillManager;
+import com.SkyIsland.QuestManager.Player.Skill.TwoHandedSkill;
 import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.Requirements.ArriveRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.ChestRequirement;
@@ -104,6 +106,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private SpellManager spellManager;
 	
 	private SummonManager summonManager;
+	
+	private SkillManager skillManager;
 	
 	private QuestManager manager;
 	
@@ -235,36 +239,41 @@ public class QuestManagerPlugin extends JavaPlugin {
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
 		
+
+		
+		skillManager = new SkillManager();
+		
+		skillManager.registerSkill(new TwoHandedSkill());
 		
 		//preload Player data
-				File playerFile = new File(getDataFolder(), playerConfigFileName);
-				if (!playerFile.exists()) {
-					try {
-						YamlConfiguration tmp = new YamlConfiguration();
-						tmp.createSection("players");
-						tmp.createSection("parties");
-						tmp.save(playerFile);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
-				//get Player data & manager
-				YamlConfiguration playerConfig = new YamlConfiguration();
+			File playerFile = new File(getDataFolder(), playerConfigFileName);
+			if (!playerFile.exists()) {
 				try {
-					playerConfig.load(playerFile);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					YamlConfiguration tmp = new YamlConfiguration();
+					tmp.createSection("players");
+					tmp.createSection("parties");
+					tmp.save(playerFile);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (InvalidConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-				playerManager = new PlayerManager(playerConfig);
+			}
+
+			//get Player data & manager
+			YamlConfiguration playerConfig = new YamlConfiguration();
+			try {
+				playerConfig.load(playerFile);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvalidConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			playerManager = new PlayerManager(playerConfig);
 		
 		
 		//parse config & instantiate manager
@@ -279,6 +288,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		spellManager = new SpellManager(spellDirectory);
 		
 		summonManager = new SummonManager();
+		
+		
 		
 //		///////////////////////////////////////////////////////////////////////////////
 //					
@@ -642,5 +653,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public SummonManager getSummonManager() {
 		return summonManager;
+	}
+	
+	public SkillManager getSkillManager() {
+		return skillManager;
 	}
 }
