@@ -36,6 +36,7 @@ public abstract class Enemy implements ConfigurationSerializable {
 	public static final String classMetaKey = "QMEnemySpawnClass";
 	
 	public Enemy(String name, EntityType type) {
+		this.enemyClassID = generateNewEnemyClassID();
 		this.name = name;
 		this.type = type;
 	}

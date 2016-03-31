@@ -171,7 +171,12 @@ public class NormalEnemy extends Enemy implements Lootable, Listener {
 	@EventHandler
 	public void onEnemyDeath(EntityDeathEvent e) {
 		List<MetadataValue> metas = e.getEntity().getMetadata(classMetaKey);
-		if (metas == null) {
+		if (metas == null || metas.isEmpty()) {
+			return;
+		}
+		
+		//eliminate those that have a different EntityType right away, for performance
+		if (e.getEntityType() != this.type) {
 			return;
 		}
 		
@@ -180,12 +185,14 @@ public class NormalEnemy extends Enemy implements Lootable, Listener {
 				continue;
 			}
 			
+			
 			//same plugin and same key. Use it.
 			if (meta.asString().equals(enemyClassID)) {
 				handleDeath(e);
 				return;
 			}
 		}
+
 	}
 	
 	private void handleDeath(EntityDeathEvent event) {
