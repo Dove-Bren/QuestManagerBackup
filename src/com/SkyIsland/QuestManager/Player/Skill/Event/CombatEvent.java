@@ -1,6 +1,11 @@
 package com.SkyIsland.QuestManager.Player.Skill.Event;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -14,6 +19,22 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
  *
  */
 public class CombatEvent extends Event {
+	
+	public static final String missMessage = ChatColor.YELLOW + "You missed!" + ChatColor.RESET;
+	
+	public static final String noDamageMessage = ChatColor.YELLOW + "Your attack had no effect!" + ChatColor.RESET;
+	
+	public static void doMiss(Player misser, Location targetLocation) {
+		misser.sendMessage(missMessage);
+		targetLocation.getWorld().spigot().playEffect(targetLocation, Effect.SMOKE);
+		targetLocation.getWorld().playSound(targetLocation, Sound.ENTITY_ENDERDRAGON_FLAP, 1f, 1.85f);
+	}
+
+	public static void doNoDamage(Player misser, Location targetLocation) {
+		misser.sendMessage(noDamageMessage);
+		targetLocation.getWorld().spigot().playEffect(targetLocation, Effect.VILLAGER_THUNDERCLOUD);
+		targetLocation.getWorld().playSound(targetLocation, Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
+	}
 
 	private static final HandlerList handlers = new HandlerList();
 		

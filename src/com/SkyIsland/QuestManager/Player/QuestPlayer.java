@@ -22,9 +22,12 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
@@ -48,6 +51,7 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
+import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
 import com.SkyIsland.QuestManager.Player.Utils.QuestJournal;
@@ -1585,5 +1589,44 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			((SelfSpell) spell).cast(this);
 			return;
 		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerDamage(EntityDamageByEntityEvent e) {
+		if (e.isCancelled()) {
+			return;
+		}
+		
+		if (!(e.getDamager() instanceof Player)) {
+			return;
+		}
+		
+		Player player = (Player) e.getDamager();
+		if (!this.playerID.equals(player.getUniqueId())) {
+			return;
+		}
+		
+		if (!(e.getEntity() instanceof LivingEntity)) {
+			return;
+		}
+		LivingEntity target = (LivingEntity) e.getEntity();
+		
+		//our player just damaged something. who knows what. Don't matter
+		CombatEvent event = new CombatEvent(this, target, e.getFinalDamage());
+		Bukkit.getPluginManager().callEvent(event);
+		
+		if (event.isMiss()) {
+			e.setCancelled(true);
+			CombatEvent.doMiss(player, target.getEyeLocation());
+			return;
+		}
+		
+		if (event.getFinalDamage() <= 0.0) {
+			e.setCancelled(true);
+			CombatEvent.doNoDamage(player, target.getEyeLocation());
+			return;
+		}
+		
+		e.setDamage(event.getFinalDamage());
 	}
 }
