@@ -26,6 +26,7 @@ import com.SkyIsland.QuestManager.Enemy.StandardEnemy;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
+import com.SkyIsland.QuestManager.Loot.Loot;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
@@ -229,6 +230,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SummonTamedEffect.registerWithAliases();
 		FireEffect.registerWithAliases();
 		DamageUndeadEffect.registerWithAliases();
+		Loot.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
