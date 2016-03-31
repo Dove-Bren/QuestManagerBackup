@@ -197,7 +197,7 @@ public class NormalEnemy extends Enemy implements Lootable, Listener {
 	
 	private void handleDeath(EntityDeathEvent event) {
 		//on death, drop loot (if we have any). otherwise, don't
-		if (loot != null) {
+		if (loot != null && !loot.isEmpty()) {
 			event.getDrops().clear();
 			event.getDrops().add(
 					Lootable.pickLoot(loot).getItem()
