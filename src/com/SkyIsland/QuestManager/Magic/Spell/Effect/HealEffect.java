@@ -12,6 +12,8 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
 public class HealEffect extends SpellEffect {
 	
@@ -74,9 +76,16 @@ public class HealEffect extends SpellEffect {
 		if (caster instanceof LivingEntity) {
 			LivingEntity e = (LivingEntity) caster;
 			
-//			MagicApplyEvent()
+			double curAmount = amount;
+			if (cause instanceof QuestPlayer) {
+				QuestPlayer qp = (QuestPlayer) cause;
+				MagicApplyEvent aEvent = new MagicApplyEvent(qp, -curAmount); //negative cause healing
+				Bukkit.getPluginManager().callEvent(aEvent);
+				
+				curAmount = -aEvent.getFinalDamage(); //negative cause healing
+			}
 			
-			EntityRegainHealthEvent event = new EntityRegainHealthEvent(e, amount, RegainReason.MAGIC);
+			EntityRegainHealthEvent event = new EntityRegainHealthEvent(e, curAmount, RegainReason.MAGIC);
 			Bukkit.getPluginManager().callEvent(event);
 			
 			if (event.isCancelled()) {
@@ -84,7 +93,7 @@ public class HealEffect extends SpellEffect {
 			}
 			
 			e.setHealth(Math.min(e.getMaxHealth(), 
-			e.getHealth() + amount));
+			e.getHealth() + curAmount));
 		}
 	}
 	

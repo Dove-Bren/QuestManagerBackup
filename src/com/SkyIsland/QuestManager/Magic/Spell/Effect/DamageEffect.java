@@ -3,12 +3,15 @@ package com.SkyIsland.QuestManager.Magic.Spell.Effect;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
 public class DamageEffect extends SpellEffect {
 	
@@ -69,8 +72,17 @@ public class DamageEffect extends SpellEffect {
 	@Override
 	public void apply(Entity e, MagicUser cause) {
 		if (e instanceof LivingEntity) {
+			double curDamage = damage;
+			if (cause instanceof QuestPlayer) {
+				QuestPlayer qp = (QuestPlayer) cause;
+				MagicApplyEvent aEvent = new MagicApplyEvent(qp, curDamage);
+				Bukkit.getPluginManager().callEvent(aEvent);
+				
+				curDamage = aEvent.getFinalDamage();
+			}			
+			
 			LivingEntity targ = (LivingEntity) e;
-			targ.damage(damage, cause.getEntity());
+			targ.damage(curDamage, cause.getEntity());
 		}
 	}
 	
