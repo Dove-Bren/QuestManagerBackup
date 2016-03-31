@@ -1,6 +1,8 @@
 package com.SkyIsland.QuestManager.Enemy;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Location;
@@ -14,6 +16,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Loot.Loot;
 
 /**
  * Enemy type with equipment customization in addition to NormalMob stuff
@@ -58,7 +61,7 @@ public class StandardEnemy extends NormalEnemy {
 	private ItemStack head, chest, legs, boots, mainhand, offhand;
 	
 	public StandardEnemy(String name, EntityType type, double hp, double attack) {
-		this(name, type, hp, attack, null, null, null, null, null);
+		this(name, type, hp, attack, null, null, null, null, null, null);
 	}
 	
 	@Deprecated
@@ -79,6 +82,13 @@ public class StandardEnemy extends NormalEnemy {
 		
 	}
 	
+	public StandardEnemy(String name, EntityType type, double hp, double attack,
+			ItemStack head, ItemStack chest, ItemStack legs, ItemStack boots, ItemStack mainhand, ItemStack offhand,
+			Collection<Loot> loot) {
+		this(name, type, hp, attack, head, chest, legs, boots, mainhand, offhand);
+		this.loot.addAll(loot);
+	}
+	
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<>();
@@ -93,10 +103,12 @@ public class StandardEnemy extends NormalEnemy {
 		map.put("boots", boots);
 		map.put("mainhand", mainhand);
 		map.put("offhand", offhand);
+		map.put("loot", this.loot);
 		
 		return map;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static StandardEnemy valueOf(Map<String, Object> map) {
 		
 		EntityType type;
@@ -136,6 +148,21 @@ public class StandardEnemy extends NormalEnemy {
 			mainhand = new ItemStack(Material.valueOf((String) map.get("mainhand")));
 			offhand = new ItemStack(Material.valueOf((String) map.get("offhand")));
 			
+		}
+		
+		List<Loot> loot = null;
+		if (map.containsKey("loot")) {
+			try {
+				loot = (List<Loot>) map.get("loot");
+			} catch (Exception e) {
+				e.printStackTrace();
+				QuestManagerPlugin.questManagerPlugin.getLogger().warning("Failed to get loot list from "
+						+ "config for NormalEnemy " + type.name() + " - " + name + ". Resorting to default loot.");
+			}
+		}
+		
+		if (loot != null) {
+			return new StandardEnemy(name, type, hp, attack, head, chest, legs, boots, mainhand, offhand, loot);
 		}
 		
 		return new StandardEnemy(name, type, hp, attack, head, chest, legs, boots, mainhand, offhand);
