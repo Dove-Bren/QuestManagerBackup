@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -14,6 +15,8 @@ import org.bukkit.util.Vector;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
 
 public class SimpleTargetSpell extends TargetSpell {
 	
@@ -54,7 +57,7 @@ public class SimpleTargetSpell extends TargetSpell {
 	public static SimpleTargetSpell valueOf(Map<String, Object> map) {
 		if (!map.containsKey("cost") || !map.containsKey("name") || !map.containsKey("description")
 				|| !map.containsKey("speed") || !map.containsKey("maxdistance") 
-				|| !map.containsKey("effects")) {
+				|| !map.containsKey("effects") || !map.containsKey("difficulty")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"Unable to load spell " 
 						+ (map.containsKey("name") ? (String) map.get("name") : "")
@@ -65,6 +68,7 @@ public class SimpleTargetSpell extends TargetSpell {
 		
 		SimpleTargetSpell spell = new SimpleTargetSpell(
 				(int) map.get("cost"),
+				(int) map.get("difficulty"),
 				(String) map.get("name"),
 				(String) map.get("description"),
 				(double) map.get("speed"),
@@ -131,9 +135,9 @@ public class SimpleTargetSpell extends TargetSpell {
 	
 	private Sound contactSound;
 	
-	public SimpleTargetSpell(int cost, String name, String description, double speed,
+	public SimpleTargetSpell(int cost, int difficulty, String name, String description, double speed,
 			int maxDistance) {
-		super(cost, name, description);
+		super(cost, difficulty, name, description);
 		this.speed = speed;
 		this.maxDistance = maxDistance;
 		this.projectileEffect = null;
@@ -166,6 +170,20 @@ public class SimpleTargetSpell extends TargetSpell {
 
 	@Override
 	public void cast(MagicUser caster, Vector direction) {
+		if (caster instanceof QuestPlayer) {
+			QuestPlayer player = (QuestPlayer) caster;
+			MagicCastEvent event = new MagicCastEvent(player,
+									this.getDifficulty()
+							);
+			Bukkit.getPluginManager().callEvent(event);
+			
+			if (event.isFail()) {
+				fail(caster);
+				return;
+			}
+			
+		}
+		
 		new SpellProjectile(this, caster, caster.getEntity().getLocation().clone().add(0,1.5,0), 
 			caster.getEntity().getLocation().getDirection(), speed, maxDistance, projectileEffect);
 

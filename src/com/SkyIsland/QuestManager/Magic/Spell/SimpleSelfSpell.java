@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -15,6 +16,8 @@ import com.SkyIsland.QuestManager.Effects.QuestEffect;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
 
 public class SimpleSelfSpell extends SelfSpell {
 	
@@ -54,7 +57,7 @@ public class SimpleSelfSpell extends SelfSpell {
 
 	public static SimpleSelfSpell valueOf(Map<String, Object> map) {
 		if (!map.containsKey("cost") || !map.containsKey("name") || !map.containsKey("description")
-				|| !map.containsKey("effects")) {
+				|| !map.containsKey("effects") || !map.containsKey("difficulty")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"Unable to load spell " 
 						+ (map.containsKey("name") ? (String) map.get("name") : "")
@@ -65,6 +68,7 @@ public class SimpleSelfSpell extends SelfSpell {
 		
 		SimpleSelfSpell spell = new SimpleSelfSpell(
 				(int) map.get("cost"),
+				(int) map.get("difficulty"),
 				(String) map.get("name"),
 				(String) map.get("description")
 				);
@@ -116,8 +120,8 @@ public class SimpleSelfSpell extends SelfSpell {
 	 * @param name
 	 * @param description
 	 */
-	public SimpleSelfSpell(int cost, String name, String description) {
-		super(cost, name, description);
+	public SimpleSelfSpell(int cost, int difficulty, String name, String description) {
+		super(cost, difficulty, name, description);
 		castEffect = null;
 		castSound = null;
 	}
@@ -132,6 +136,20 @@ public class SimpleSelfSpell extends SelfSpell {
 
 	@Override
 	public void cast(MagicUser caster) {
+		
+		if (caster instanceof QuestPlayer) {
+			QuestPlayer player = (QuestPlayer) caster;
+			MagicCastEvent event = new MagicCastEvent(player,
+									this.getDifficulty()
+							);
+			Bukkit.getPluginManager().callEvent(event);
+			
+			if (event.isFail()) {
+				fail(caster);
+				return;
+			}
+			
+		}
 		
 		Entity e = caster.getEntity();
 		
