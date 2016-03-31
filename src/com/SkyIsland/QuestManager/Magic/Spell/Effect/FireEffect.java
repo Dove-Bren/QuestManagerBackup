@@ -8,6 +8,8 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 /**
  * Catches entities on fire
  * @author Skyler
@@ -70,16 +72,16 @@ public class FireEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		if (e instanceof LivingEntity) {
 			LivingEntity targ = (LivingEntity) e;
 			targ.setFireTicks(duration);
-			targ.damage(0.0, cause);
+			targ.damage(0.0, cause.getEntity());
 		}
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		//can't damage a location
 		//do nothing 
 		;

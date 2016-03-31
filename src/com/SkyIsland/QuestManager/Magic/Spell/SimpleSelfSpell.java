@@ -157,7 +157,7 @@ public class SimpleSelfSpell extends SelfSpell {
 		ef.play(e, null);
 			
 		for (SpellEffect effect : getSpellEffects()) {
-			effect.apply(e, e);
+			effect.apply(e, caster);
 		}
 		
 		if (castEffect != null) {

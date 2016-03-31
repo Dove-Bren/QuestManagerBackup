@@ -8,6 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 /**
  * Manipulates blocks. This effect replaces one type of block with another
  * @author Skyler
@@ -75,12 +77,12 @@ public class BlockEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		; //do nothing
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		if (loc.getBlock().getType() == typeFrom) {
 			loc.getBlock().setType(typeTo);
 		}

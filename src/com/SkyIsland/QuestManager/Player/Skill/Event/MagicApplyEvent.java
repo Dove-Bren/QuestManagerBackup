@@ -57,7 +57,7 @@ public class MagicApplyEvent extends Event {
 	}
 
 	/**
-	 * Gets the base amount of damage being done. 
+	 * Gets the base amount of damage being done. If this were healing, it would be negative.
 	 * @return
 	 */
 	public double getDamage() {
@@ -112,14 +112,14 @@ public class MagicApplyEvent extends Event {
 	
 	/**
 	 * Performs all calculations with given parameters to determine the final damage dealt.<br />
-	 * Damage will not be negative. This calculation also does not consider whether or not the attack missed.
-	 * @return the damage that would be dealt, or 0 if the damage would be negative
+	 * This calculation also does not consider whether or not the attack missed.
+	 * @return the damage that would be dealt.
 	 */
 	public double getFinalDamage() {
 		double calc = damage + modifiedDamage;
 		calc *= efficiency;
 		
-		return Math.max(calc, 0.0);
+		return calc;
 	}
 	
 }

@@ -9,6 +9,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 /**
  * Wrapper class for potion effects put into spells
  * @author Skyler
@@ -71,7 +73,7 @@ public class StatusEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		if (e instanceof LivingEntity) {
 			LivingEntity targ = (LivingEntity) e;
 			effect.apply(targ);
@@ -79,7 +81,7 @@ public class StatusEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		//can't damage a location
 		//do nothing 
 		;

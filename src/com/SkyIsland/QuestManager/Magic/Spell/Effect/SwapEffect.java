@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 /**
  * Swaps location of the caster and an entity target. Does nothing on contact with a solid. 
  * @author Skyler
@@ -65,14 +67,14 @@ public class SwapEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		Location tmp = e.getLocation().clone();
-		e.teleport(cause);
-		cause.teleport(tmp);
+		e.teleport(cause.getEntity());
+		cause.getEntity().teleport(tmp);
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		; //do nothing
 	}
 	

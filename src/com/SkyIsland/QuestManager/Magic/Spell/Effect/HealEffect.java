@@ -11,6 +11,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 public class HealEffect extends SpellEffect {
 	
 	/**
@@ -68,9 +70,12 @@ public class HealEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity caster, Entity cause) {
+	public void apply(Entity caster, MagicUser cause) {
 		if (caster instanceof LivingEntity) {
 			LivingEntity e = (LivingEntity) caster;
+			
+//			MagicApplyEvent()
+			
 			EntityRegainHealthEvent event = new EntityRegainHealthEvent(e, amount, RegainReason.MAGIC);
 			Bukkit.getPluginManager().callEvent(event);
 			
@@ -84,7 +89,7 @@ public class HealEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		//can't damage a location
 		//do nothing 
 		;

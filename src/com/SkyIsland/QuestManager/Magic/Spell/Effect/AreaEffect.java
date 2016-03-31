@@ -10,6 +10,8 @@ import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 public class AreaEffect extends SpellEffect {
 	
 	/**
@@ -89,12 +91,12 @@ public class AreaEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		apply(e.getLocation(), cause);
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		
 		Collection<Entity> nearby = loc.getWorld().getNearbyEntities(
 				loc, radius, radius, radius);

@@ -195,7 +195,7 @@ public class SimpleTargetSpell extends TargetSpell {
 	@Override
 	protected void onBlockHit(MagicUser caster, Location loc) {
 		for (SpellEffect effect : getSpellEffects()) {
-			effect.apply(loc, caster.getEntity());
+			effect.apply(loc, caster);
 		}
 		
 		if (contactEffect != null) {
@@ -211,7 +211,7 @@ public class SimpleTargetSpell extends TargetSpell {
 		//do effects
 		
 		for (SpellEffect effect : getSpellEffects()) {
-			effect.apply(target, caster.getEntity());
+			effect.apply(target, caster);
 		}
 		
 		if (contactEffect != null) {

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Summon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
 
@@ -131,10 +132,10 @@ public class SummonTamedEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
-		if (!(cause instanceof AnimalTamer)) {
+	public void apply(Entity e, MagicUser cause) {
+		if (!(cause.getEntity() instanceof AnimalTamer)) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to summon tamed "
-					+ "entity to caster, because they aren't an AnimalTamer: " + cause.getCustomName());
+					+ "entity to caster, because they aren't an AnimalTamer: " + cause.getEntity().getCustomName());
 			return;
 		}
 		
@@ -150,12 +151,12 @@ public class SummonTamedEffect extends SpellEffect {
 			ent.remove();
 			return;
 		}
-		Summon s = new Summon(cause.getUniqueId(), ent, duration);
+		Summon s = new Summon(cause.getEntity().getUniqueId(), ent, duration);
 		
 		if (cause instanceof Player) {
 			if (!manager.registerSummon((Player) cause, s)) {
 				s.remove();
-				cause.sendMessage(summonDenial);
+				cause.getEntity().sendMessage(summonDenial);
 				return;
 			}
 		} else {
@@ -166,7 +167,7 @@ public class SummonTamedEffect extends SpellEffect {
 		tame.setTamed(true);
 		tame.setOwner((AnimalTamer) cause);
 		
-		ent.setCustomName(cause.getName() + "'s " + name);
+		ent.setCustomName(cause.getEntity().getName() + "'s " + name);
 		ent.setCustomNameVisible(true);
 		
 		
@@ -182,7 +183,7 @@ public class SummonTamedEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		; //do nothing
 	}
 	

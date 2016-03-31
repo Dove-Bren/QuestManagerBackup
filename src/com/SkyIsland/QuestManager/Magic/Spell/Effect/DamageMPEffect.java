@@ -68,7 +68,7 @@ public class DamageMPEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		if (e instanceof Player) {
 			MagicUser qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager()
 					.getPlayer((Player) e);
@@ -82,7 +82,7 @@ public class DamageMPEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		//can't damage a location
 		//do nothing 
 		;

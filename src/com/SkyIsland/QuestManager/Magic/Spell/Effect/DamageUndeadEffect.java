@@ -9,6 +9,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
+import com.SkyIsland.QuestManager.Magic.MagicUser;
+
 public class DamageUndeadEffect extends SpellEffect {
 	
 	/**
@@ -77,16 +79,16 @@ public class DamageUndeadEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity e, Entity cause) {
+	public void apply(Entity e, MagicUser cause) {
 		if (e instanceof LivingEntity)
 		if (isUndead(e.getType())) {
 			LivingEntity targ = (LivingEntity) e;
-			targ.damage(damage, cause);
+			targ.damage(damage, cause.getEntity());
 		}
 	}
 	
 	@Override
-	public void apply(Location loc, Entity cause) {
+	public void apply(Location loc, MagicUser cause) {
 		//can't damage a location
 		//do nothing 
 		;
