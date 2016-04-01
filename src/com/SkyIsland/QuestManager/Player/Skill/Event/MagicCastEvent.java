@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.Player.Skill.Event;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
 /**
@@ -26,13 +27,13 @@ public class MagicCastEvent extends Event {
 	
 	private QuestPlayer player;
 	
-	private int difficulty;
+	private Spell castSpell;
 	
 	private boolean isFail;
 	
-	public MagicCastEvent(QuestPlayer player, int difficulty) {
+	public MagicCastEvent(QuestPlayer player, Spell spell) {
 		this.player = player;
-		this.difficulty = difficulty;
+		this.castSpell = spell;
 		isFail = false;
 	}
 
@@ -44,12 +45,12 @@ public class MagicCastEvent extends Event {
 		this.player = player;
 	}
 
-	public int getDifficulty() {
-		return difficulty;
+	public Spell getCastSpell() {
+		return castSpell;
 	}
 
-	public void setDifficulty(int difficulty) {
-		this.difficulty = difficulty;
+	public void setCastSpell(Spell castSpell) {
+		this.castSpell = castSpell;
 	}
 
 	public boolean isFail() {

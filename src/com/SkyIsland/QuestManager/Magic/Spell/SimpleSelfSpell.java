@@ -140,7 +140,7 @@ public class SimpleSelfSpell extends SelfSpell {
 		if (caster instanceof QuestPlayer) {
 			QuestPlayer player = (QuestPlayer) caster;
 			MagicCastEvent event = new MagicCastEvent(player,
-									this.getDifficulty()
+									this
 							);
 			Bukkit.getPluginManager().callEvent(event);
 			

@@ -57,7 +57,8 @@ import com.SkyIsland.QuestManager.NPC.Utils.ServiceOffer;
 import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.SkillManager;
-import com.SkyIsland.QuestManager.Player.Skill.TwoHandedSkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.TwoHandedSkill;
 import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.Requirements.ArriveRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.ChestRequirement;
@@ -125,6 +126,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private File spellDirectory;
 	
+	private File skillDirectory;
+	
 	private final static String configFileName = "QuestManagerConfig.yml";
 	
 	private final static String playerConfigFileName = "players.yml";
@@ -160,6 +163,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 		spellDirectory = new File(getDataFolder(), config.getSpellPath());
 		if (!spellDirectory.exists()) {
 			spellDirectory.mkdirs();
+		}
+		
+		skillDirectory = new File(getDataFolder(), config.getSkillPath());
+		if (!skillDirectory.exists()) {
+			skillDirectory.mkdirs();
 		}
 	
 		//register our own requirements
@@ -244,6 +252,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager = new SkillManager();
 		
 		skillManager.registerSkill(new TwoHandedSkill());
+		skillManager.registerSkill(new MagerySkill());
 		
 		//preload Player data
 			File playerFile = new File(getDataFolder(), playerConfigFileName);

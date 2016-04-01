@@ -771,9 +771,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 							if (detailMap.get("xp") == null) {
 								qp.setSkillExperience(skill, 0f);
 							} else {
-								qp.setSkillExperience(skill, (float) detailMap.get("xp"));
+								qp.setSkillExperience(skill,(float) ((double) detailMap.get("xp")));
 							}
 						} catch (Exception e) {
+							e.printStackTrace();
 							QuestManagerPlugin.questManagerPlugin.getLogger().warning("Failed to load skill configuration for skill " + skillName);
 						}
 						

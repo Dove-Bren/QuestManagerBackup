@@ -1,4 +1,4 @@
-package com.SkyIsland.QuestManager.Player.Skill;
+package com.SkyIsland.QuestManager.Player.Skill.Default;
 
 import java.io.File;
 
@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
 
@@ -51,7 +52,7 @@ public class TwoHandedSkill extends Skill implements Listener {
 			return;
 		}
 		
-		this.levelRate = config.getInt("startingLevel", 0);
+		this.startingLevel = config.getInt("startingLevel", 0);
 		this.levelRate = config.getInt("levelsperdamageincrease", 10);
 		this.apprenticeLevel = config.getInt("apprenticeLevel", 15);
 		
@@ -59,7 +60,7 @@ public class TwoHandedSkill extends Skill implements Listener {
 	}
 	
 	private YamlConfiguration createConfig(File configFile) {
-		if (configFile.exists()) {
+		if (!configFile.exists()) {
 			YamlConfiguration defaultConfig = new YamlConfiguration();
 			
 			defaultConfig.set("enabled", true);
@@ -86,7 +87,6 @@ public class TwoHandedSkill extends Skill implements Listener {
 		
 		if (!ForgeAction.Repairable.isRepairable(p.getInventory().getItemInMainHand().getType())
 				|| (p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR)) {
-			System.out.println("Not two-handing!");
 			return;
 		}
 		
@@ -100,7 +100,6 @@ public class TwoHandedSkill extends Skill implements Listener {
 			int roll = Skill.random.nextInt(100);
 			if (roll <= miss) {
 				e.setMiss(true);
-				System.out.println("Chance to miss: " + miss + " / 100 [" + roll + "]");
 				causeMiss = true;
 			}
 		}
