@@ -40,7 +40,7 @@ public abstract class Skill {
 		
 		PluginConfiguration config = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
 		
-		int levelDifference = participant.getSkillLevel(this) - participant.getSkillLevel(this);
+		int levelDifference = participant.getSkillLevel(this) - actionLevel;
 		//negative means the skill's a higher level than the player
 		
 		if (levelDifference > config.getSkillCutoff()) {
@@ -61,7 +61,7 @@ public abstract class Skill {
 		
 		//every level difference between skill and player decreases xp. Each level differene is 
 		//1/[cutoff] reduction. That way, we get a nice approach towards 0 at the cutoff
-		float xp = (float) (base * (1-(levelDifference / Math.abs(config.getSkillCap()))));
+		float xp = (float) (base * (1-(Math.abs((double) levelDifference) / (double) config.getSkillCutoff())));
 		
 		//lulz now just add it to player xp
 		participant.setSkillExperience(this, participant.getSkillExperience(this) + xp);

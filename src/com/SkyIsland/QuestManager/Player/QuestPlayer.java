@@ -1644,13 +1644,14 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	}
 	
 	public void setSkillExperience(Skill skill, float progress) {
-		if (progress > 1.0f) {
+		if (progress >= 1.0f) {
 			setSkillLevel(skill, getSkillLevel(skill) + 1);
 			skillLevelup(skill);
 			progress = 0f;
 		}
 		
 		this.skillXP.put(skill, progress);
+		QuestLog.updateQuestlog(this, true);
 	}
 	
 	public int getSkillLevel(Skill skill) {
@@ -1716,7 +1717,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		int skillLevel = getSkillLevel(skill);
 		Player p = getPlayer().getPlayer();
-		p.sendMessage(ChatColor.GREEN + "You've obtained leveled " + ChatColor.GOLD 
+		p.sendMessage(ChatColor.GREEN + "You've obtained level " + ChatColor.GOLD 
 				+ skillLevel + ChatColor.GREEN + " up in " + skill.getName() + ChatColor.RESET);
 		
 		if (this.party != null) {

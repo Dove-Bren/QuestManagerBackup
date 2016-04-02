@@ -140,7 +140,7 @@ public class MagerySkill extends Skill implements Listener {
 		}
 		
 		//give xp for the cast (success, fail)
-		this.perform(player, causeMiss);
+		this.perform(player, difficultylevel, causeMiss);
 	}
 	
 	@EventHandler
