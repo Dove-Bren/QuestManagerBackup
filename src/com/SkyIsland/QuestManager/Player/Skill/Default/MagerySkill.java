@@ -100,8 +100,9 @@ public class MagerySkill extends Skill implements Listener {
 			
 			defaultConfig.set("enabled", true);
 			defaultConfig.set("startingLevel", 0);
-			defaultConfig.set("levelsperdamageincrease", 10);
+			defaultConfig.set("bonusDamagePerLevel", 0.01);
 			defaultConfig.set("difficultyRatio", 1.0);
+			defaultConfig.set("levelGrace", 5);
 			
 			try {
 				defaultConfig.save(configFile);
