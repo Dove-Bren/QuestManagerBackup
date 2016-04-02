@@ -8,8 +8,7 @@ import org.bukkit.entity.Player;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 /**
  * Levels up a player, awarding them some amount of health
@@ -54,13 +53,11 @@ public class LevelupHealthAction implements MenuAction {
 		ChargeEffect ef = new ChargeEffect(Effect.HAPPY_VILLAGER);
 		ef.play(p, p.getLocation());
 		
-		TitleManager.sendTimings(p, 20, 40, 20);
+		(new TitleObject(ChatColor.GREEN + "Level Up",
+				ChatColor.BLUE + "Your maximum health has been increased"))
+		.setFadeIn(20).setFadeOut(20).setStay(40).send(p);
+	
 		
-		TitleManager.sendSubTitle(p, TellrawConverterLite.convertToJSON(
-				ChatColor.BLUE + "Your maximum health has been increased"));
-
-        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
-        		ChatColor.GREEN + "Level Up"));
 		
 	}
 

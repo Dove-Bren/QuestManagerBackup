@@ -15,8 +15,7 @@ import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 /**
  * Rests a player, restoring health and hunger
@@ -71,14 +70,14 @@ public class InnAction implements MenuAction {
 			
 			p.addPotionEffect(
 					new PotionEffect(PotionEffectType.BLINDNESS, 60, 5));
-			
-			TitleManager.sendTimings(p, 20, 40, 20);
-			
-			TitleManager.sendSubTitle(p, TellrawConverterLite.convertToJSON(
-					ChatColor.BLUE + "Your health and hunger are restored"));
 
-	        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
-	        		ChatColor.GREEN + "Sweet Dreams"));
+
+//			(new TitleObject(new FancyMessage("Sweet Dreams").color(ChatColor.GREEN).toJSONString(),
+//					new FancyMessage("Your health and hunger are restored").color(ChatColor.BLUE).toJSONString()))
+//			.setFadeIn(20).setFadeOut(20).setStay(40).send(p);
+			new TitleObject(ChatColor.GREEN + "Sweet Dreams" + ChatColor.RESET,
+					ChatColor.BLUE + "Health and hunger have been restored")
+					.setFadeIn(20).setFadeOut(20).setStay(40).send(p);
 	        
 	        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, .5f);
 			

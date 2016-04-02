@@ -14,8 +14,7 @@ import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 /**
  * Trades an itemstack for some currency
@@ -62,13 +61,9 @@ public class OfferServiceAction implements MenuAction {
 		
 		p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 		
-		TitleManager.sendTimings(p, 10, 25, 10);
-		
-		TitleManager.sendSubTitle(p, TellrawConverterLite.convertToJSON(
-				ChatColor.GOLD + " "));
-
-        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
-        		ChatColor.GOLD + "Sale"));
+		(new TitleObject(ChatColor.GOLD + "Sale",
+				" "))
+		.setFadeIn(20).setFadeOut(20).setStay(40).send(p);
 
 		
 	}

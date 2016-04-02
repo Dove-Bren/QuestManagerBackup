@@ -16,8 +16,7 @@ import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Message.Message;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 /**
  * Repairs a player's equipment
@@ -130,13 +129,11 @@ public class ForgeAction implements MenuAction {
 			
 			p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_USE, 1, 0);
 			
-			TitleManager.sendTimings(p, 20, 40, 20);
+			(new TitleObject(ChatColor.GREEN + "Forge",
+					ChatColor.BLUE + "" + count + " item(s) have been repaired"))
+			.setFadeIn(20).setFadeOut(20).setStay(40).send(p);
+		
 			
-			TitleManager.sendSubTitle(p, TellrawConverterLite.convertToJSON(
-					ChatColor.BLUE + "" + count + " item(s) have been repaired"));
-
-	        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
-	        		ChatColor.GREEN + "Forge"));
 			
 		} else {
 			//not enough money

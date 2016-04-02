@@ -8,8 +8,7 @@ import org.bukkit.entity.Player;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 /**
  * Levels up a player, awarding them some amount of mana
@@ -54,13 +53,9 @@ public class LevelupManaAction implements MenuAction {
 		ChargeEffect ef = new ChargeEffect(Effect.WITCH_MAGIC);
 		ef.play(p, p.getLocation());
 		
-		TitleManager.sendTimings(p, 20, 40, 20);
-		
-		TitleManager.sendSubTitle(p, TellrawConverterLite.convertToJSON(
-				ChatColor.BLUE + "Your maximum mana has been increased"));
-
-        TitleManager.sendTitle(p, TellrawConverterLite.convertToJSON(
-        		ChatColor.GREEN + "Level Up"));
+		(new TitleObject(ChatColor.GREEN + "Level Up",
+				ChatColor.BLUE + "Your maximum mana has been increased"))
+		.setFadeIn(20).setFadeOut(20).setStay(40).send(p);
 		
 	}
 

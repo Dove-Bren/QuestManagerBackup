@@ -13,8 +13,7 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.History.HistoryEvent;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 public class QuestStartAction implements MenuAction {
 
@@ -85,13 +84,10 @@ public class QuestStartAction implements MenuAction {
 		for (QuestPlayer qpe : participant.getParticipants()) {
 			qpe.updateQuestBook(false);
 			if (qpe.getPlayer().isOnline()) {
-				TitleManager.sendTimings(qpe.getPlayer().getPlayer(), 30, 80, 30);
-
-		        TitleManager.sendSubTitle(qpe.getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-		        		ChatColor.GOLD + template.getDescription()));
-
-		        TitleManager.sendTitle(qpe.getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-		        		ChatColor.DARK_RED + template.getName()));
+				
+				(new TitleObject(ChatColor.DARK_RED + template.getName(),
+						ChatColor.GOLD + template.getDescription()))
+				.setFadeIn(30).setFadeOut(30).setStay(80).send(qpe.getPlayer().getPlayer());
 			}
 		}
 		

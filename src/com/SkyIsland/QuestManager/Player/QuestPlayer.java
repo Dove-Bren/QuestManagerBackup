@@ -78,8 +78,7 @@ import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
 import com.onarandombox.MultiversePortals.event.MVPortalEvent;
 
-import de.inventivegames.util.tellraw.TellrawConverterLite;
-import de.inventivegames.util.title.TitleManager;
+import io.puharesource.mc.titlemanager.api.TitleObject;
 
 /**
  * Player wrapper to store questing information and make saving player quest status
@@ -565,13 +564,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		menu.show(getPlayer().getPlayer());
 		
-		TitleManager.sendTimings(getPlayer().getPlayer(), 30, 80, 30);
-
-//        TitleManager.sendSubTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-//        		new FancyMessage(title).toOldMessageFormat()));
-
-        TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-        		ChatColor.GREEN + "Title Unlocked!"));
+		(new TitleObject(ChatColor.GREEN + "Title Unlocked",
+				""))
+		.setFadeIn(30).setFadeOut(30).setStay(80).send(getPlayer().getPlayer());
         
         getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 10, 1);
 	}
@@ -596,13 +591,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		menu.show(getPlayer().getPlayer());
 		
-		TitleManager.sendTimings(getPlayer().getPlayer(), 30, 80, 30);
-
-//        TitleManager.sendSubTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-//        		new FancyMessage(title).toOldMessageFormat()));
-
-        TitleManager.sendTitle(getPlayer().getPlayer(), TellrawConverterLite.convertToJSON(
-        		ChatColor.GREEN + "Spell Learned!"));
+		(new TitleObject(ChatColor.GREEN + "Spell Learned!",
+				""))
+		.setFadeIn(30).setFadeOut(30).setStay(80).send(getPlayer().getPlayer());
         
         getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.ENTITY_FIREWORK_TWINKLE, 10, 1);
 	}
