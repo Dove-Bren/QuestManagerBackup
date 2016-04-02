@@ -1,6 +1,7 @@
 package com.SkyIsland.QuestManager.Player.Utils;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -19,11 +20,13 @@ import org.bukkit.inventory.meta.BookMeta;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Quest.Quest;
 
 /**
  * Utility class for the quest log.<br />
- * Provides nice, simple wrapper functions for the elaborate workings of the Quest Log
+ * Provides nice, simple wrapper functions for the elaborate workings of the Quest Log.
+ * 4-1-16 Quest Log will also now hold Skill information
  * @author Skyler
  *
  */
@@ -155,6 +158,92 @@ public class QuestLog {
 		
 		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
 		
+		
+		title = new FancyMessage("        Skills")
+				.color(ChatColor.BLACK);
+		int lines = 0;
+		
+		//combat skills
+		for (Skill.Type type : Skill.Type.values()) {
+			title.then("\n\n" + toNormalCase(type.name()))
+				.color(ChatColor.DARK_RED).style(ChatColor.BOLD);
+			lines += 2;
+			for (Skill s : QuestManagerPlugin.questManagerPlugin.getSkillManager().getSkills(type)) {
+				//get a formatted description. (Code from QuestPlayer's magic menu)
+				List<String> descList = new LinkedList<>();
+				String desc;
+				desc = s.getDescription(qp);
+				
+				String mid;
+				int pos;
+				while (desc.length() > 30) {
+					
+					desc = desc.trim();
+					
+					//first, check for newline before 30 limit
+					pos = desc.substring(0, 30).indexOf("\n");
+					if (pos != -1) {
+						//there's a newline, so split before it
+						//[and some sting\nwith a newline]
+						mid = desc.substring(0, pos);
+						mid = mid.substring(0, 1 + mid.length() - (("\n").length())); //chop off the \n
+						descList.add(mid);
+						desc = desc.substring(pos);
+						continue;
+					}
+					
+					//find first space before 30
+					mid = desc.substring(0, 30);
+					pos = mid.lastIndexOf(" ");
+					if (pos == -1) {
+						descList.add(mid);
+						desc = desc.substring(30);
+						continue;
+					}
+					//else we found a space
+					descList.add(mid.substring(0, pos));
+					desc = desc.substring(pos);
+				}
+				
+				descList.add(desc.trim());
+				
+				desc = "";
+				for (int i = 0; i < descList.size() - 1; i++) {
+					desc += descList.get(i) + "\n";
+				}
+				desc += descList.get(descList.size() - 1);
+				
+				
+				if (lines > 12) {
+					//not enough room on the page
+					//write page, continue
+					builder += ", ";
+					builder += generatePageJSON(title.toJSONString().replace("\"", escq));
+					lines = 1;
+					title = new FancyMessage("\n  " + s.getName())
+							.tooltip(desc)
+							.color(ChatColor.BLACK)
+						.then(" (" + qp.getSkillLevel(s) + ", "
+							+ ((int) qp.getSkillExperience(s)*100) + "%)")
+							.color(ChatColor.DARK_GREEN);
+				} else {
+					title.then("\n  " + s.getName())
+							.tooltip(desc)
+							.color(ChatColor.BLACK)
+						.then(" (" + qp.getSkillLevel(s) + ", "
+							+ ((int) qp.getSkillExperience(s)*100) + "%)")
+							.color(ChatColor.DARK_GREEN);
+					lines++;
+				}
+			}
+		}
+		
+		builder += ", ";
+		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
+		
+		
+		//13 lines
+		
 		//add quests
 		if (qp.getCurrentQuests().isEmpty()) {
 			builder += ",";
@@ -252,5 +341,9 @@ public class QuestLog {
 		
 	private static String formatText(String str) {
 		return "{" + escq + "text" + escq + ": " + escq + str + escq + "}";
+	}
+	
+	private static String toNormalCase(String wonkWord) {
+		return (wonkWord.substring(0, 1).toUpperCase()) + (wonkWord.substring(1).toLowerCase());
 	}
 }

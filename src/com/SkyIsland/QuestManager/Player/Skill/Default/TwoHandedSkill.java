@@ -34,7 +34,7 @@ public class TwoHandedSkill extends Skill implements Listener {
 		
 		int lvl = player.getSkillLevel(this);
 		if (lvl < apprenticeLevel) {
-			ret += "\n" + ChatColor.RED + "Chance to hit: " + (-3 * (apprenticeLevel - lvl));
+			ret += "\n\n" + ChatColor.RED + "Chance to hit: " + (-3 * (apprenticeLevel - lvl)) + "%";
 		}
 		
 		ret += "\n" + ChatColor.GREEN + "Bonus Damage: " + (lvl / levelRate) + ChatColor.RESET;
