@@ -59,6 +59,11 @@ public class PluginConfiguration {
 		ENEMYDIR("enemyDir"),
 		SPELLDIR("spellDir"),
 		SKILLDIR("skillDir"),
+		SKILLCAP("skill.cap"),
+		SKILLSUCCESSGROWTH("skill.growth.success"),
+		SKILLFAILGROWTH("skill.growth.fail"),
+		SKILLGROWTHCUTOFF("skill.growth.cutoff"),
+		SKILLGROWTHUPPERCUTOFF("skill.growth.cutoffUpper"),
 		SUMMONLIMIT("summonLimit");
 		
 		
@@ -350,6 +355,36 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Returns the plugin-wide skill cap. This is the maximum level any skill can achieve.
+	 * Defaults to <i>100</i> if it is absent from the config.
+	 * @return
+	 */
+	public int getSkillCap() {
+		return config.getInt(PluginConfigurationKey.SKILLCAP.key, 100);
+	}
+	
+	public double getSkillGrowthOnSuccess() {
+		return config.getDouble(PluginConfigurationKey.SKILLSUCCESSGROWTH.key, 0.20);
+	}
+	
+	public double getSkillGrowthOnFail() {
+		return config.getDouble(PluginConfigurationKey.SKILLFAILGROWTH.key, 0.05);
+	}
+	
+	public int getSkillCutoff() {
+		return config.getInt(PluginConfigurationKey.SKILLGROWTHCUTOFF.key, 20);
+	}
+	
+	/**
+	 * Returns the limit of how might higher a spell difficulty level can be than a players where the player
+	 * will still get xp on failure.
+	 * @return
+	 */
+	public int getSkillUpperCutoff() {
+		return config.getInt(PluginConfigurationKey.SKILLGROWTHUPPERCUTOFF.key, 20);
+	}
+	
+	/**
 	 * Gets the name of the spell holders
 	 * @return
 	 */
@@ -429,6 +464,12 @@ public class PluginConfiguration {
 		config.set(PluginConfigurationKey.ENEMYDIR.key, "enemies/");
 		config.set(PluginConfigurationKey.SPELLDIR.key, "spells/");
 		config.set(PluginConfigurationKey.SKILLDIR.key, "skills/");
+		
+		config.set(PluginConfigurationKey.SKILLCAP.key, 100);
+		config.set(PluginConfigurationKey.SKILLSUCCESSGROWTH.key, 0.20);
+		config.set(PluginConfigurationKey.SKILLFAILGROWTH.key, 0.05);
+		config.set(PluginConfigurationKey.SKILLGROWTHCUTOFF.key, 20);
+		config.set(PluginConfigurationKey.SKILLGROWTHUPPERCUTOFF.key, 10);
 				
 		try {
 			config.save(configFile);

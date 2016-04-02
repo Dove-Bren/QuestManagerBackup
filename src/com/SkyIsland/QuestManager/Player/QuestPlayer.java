@@ -1644,6 +1644,12 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	}
 	
 	public void setSkillExperience(Skill skill, float progress) {
+		if (progress > 1.0f) {
+			setSkillLevel(skill, getSkillLevel(skill) + 1);
+			skillLevelup(skill);
+			progress = 0f;
+		}
+		
 		this.skillXP.put(skill, progress);
 	}
 	
@@ -1700,5 +1706,36 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 		
 		e.setDamage(event.getFinalDamage());
+	}
+	
+	private void skillLevelup(Skill skill) {
+		//just leveled up a skill
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		int skillLevel = getSkillLevel(skill);
+		Player p = getPlayer().getPlayer();
+		p.sendMessage(ChatColor.GREEN + "You've obtained leveled " + ChatColor.GOLD 
+				+ skillLevel + ChatColor.GREEN + " up in " + skill.getName() + ChatColor.RESET);
+		
+		if (this.party != null) {
+			for (QuestPlayer qp : party.getParticipants()) {
+				if (qp.playerID.equals(playerID)) {
+					continue;
+				}
+				
+				if (!qp.getPlayer().isOnline()) {
+					continue;
+				}
+				
+				qp.getPlayer().getPlayer().sendMessage(ChatColor.GOLD + this.getPlayer().getName()
+						+ " just attained level " + skillLevel + " in " + skill.getName() + "!" + ChatColor.RESET);
+			}
+		}
+		
+		(new ChargeEffect(Effect.HAPPY_VILLAGER)).play(p, p.getEyeLocation());
+		p.getWorld().playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 1, 0.75f);
+		p.getWorld().playSound(p.getLocation(), Sound.BLOCK_NOTE_HARP, 1, 0.5f);
 	}
 }

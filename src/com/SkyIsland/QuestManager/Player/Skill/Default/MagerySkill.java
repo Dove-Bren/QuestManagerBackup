@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.Player.Skill.Default;
 import java.io.File;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,24 @@ public class MagerySkill extends Skill implements Listener {
 
 	public Type getType() {
 		return Skill.Type.COMBAT;
+	}
+	
+	public String getName() {
+		return "Magery";
+	}
+	
+	public String getDescription(QuestPlayer player) {
+		String ret = ChatColor.WHITE + "The Magery skill governs the player's ability to cast spells, and "
+				+ "produce meaningful results. Magery skill combats spell difficulty, and is the main "
+				+ "determining factor in spell success or failure.";
+		
+		int lvl = player.getSkillLevel(this);
+		int mastery = Math.max(0, (int) ((difficultyRatio * lvl) - levelGrace));
+		ret += ChatColor.GOLD + "\nCurrent Mastery Level: " + mastery;
+		
+		ret += "\n" + ChatColor.GREEN + "Spell Efficiency: " + (lvl * levelRate) + ChatColor.RESET;
+		
+		return ret;
 	}
 
 	@Override
@@ -115,8 +134,6 @@ public class MagerySkill extends Skill implements Listener {
 			if (roll < chance) {
 				e.setFail(true);
 				causeMiss = true;
-			} else {
-				System.out.println("[" + chance + "/100] " + roll);
 			}
 			
 		}

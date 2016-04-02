@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.Player.Skill.Default;
 import java.io.File;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
@@ -20,6 +22,24 @@ public class TwoHandedSkill extends Skill implements Listener {
 
 	public Type getType() {
 		return Skill.Type.COMBAT;
+	}
+	
+	public String getName() {
+		return "Two Handed";
+	}
+	
+	public String getDescription(QuestPlayer player) {
+		String ret = ChatColor.WHITE + "The Two Handed skill involved a player using a single weapon to attack, with nothing"
+				+ " in their offhand.";
+		
+		int lvl = player.getSkillLevel(this);
+		if (lvl < apprenticeLevel) {
+			ret += "\n" + ChatColor.RED + "Chance to hit: " + (-3 * (apprenticeLevel - lvl));
+		}
+		
+		ret += "\n" + ChatColor.GREEN + "Bonus Damage: " + (lvl / levelRate) + ChatColor.RESET;
+		
+		return ret;
 	}
 
 	@Override

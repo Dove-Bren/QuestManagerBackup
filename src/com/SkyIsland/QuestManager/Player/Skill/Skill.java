@@ -2,6 +2,8 @@ package com.SkyIsland.QuestManager.Player.Skill;
 
 import java.util.Random;
 
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
 /**
@@ -34,7 +36,37 @@ public abstract class Skill {
 	 * @param fail whether or not the action was failed. May or not award xp on failure, as determined by config
 	 */
 	public void perform(QuestPlayer participant, int actionLevel, boolean fail) {
-		//TODO
+		//XP = (base * (1-remaining))
+		
+		PluginConfiguration config = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
+		
+		int levelDifference = participant.getSkillLevel(this) - participant.getSkillLevel(this);
+		//negative means the skill's a higher level than the player
+		
+		if (levelDifference > config.getSkillCutoff()) {
+			return; //no xp, too far below the player's level!
+		}
+		
+		if (fail && levelDifference < -config.getSkillUpperCutoff()) {
+			//skill level is higher than the config's upper skill fail limit cutoff
+			return;
+		}
+		
+		double base;
+		if (fail) {
+			base = config.getSkillGrowthOnFail();
+		} else {
+			base = config.getSkillGrowthOnSuccess();
+		}
+		
+		//every level difference between skill and player decreases xp. Each level differene is 
+		//1/[cutoff] reduction. That way, we get a nice approach towards 0 at the cutoff
+		float xp = (float) (base * (1-(levelDifference / Math.abs(config.getSkillCap()))));
+		
+		//lulz now just add it to player xp
+		participant.setSkillExperience(this, participant.getSkillExperience(this) + xp);
+		
+		
 	}
 	
 	/**
@@ -66,6 +98,17 @@ public abstract class Skill {
 	}
 	
 	public abstract Type getType();
+	
+	public abstract String getName();
+	
+	/**
+	 * Get a pre-formated description that can be sent to the user.<br />
+	 * Message should contain a brief description followed by any specifics defined by the
+	 * Skill. For example, the {@link com.SkyIsland.QuestManager.Player.Skill.Default.TwoHandedSkill TwoHandedSkill}
+	 * should have details about what the current hit chance and bonus damage is. 
+	 * @return
+	 */
+	public abstract String getDescription(QuestPlayer player);
 	
 	public abstract int getStartingLevel();
 	
