@@ -11,10 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
+import com.google.common.collect.Lists;
 
 /**
  * Skill governing combat with a weapon in main hand, shield in offhand
@@ -86,20 +88,20 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 	
 	private YamlConfiguration createConfig(File configFile) {
 		if (!configFile.exists()) {
-			YamlConfiguration defaultConfig = new YamlConfiguration();
+			YamlWriter writer = new YamlWriter();
 			
-			defaultConfig.set("enabled", true);
-			defaultConfig.set("startingLevel", 0);
-			defaultConfig.set("levelsperdefenseincrease", 10);
-			defaultConfig.set("apprenticeLevel", 20);
+			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
+				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
+				.addLine("levelsperdefenseincrease", 10, Lists.newArrayList("How many levels are required to gain an additional", "point in defense", "[int], greater than 0"))
+				.addLine("apprenticeLevel", 20);
 			
 			try {
-				defaultConfig.save(configFile);
+				writer.save(configFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			return defaultConfig;
+			return writer.buildYaml();
 		}
 		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);

@@ -58,6 +58,7 @@ import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.SkillManager;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.SwordAndShieldSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.TwoHandedSkill;
 import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.Requirements.ArriveRequirement;
@@ -251,8 +252,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		skillManager = new SkillManager();
 		
-		skillManager.registerSkill(new TwoHandedSkill());
-		skillManager.registerSkill(new MagerySkill());
+		registerDefaultSkills();
 		
 		//preload Player data
 			File playerFile = new File(getDataFolder(), playerConfigFileName);
@@ -341,6 +341,12 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		onLoad();
 		onEnable();
+	}
+	
+	private void registerDefaultSkills() {
+		skillManager.registerSkill(new TwoHandedSkill());
+		skillManager.registerSkill(new SwordAndShieldSkill());
+		skillManager.registerSkill(new MagerySkill());
 	}
 	
 	

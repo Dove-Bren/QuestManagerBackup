@@ -9,10 +9,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
+import com.google.common.collect.Lists;
 
 public class MagerySkill extends Skill implements Listener {
 	
@@ -96,21 +98,21 @@ public class MagerySkill extends Skill implements Listener {
 	
 	private YamlConfiguration createConfig(File configFile) {
 		if (!configFile.exists()) {
-			YamlConfiguration defaultConfig = new YamlConfiguration();
+			YamlWriter writer = new YamlWriter();
 			
-			defaultConfig.set("enabled", true);
-			defaultConfig.set("startingLevel", 0);
-			defaultConfig.set("bonusDamagePerLevel", 0.01);
-			defaultConfig.set("difficultyRatio", 1.0);
-			defaultConfig.set("levelGrace", 5);
+			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
+				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
+				.addLine("bonusDamagePerLevel", 0.01, Lists.newArrayList("How many levels are needed to gain an additional bonus damage", "[int], greater than 0"))
+				.addLine("difficultyRatio", 1.0, Lists.newArrayList("How many player magery levels correspond to 1 difficulty level?", "In other words, at what magery level should a player be able to cast a", "level x spell? n*x, where n is the ratio. If magery goes from 0-100", "and difficulty goes from 0-100, then 1 is perfect. If magery goes from 0-100 and difficulty", "goes from 0-10, a ratio of 10 is perfect. (10 magery levels per difficulty)", "[double] "))
+				.addLine("levelGrace", 5, Lists.newArrayList("How many levels over the appropriate level (according to the", "difficulty ratio) a player must be to no longer make", "checks on spell failure", "[int]"));
 			
 			try {
-				defaultConfig.save(configFile);
+				writer.save(configFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			return defaultConfig;
+			return writer.buildYaml();
 		}
 		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
