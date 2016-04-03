@@ -32,7 +32,7 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 	}
 	
 	public String getName() {
-		return "Sword & Shield";
+		return "Sword&Shield";
 	}
 	
 	public String getDescription(QuestPlayer player) {
