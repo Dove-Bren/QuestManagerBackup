@@ -41,7 +41,7 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 		
 		int lvl = player.getSkillLevel(this);
 		if (lvl < apprenticeLevel) {
-			ret += "\n\n" + ChatColor.RED + "Chance to hit: " + (-3 * (apprenticeLevel - lvl)) + "%";
+			ret += "\n\n" + ChatColor.RED + "Chance to hit: " + (int) (-rateDecrease * (apprenticeLevel - lvl)) + "%";
 		}
 		
 		ret += "\n" + ChatColor.GREEN + "Bonus Defense: " + (lvl / levelRate) + ChatColor.RESET;
@@ -70,6 +70,8 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 	
 	private int apprenticeLevel;
 	
+	private double rateDecrease;
+	
 	public SwordAndShieldSkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
@@ -82,6 +84,7 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 		this.startingLevel = config.getInt("startingLevel", 0);
 		this.levelRate = config.getInt("levelsperdefenseincrease", 10);
 		this.apprenticeLevel = config.getInt("apprenticeLevel", 20);
+		this.rateDecrease = config.getDouble("hitchancePenalty", 3.0);
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -93,7 +96,8 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
 				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
 				.addLine("levelsperdefenseincrease", 10, Lists.newArrayList("How many levels are required to gain an additional", "point in defense", "[int], greater than 0"))
-				.addLine("apprenticeLevel", 20);
+				.addLine("apprenticeLevel", 20, Lists.newArrayList("The level at which the player's chance to hit is no", "longer is penalized", "[int], greater than 0"))
+				.addLine("hitchancePenalty", 3.0, Lists.newArrayList("The penalty per level under apprentiveLevel given to the", "chance to hit. Maximum penalty is (apprenticeLevel * hitchancePenalty)", "[double]"));
 			
 			try {
 				writer.save(configFile);
@@ -123,7 +127,7 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 		boolean causeMiss = false;
 		if (lvl < apprenticeLevel) {
 			//3% per level under apprentice -- up to 45%
-			int miss = 3 * (apprenticeLevel - lvl); 
+			int miss = (int) (rateDecrease * (apprenticeLevel - lvl)); 
 			int roll = Skill.random.nextInt(100);
 			if (roll <= miss) {
 				e.setMiss(true);

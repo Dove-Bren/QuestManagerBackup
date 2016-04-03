@@ -79,6 +79,8 @@ public class MagerySkill extends Skill implements Listener {
 	 */
 	private int levelGrace;
 	
+	private double rateDecrease;
+	
 	public MagerySkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
@@ -92,6 +94,7 @@ public class MagerySkill extends Skill implements Listener {
 		this.levelRate = config.getDouble("bonusDamagePerLevel", 0.01);
 		this.difficultyRatio = config.getDouble("difficultyRatio", 1.0);
 		this.levelGrace = config.getInt("levelGrace", 5);
+		this.rateDecrease = config.getDouble("hitchancePenalty", 3.0);
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -104,7 +107,8 @@ public class MagerySkill extends Skill implements Listener {
 				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
 				.addLine("bonusDamagePerLevel", 0.01, Lists.newArrayList("How many levels are needed to gain an additional bonus damage", "[int], greater than 0"))
 				.addLine("difficultyRatio", 1.0, Lists.newArrayList("How many player magery levels correspond to 1 difficulty level?", "In other words, at what magery level should a player be able to cast a", "level x spell? n*x, where n is the ratio. If magery goes from 0-100", "and difficulty goes from 0-100, then 1 is perfect. If magery goes from 0-100 and difficulty", "goes from 0-10, a ratio of 10 is perfect. (10 magery levels per difficulty)", "[double] "))
-				.addLine("levelGrace", 5, Lists.newArrayList("How many levels over the appropriate level (according to the", "difficulty ratio) a player must be to no longer make", "checks on spell failure", "[int]"));
+				.addLine("levelGrace", 5, Lists.newArrayList("How many levels over the appropriate level (according to the", "difficulty ratio) a player must be to no longer make", "checks on spell failure", "[int]"))
+				.addLine("hitchancePenalty", 3.0, Lists.newArrayList("The penalty per level under apprentiveLevel given to the", "chance to hit. Penalty is", "(  ([calculated spell level] + levelGrace) * hitchancePenalty )", "[double]"));
 			
 			try {
 				writer.save(configFile);
@@ -132,7 +136,7 @@ public class MagerySkill extends Skill implements Listener {
 		boolean causeMiss = false;
 		
 		if (levelDifference > -levelGrace) {
-			int chance = levelDifference * 2, 
+			int chance = (int) (levelDifference * rateDecrease), 
 					roll = Skill.random.nextInt(100);
 			if (roll < chance) {
 				e.setFail(true);
