@@ -11,10 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
+import com.google.common.collect.Lists;
 
 public class TwoHandedSkill extends Skill implements Listener {
 	
@@ -81,20 +83,21 @@ public class TwoHandedSkill extends Skill implements Listener {
 	
 	private YamlConfiguration createConfig(File configFile) {
 		if (!configFile.exists()) {
-			YamlConfiguration defaultConfig = new YamlConfiguration();
 			
-			defaultConfig.set("enabled", true);
-			defaultConfig.set("startingLevel", 0);
-			defaultConfig.set("levelsperdamageincrease", 10);
-			defaultConfig.set("apprenticeLevel", 15);
+			YamlWriter writer = new YamlWriter();
+			
+			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
+				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
+				.addLine("levelsperdamageincrease", 10, Lists.newArrayList("How many levels are needed to gain an additional bonus damage", "[int], greater than 0"))
+				.addLine("apprenticeLevel", 15, Lists.newArrayList("The level at which the player's chance to hit is no", "longer is penalized", "[int], greater than 0"));
 			
 			try {
-				defaultConfig.save(configFile);
+				writer.save(configFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			return defaultConfig;
+			return writer.buildYaml();
 		}
 		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
