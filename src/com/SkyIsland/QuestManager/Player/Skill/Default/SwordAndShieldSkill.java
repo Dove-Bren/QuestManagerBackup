@@ -16,28 +16,33 @@ import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
 
-public class TwoHandedSkill extends Skill implements Listener {
+/**
+ * Skill governing combat with a weapon in main hand, shield in offhand
+ * @author Skyler
+ *
+ */
+public class SwordAndShieldSkill extends Skill implements Listener {
 	
-	public static final String configName = "TwoHanded.yml";
+	public static final String configName = "SwordAndShield.yml";
 
 	public Type getType() {
 		return Skill.Type.COMBAT;
 	}
 	
 	public String getName() {
-		return "Two Handed";
+		return "Sword & Shield";
 	}
 	
 	public String getDescription(QuestPlayer player) {
-		String ret = ChatColor.WHITE + "The Two Handed skill involves a player using a single weapon to attack, with nothing"
-				+ " in their offhand.";
+		String ret = ChatColor.WHITE + "The Sword and Shield skill determines a player's offensive and "
+				+ "defensive abilities while they have a weapon in their mainhand and a shield in their offhand";
 		
 		int lvl = player.getSkillLevel(this);
 		if (lvl < apprenticeLevel) {
 			ret += "\n\n" + ChatColor.RED + "Chance to hit: " + (-3 * (apprenticeLevel - lvl)) + "%";
 		}
 		
-		ret += "\n" + ChatColor.GREEN + "Bonus Damage: " + (lvl / levelRate) + ChatColor.RESET;
+		ret += "\n" + ChatColor.GREEN + "Bonus Defense: " + (lvl / levelRate) + ChatColor.RESET;
 		
 		return ret;
 	}
@@ -49,12 +54,12 @@ public class TwoHandedSkill extends Skill implements Listener {
 	
 	@Override
 	public String getConfigKey() {
-		return "Two_Handed";
+		return "Sword_And_Shield";
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof TwoHandedSkill);
+		return (o instanceof SwordAndShieldSkill);
 	}
 	
 	private int startingLevel;
@@ -63,7 +68,7 @@ public class TwoHandedSkill extends Skill implements Listener {
 	
 	private int apprenticeLevel;
 	
-	public TwoHandedSkill() {
+	public SwordAndShieldSkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
 		YamlConfiguration config = createConfig(configFile);
@@ -73,8 +78,8 @@ public class TwoHandedSkill extends Skill implements Listener {
 		}
 		
 		this.startingLevel = config.getInt("startingLevel", 0);
-		this.levelRate = config.getInt("levelsperdamageincrease", 10);
-		this.apprenticeLevel = config.getInt("apprenticeLevel", 15);
+		this.levelRate = config.getInt("levelsperdefenseincrease", 10);
+		this.apprenticeLevel = config.getInt("apprenticeLevel", 20);
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -85,8 +90,8 @@ public class TwoHandedSkill extends Skill implements Listener {
 			
 			defaultConfig.set("enabled", true);
 			defaultConfig.set("startingLevel", 0);
-			defaultConfig.set("levelsperdamageincrease", 10);
-			defaultConfig.set("apprenticeLevel", 15);
+			defaultConfig.set("levelsperdefenseincrease", 10);
+			defaultConfig.set("apprenticeLevel", 20);
 			
 			try {
 				defaultConfig.save(configFile);
@@ -106,7 +111,7 @@ public class TwoHandedSkill extends Skill implements Listener {
 		Player p = e.getPlayer().getPlayer().getPlayer();
 		
 		if (!ForgeAction.Repairable.isRepairable(p.getInventory().getItemInMainHand().getType())
-				|| (p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR)) {
+				|| (p.getInventory().getItemInOffHand() == null || p.getInventory().getItemInOffHand().getType() != Material.SHIELD)) {
 			return;
 		}
 		
@@ -124,9 +129,9 @@ public class TwoHandedSkill extends Skill implements Listener {
 			}
 		}
 		
-		//just increase damage based on level
-		//every n levels, one more damage
-		e.setModifiedDamage(e.getModifiedDamage() + (lvl / levelRate));
+		//just increase defense based on level
+		//every n levels, one more defense point
+		e.setModifiedDamage(e.getModifiedDamage() - (lvl / levelRate));
 		
 		this.perform(e.getPlayer(), causeMiss); //only get a 'cause miss' if this skill caused it 
 		
