@@ -35,11 +35,8 @@ public class TwoHandedSkill extends Skill implements Listener {
 				+ " in their offhand.";
 		
 		int lvl = player.getSkillLevel(this);
-		if (lvl < apprenticeLevel) {
-			ret += "\n\n" + ChatColor.RED + "Chance to hit: " + (int) (-(rateDecrease) * (apprenticeLevel - lvl)) + "%";
-		}
 		
-		ret += "\n" + ChatColor.GREEN + "Bonus Damage: " + (lvl / levelRate) + ChatColor.RESET;
+		ret += "\n\n" + ChatColor.GREEN + "Bonus Damage: " + (lvl / levelRate) + ChatColor.RESET;
 		
 		return ret;
 	}
@@ -63,10 +60,6 @@ public class TwoHandedSkill extends Skill implements Listener {
 	
 	private int levelRate;
 	
-	private int apprenticeLevel;
-	
-	private double rateDecrease;
-	
 	public TwoHandedSkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
@@ -78,8 +71,6 @@ public class TwoHandedSkill extends Skill implements Listener {
 		
 		this.startingLevel = config.getInt("startingLevel", 0);
 		this.levelRate = config.getInt("levelsperdamageincrease", 10);
-		this.apprenticeLevel = config.getInt("apprenticeLevel", 15);
-		this.rateDecrease = config.getDouble("hitchancePenalty", 3.0);
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -91,9 +82,7 @@ public class TwoHandedSkill extends Skill implements Listener {
 			
 			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
 				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
-				.addLine("levelsperdamageincrease", 10, Lists.newArrayList("How many levels are needed to gain an additional bonus damage", "[int], greater than 0"))
-				.addLine("apprenticeLevel", 15, Lists.newArrayList("The level at which the player's chance to hit is no", "longer is penalized", "[int], greater than 0"))
-				.addLine("hitchancePenalty", 3.0, Lists.newArrayList("The penalty per level under apprentiveLevel given to the", "chance to hit. Maximum penalty is (apprenticeLevel * hitchancePenalty)", "[double]"));
+				.addLine("levelsperdamageincrease", 10, Lists.newArrayList("How many levels are needed to gain an additional bonus damage", "[int], greater than 0"));
 			
 			try {
 				writer.save(configFile);
@@ -119,23 +108,11 @@ public class TwoHandedSkill extends Skill implements Listener {
 		
 		int lvl = e.getPlayer().getSkillLevel(this);
 		
-		//reduce chance to hit if level under apprentice level
-		boolean causeMiss = false;
-		if (lvl < apprenticeLevel) {
-			//3% per level under apprentice -- up to 45%
-			int miss = (int) (rateDecrease * (apprenticeLevel - lvl)); 
-			int roll = Skill.random.nextInt(100);
-			if (roll <= miss) {
-				e.setMiss(true);
-				causeMiss = true;
-			}
-		}
-		
 		//just increase damage based on level
 		//every n levels, one more damage
 		e.setModifiedDamage(e.getModifiedDamage() + (lvl / levelRate));
 		
-		this.perform(e.getPlayer(), causeMiss); //only get a 'cause miss' if this skill caused it 
+		this.perform(e.getPlayer(), e.isMiss());
 		
 	}
 	

@@ -1,6 +1,10 @@
 package com.SkyIsland.QuestManager.Player.Skill;
 
+import java.util.Collection;
 import java.util.Random;
+
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.attribute.AttributeModifier;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
@@ -121,4 +125,25 @@ public abstract class Skill {
 	 * @return
 	 */
 	public abstract String getConfigKey();
+	
+	/**
+	 * Sets the provided attribute up with a modifier by the given name (overwriting one if it exists)
+	 * for the given amount. <br />
+	 * <b>This is done</b> under the {@link AttributeModifier.Operation#ADD_SCALAR} operation!
+	 * @param attribute
+	 * @param name
+	 * @param amt
+	 */
+	public static void setAttributeModifier(AttributeInstance attribute, String name, double amt) {
+		Collection<AttributeModifier> mods = attribute.getModifiers();
+		
+		for (AttributeModifier mod : mods) {
+			if (mod.getName().equals(name)) {
+				attribute.removeModifier(mod);
+				break;
+			}
+		}
+		
+		attribute.addModifier(new AttributeModifier(name, amt, AttributeModifier.Operation.ADD_SCALAR));
+	}
 }

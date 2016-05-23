@@ -1184,9 +1184,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 						.then("This player has ")
 						.then(player.money + "")
 							.color(ChatColor.GOLD)
-						.then(" and " + player.alphaFame + " fame")
+						.then("gold and ")
+						    .color(ChatColor.WHITE)
+						.then(player.alphaFame + "")
 							.color(ChatColor.GOLD)
-						.then(" gold.\nThis player has completed ")
+					    .then(" fame.\nThis player has completed ")
 							.color(ChatColor.WHITE)
 						.then("" + player.completedQuests.size())
 							.color(ChatColor.GREEN)
@@ -1287,9 +1289,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 		
 
-		MultioptionChatMenu menu = new MultioptionChatMenu(new PlainMessage("Choose your title:"), opts);
+		MultioptionChatMenu menu = new MultioptionChatMenu(new PlainMessage("Assign one of the following:"), opts);
 		
 		menu.show(getPlayer().getPlayer());
+				
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -1505,6 +1508,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	@EventHandler
 	public void onEntityDeathEvent(EntityDeathEvent e) {
+		
 		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()
 		 && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenKill() != 0)
 		if (e.getEntity().getKiller() != null && 
