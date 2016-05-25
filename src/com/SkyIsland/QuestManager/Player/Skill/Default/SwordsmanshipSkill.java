@@ -13,11 +13,12 @@ import org.bukkit.event.Listener;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.LogSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.google.common.collect.Lists;
 
-public class SwordsmanshipSkill extends Skill implements Listener {
+public class SwordsmanshipSkill extends LogSkill implements Listener {
 	
 	public static final String configName = "Swordsmanship.yml";
 	
