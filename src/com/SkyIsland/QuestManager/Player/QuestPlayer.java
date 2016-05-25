@@ -117,6 +117,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	private UUID playerID;
 	
+	private PlayerOptions options;
+	
 	private History history;
 	
 	private List<Quest> currentQuests;
@@ -774,6 +776,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 					}
 				}
 			}
+		}
+		
+		if (map.containsKey("options")) {
+			qp.options = (PlayerOptions) map.get("options");
 		}
 		
 		////////////////////////////////
@@ -1733,5 +1739,13 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		(new ChargeEffect(Effect.HAPPY_VILLAGER)).play(p, p.getEyeLocation());
 		p.getWorld().playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 1, 0.75f);
 		p.getWorld().playSound(p.getLocation(), Sound.BLOCK_NOTE_HARP, 1, 0.5f);
+	}
+	
+	public PlayerOptions getOptions() {
+		if (this.options == null) {
+			this.options = new PlayerOptions();
+		}
+		
+		return this.options;
 	}
 }
