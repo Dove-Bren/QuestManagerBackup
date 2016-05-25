@@ -55,6 +55,7 @@ import com.SkyIsland.QuestManager.NPC.TeleportNPC;
 import com.SkyIsland.QuestManager.NPC.Utils.ServiceCraft;
 import com.SkyIsland.QuestManager.NPC.Utils.ServiceOffer;
 import com.SkyIsland.QuestManager.Player.Party;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.SkillManager;
 import com.SkyIsland.QuestManager.Player.Skill.Default.AxeSkill;
@@ -247,6 +248,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		FireEffect.registerWithAliases();
 		DamageUndeadEffect.registerWithAliases();
 		Loot.registerWithAliases();
+		ConfigurationSerialization.registerClass(PlayerOptions.class);
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();

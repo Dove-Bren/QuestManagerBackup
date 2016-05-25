@@ -24,6 +24,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -87,6 +88,13 @@ import io.puharesource.mc.titlemanager.api.TitleObject;
  *
  */
 public class QuestPlayer implements Participant, Listener, MagicUser {
+	
+	public static final String damageMessage = ChatColor.GRAY + "%s "
+			+ ChatColor.DARK_GRAY + "did " + ChatColor.RED + "%.2f damage"
+			+ ChatColor.DARK_GRAY + " to you";
+	
+	public static final String damageBlockMessage = ChatColor.DARK_GRAY + "You received " 
+			+ ChatColor.RED + "%.2f damage" + ChatColor.RESET;
 	
 	public static boolean meetsRequirement(QuestPlayer player, String requirement) {
 		if (requirement.contains("|")) {
@@ -669,8 +677,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			map.put("skills", skillMap);
 		}
 		
-		
-		
+		map.put("options", this.getOptions());
+
 		return map;
 	}
 	
@@ -1677,6 +1685,14 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			return;
 		}
 		
+		if (e.getEntity() instanceof Player) {
+			if (((Player) e.getEntity()).getUniqueId().equals(this.playerID)) {
+				//we just got hurt
+				onPlayerHurt(e);
+				return;
+			}
+		}
+		
 		if (!(e.getDamager() instanceof Player)) {
 			return;
 		}
@@ -1697,17 +1713,50 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		
 		if (event.isMiss()) {
 			e.setCancelled(true);
-			CombatEvent.doMiss(player, target.getEyeLocation());
+			CombatEvent.doMiss(this, target.getEyeLocation());
 			return;
 		}
 		
 		if (event.getFinalDamage() <= 0.0) {
 			e.setCancelled(true);
-			CombatEvent.doNoDamage(player, target.getEyeLocation());
+			CombatEvent.doNoDamage(this, target.getEyeLocation());
 			return;
 		}
 		
 		e.setDamage(event.getFinalDamage());
+		String name;
+		if (target.getCustomName() != null) {
+			name = target.getCustomName();
+		} else {
+			name = target.getType().toString();
+		}
+		CombatEvent.doHit(this, target.getEyeLocation(), event.getFinalDamage(), name);
+		
+	}
+	
+	private void onPlayerHurt(EntityDamageByEntityEvent e) {
+		if (getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)) {
+			String name;
+			Entity damager = e.getDamager();
+			
+			if (damager instanceof Projectile) {
+				Projectile p = (Projectile) damager;
+				if (p.getShooter() instanceof Entity) {
+					damager = (Entity) p.getShooter();
+				} else {
+					//custom message for arrows and crap from non-entities
+					getPlayer().getPlayer().sendMessage(String.format(damageBlockMessage, e.getFinalDamage()));
+					return;
+				}
+			}
+			
+			if (damager.getCustomName() != null) {
+				name = damager.getCustomName();
+			} else {
+				name = damager.getType().toString();
+			}
+			getPlayer().getPlayer().sendMessage(String.format(damageMessage, name, e.getFinalDamage()));
+		}
 	}
 	
 	private void skillLevelup(Skill skill) {

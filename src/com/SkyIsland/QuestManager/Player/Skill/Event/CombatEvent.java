@@ -5,10 +5,10 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
 /**
@@ -24,16 +24,32 @@ public class CombatEvent extends Event {
 	
 	public static final String noDamageMessage = ChatColor.YELLOW + "Your attack had no effect!" + ChatColor.RESET;
 	
-	public static void doMiss(Player misser, Location targetLocation) {
-		misser.sendMessage(missMessage);
+	public static final String damageMessage = ChatColor.DARK_GRAY + "Your attack did "
+			+ ChatColor.DARK_GREEN + "%.2f damage" + ChatColor.DARK_GRAY + " to "
+			+ ChatColor.GRAY + "%s" + ChatColor.RESET;
+	
+	public static void doMiss(QuestPlayer misser, Location targetLocation) {
+		if (misser.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_RESULT))
+			misser.getPlayer().getPlayer().sendMessage(missMessage);
 		targetLocation.getWorld().spigot().playEffect(targetLocation, Effect.SMOKE);
 		targetLocation.getWorld().playSound(targetLocation, Sound.ENTITY_ENDERDRAGON_FLAP, 1f, 1.85f);
 	}
 
-	public static void doNoDamage(Player misser, Location targetLocation) {
-		misser.sendMessage(noDamageMessage);
+	public static void doNoDamage(QuestPlayer misser, Location targetLocation) {
+		if (misser.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_RESULT))
+			misser.getPlayer().getPlayer().sendMessage(noDamageMessage);
 		targetLocation.getWorld().spigot().playEffect(targetLocation, Effect.VILLAGER_THUNDERCLOUD);
 		targetLocation.getWorld().playSound(targetLocation, Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
+	}
+	
+	public static void doHit(QuestPlayer misser, Location targetLocation, double damage, String target) {
+		if (misser.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)) {
+			String modmsg = String.format(damageMessage, damage, target);
+			
+			misser.getPlayer().getPlayer().sendMessage(modmsg);
+		}
+		
+		//TODO effects?
 	}
 
 	private static final HandlerList handlers = new HandlerList();
