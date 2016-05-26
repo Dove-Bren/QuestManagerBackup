@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.NPC.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,20 +31,20 @@ public class BankStorageManager {
 
 	public static class BankStorage implements ConfigurationSerializable {
 		
-		private Map<QuestPlayer, Inventory> invMap;
+		private Map<UUID, Inventory> invMap;
 		
 		private String storageKey;
 		
 		protected BankStorage(String key) {
 			this.storageKey = key;
-			this.invMap = new HashMap<QuestPlayer, Inventory>();
+			this.invMap = new TreeMap<UUID, Inventory>();
 		}
 		
-		protected void setInventory(QuestPlayer player, Inventory inv) {
+		protected void setInventory(UUID player, Inventory inv) {
 			invMap.put(player, inv);
 		}
 		
-		protected Inventory getInventory(QuestPlayer player) {
+		protected Inventory getInventory(UUID player) {
 			return invMap.get(player);
 		}
 		
@@ -55,7 +56,7 @@ public class BankStorageManager {
 			
 			map.put("key", storageKey);
 			
-			for (QuestPlayer key : invMap.keySet()) {
+			for (UUID key : invMap.keySet()) {
 				items = new TreeMap<>();
 				index = 0;
 				
@@ -64,7 +65,7 @@ public class BankStorageManager {
 					index++;
 				}
 				
-				map.put(key.getPlayer().getUniqueId().toString(), items);
+				map.put(key.toString(), items);
 			}
 			
 			return map;
@@ -75,20 +76,24 @@ public class BankStorageManager {
 			BankStorage storage = new BankStorage((String) map.get("key"));
 						
 			if (!map.keySet().isEmpty()) {
-				QuestPlayer qp;
+				UUID uuid;
 				Inventory inv;
 				Map<Integer, ItemStack> items;
 				
 				for (String id : map.keySet()) {
-					qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
-							UUID.fromString(id));
-					inv = Bukkit.createInventory(null, 54, "QM_bank_" + storage.storageKey + "_" + qp.getIDString());
+					if (id.startsWith("==") || id.startsWith("key")) {
+						continue;
+					}
+					
+					uuid = UUID.fromString(id);
+					inv = Bukkit.createInventory(null, 54, "Bank");//"QM_bank_" + storage.storageKey + "_" + qp.getIDString());
 					items = (Map<Integer, ItemStack>) map.get(id);
 					for (Integer slot : items.keySet()) {
 						inv.setItem(slot, items.get(slot));
+						
 					}
 					
-					storage.invMap.put(qp, inv);
+					storage.invMap.put(uuid, inv);
 				}
 			}
 			
@@ -113,7 +118,12 @@ public class BankStorageManager {
 		YamlConfiguration bankData = YamlConfiguration.loadConfiguration(bankDataFile);
 		
 		List<BankStorage> storages = (List<BankStorage>) bankData.getList("banks");
+		if (storages == null || storages.isEmpty()) {
+			return;
+		}
+		
 		for (BankStorage storage : storages) {
+			System.out.println("Storage named " + storage.storageKey);
 			storageMap.put(storage.storageKey, storage);
 		}
 	}
@@ -136,11 +146,11 @@ public class BankStorageManager {
 		
 		BankStorage store = storageMap.get(bankKey);
 		
-		Inventory inv = store.getInventory(player);
+		Inventory inv = store.getInventory(player.getPlayer().getUniqueId());
 		
 		if (inv == null) {
-			inv = Bukkit.createInventory(null, 54, "QM_bank_" + bankKey + "_" + player.getIDString());
-			store.setInventory(player, inv);
+			inv = Bukkit.createInventory(null, 54, "Bank");//"QM_bank_" + bankKey + "_" + player.getIDString());
+			store.setInventory(player.getPlayer().getUniqueId(), inv);
 		}
 		
 		return inv;
@@ -152,10 +162,13 @@ public class BankStorageManager {
 		}
 		
 		YamlConfiguration config = new YamlConfiguration();
+		List<BankStorage> list = new LinkedList<>();
 		
-		for (String key : storageMap.keySet()) {
-			config.set(key, storageMap.get(key));
-		}		
+		for (BankStorage store : storageMap.values()) {
+			list.add(store);
+		}	
+		
+		config.set("banks", list);
 		
 		try {
 			config.save(file);

@@ -41,6 +41,7 @@ import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.StatusEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SummonTamedEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SwapEffect;
+import com.SkyIsland.QuestManager.NPC.BankNPC;
 import com.SkyIsland.QuestManager.NPC.DummyNPC;
 import com.SkyIsland.QuestManager.NPC.ForgeNPC;
 import com.SkyIsland.QuestManager.NPC.InnNPC;
@@ -255,6 +256,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		Loot.registerWithAliases();
 		ConfigurationSerialization.registerClass(PlayerOptions.class);
 		BankStorageManager.registerSerialization();
+		BankNPC.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
@@ -689,5 +691,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public SkillManager getSkillManager() {
 		return skillManager;
+	}
+	
+	public BankStorageManager getBankManager() {
+		return bankManager;
 	}
 }

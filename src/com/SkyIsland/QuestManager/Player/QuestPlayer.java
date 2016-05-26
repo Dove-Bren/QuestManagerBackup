@@ -90,7 +90,7 @@ import io.puharesource.mc.titlemanager.api.TitleObject;
  * @author Skyler
  *
  */
-public class QuestPlayer implements Participant, Listener, MagicUser {
+public class QuestPlayer implements Participant, Listener, MagicUser, Comparable<QuestPlayer> {
 	
 	public static final String damageMessage = ChatColor.GRAY + "%s "
 			+ ChatColor.DARK_GRAY + "did " + ChatColor.DARK_RED + "%.2f damage"
@@ -1816,5 +1816,19 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 		
 		return this.options;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof QuestPlayer)) {
+			return false;
+		}
+		
+		return ((QuestPlayer) o).getIDString().equals(this.getIDString());
+	}
+
+	@Override
+	public int compareTo(QuestPlayer o) {
+		return this.getIDString().compareTo(o.getIDString());
 	}
 }
