@@ -52,6 +52,7 @@ import com.SkyIsland.QuestManager.NPC.SimpleBioptionNPC;
 import com.SkyIsland.QuestManager.NPC.SimpleChatNPC;
 import com.SkyIsland.QuestManager.NPC.SimpleQuestStartNPC;
 import com.SkyIsland.QuestManager.NPC.TeleportNPC;
+import com.SkyIsland.QuestManager.NPC.Utils.BankStorageManager;
 import com.SkyIsland.QuestManager.NPC.Utils.ServiceCraft;
 import com.SkyIsland.QuestManager.NPC.Utils.ServiceOffer;
 import com.SkyIsland.QuestManager.Player.Party;
@@ -115,6 +116,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private SkillManager skillManager;
 	
+	private BankStorageManager bankManager;
+	
 	private QuestManager manager;
 	
 	private ChatGuiHandler chatGuiHandler;
@@ -136,6 +139,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private final static String configFileName = "QuestManagerConfig.yml";
 	
 	private final static String playerConfigFileName = "players.yml";
+	
+	private final static String bankDataFileName = "banks.yml";
 	
 	public static final double version = 1.00;
 	
@@ -249,6 +254,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		DamageUndeadEffect.registerWithAliases();
 		Loot.registerWithAliases();
 		ConfigurationSerialization.registerClass(PlayerOptions.class);
+		BankStorageManager.registerSerialization();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
@@ -303,6 +309,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		summonManager = new SummonManager();
 		
+		bankManager = new BankStorageManager(new File(getDataFolder(), bankDataFileName));
+		
 		
 		
 //		///////////////////////////////////////////////////////////////////////////////
@@ -333,6 +341,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		//save user database
 		playerManager.save(new File(getDataFolder(), playerConfigFileName));
+		bankManager.save(new File(getDataFolder(), bankDataFileName));
 		stopAllQuests();
 		summonManager.removeSummons();
 		
