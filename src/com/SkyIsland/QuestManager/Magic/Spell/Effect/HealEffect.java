@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
@@ -110,17 +111,36 @@ public class HealEffect extends SpellEffect {
 					} else {
 						String name = cause.getEntity().getCustomName();
 						if (name == null) {
-							name = cause.getEntity().getType().toString();
+							name = YamlWriter.toStandardFormat(cause.getEntity().getType().toString());
 						}
-						msg = ChatColor.GRAY + cause.getEntity().getCustomName() + ChatColor.DARK_GRAY 
+						msg = ChatColor.GRAY + name + ChatColor.DARK_GRAY 
 								+ " healed you for " + ChatColor.GREEN + "%.2f" + ChatColor.DARK_GRAY
-								+ " damage";
+								+ " damage" + ChatColor.RESET;
 					}
 					
 					p.sendMessage(String.format(msg, curAmount));
 				
 				}
 				
+			}
+			
+			if (cause instanceof QuestPlayer) {
+				QuestPlayer qp = (QuestPlayer) cause;
+				if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)
+					&& qp.getPlayer().isOnline()) {
+					Player p = qp.getPlayer().getPlayer();
+					
+					String msg;
+					String name = e.getCustomName();
+					if (name == null) {
+						name = YamlWriter.toStandardFormat(cause.getEntity().getType().toString());
+					}
+					msg = ChatColor.DARK_GRAY + "You healed " + ChatColor.GRAY + name + ChatColor.DARK_GRAY 
+							+ " for " + ChatColor.GREEN + "%.2f" + ChatColor.DARK_GRAY + " damage"
+							+ ChatColor.RESET;
+					
+					p.sendMessage(String.format(msg, curAmount));
+				}
 			}
 			
 			e.setHealth(Math.min(e.getMaxHealth(), 

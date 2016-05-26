@@ -107,13 +107,7 @@ public class StatusEffect extends SpellEffect {
 								+ " gave you the effect ";
 					}
 					
-					String name = YamlWriter.toStandardCase(effect.getType().getName());
-					
-					while (name.indexOf("_") != -1) {
-						name = name.substring(0, name.indexOf("_")) + " "
-							+ YamlWriter.toStandardCase(name.substring(name.indexOf("_") + 1));
-					}
-					
+					String name = YamlWriter.toStandardFormat(effect.getType().getName());
 					
 					FancyMessage message = new FancyMessage(msg);
 					message.then(name)

@@ -28,6 +28,23 @@ public class YamlWriter {
 		return (string.substring(0, 1).toUpperCase()) + (string.substring(1).toLowerCase());
 	}
 	
+	/**
+	 * Takes a string (word) and changes the first letter to capital. Then, for every
+	 * Underscore ("_") in the word, it inserts a space and capitalizes the letter right after
+	 * @param string
+	 * @return
+	 */
+	public static String toStandardFormat(String string) {
+		string = YamlWriter.toStandardCase(string);
+		
+		while (string.indexOf("_") != -1) {
+			string = string.substring(0, string.indexOf("_")) + " "
+				+ YamlWriter.toStandardCase(string.substring(string.indexOf("_") + 1));
+		}
+		
+		return string;
+	}
+	
 	private class Entry {
 		private String key;
 		

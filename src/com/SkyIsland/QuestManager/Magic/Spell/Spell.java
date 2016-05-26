@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
 public abstract class Spell implements ConfigurationSerializable {
@@ -67,7 +68,8 @@ public abstract class Spell implements ConfigurationSerializable {
 			QuestPlayer player = (QuestPlayer) caster;
 			if (player.getPlayer().isOnline()) {
 				Player p = player.getPlayer().getPlayer();
-				p.sendMessage(Spell.failMessage);
+				if (player.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_RESULT))
+					p.sendMessage(Spell.failMessage);
 				p.getWorld().spigot().playEffect(p.getEyeLocation(), Effect.SMOKE);
 				p.getWorld().playSound(p.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1.0f, 2.0f);
 				p.getWorld().playSound(p.getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);

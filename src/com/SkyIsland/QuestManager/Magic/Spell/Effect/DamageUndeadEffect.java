@@ -4,13 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
+import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
@@ -93,6 +97,25 @@ public class DamageUndeadEffect extends SpellEffect {
 				Bukkit.getPluginManager().callEvent(aEvent);
 				
 				curDamage = aEvent.getFinalDamage();
+			}
+					
+			if (cause instanceof QuestPlayer) {
+				QuestPlayer qp = (QuestPlayer) cause;
+				if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)
+					&& qp.getPlayer().isOnline()) {
+					Player p = qp.getPlayer().getPlayer();
+					
+					String msg;
+					String name = e.getCustomName();
+					if (name == null) {
+						name = YamlWriter.toStandardFormat(cause.getEntity().getType().toString());
+					}
+					msg = ChatColor.DARK_GRAY + "You damaged " + ChatColor.GRAY + name + ChatColor.DARK_GRAY 
+							+ " for " + ChatColor.DARK_RED + "%.2f" + ChatColor.DARK_GRAY + " damage"
+							+ ChatColor.RESET;
+					
+					p.sendMessage(String.format(msg, curDamage));
+				}
 			}
 			
 			LivingEntity targ = (LivingEntity) e;

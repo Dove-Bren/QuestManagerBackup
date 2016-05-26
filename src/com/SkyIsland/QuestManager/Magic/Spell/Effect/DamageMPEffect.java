@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
@@ -110,11 +111,27 @@ public class DamageMPEffect extends SpellEffect {
 			}
 			
 			qp.addMP((int) -curDamage);
-			return;
+			//return;
+		} else if (e instanceof MagicUser) {
+			((MagicUser) e).addMP((int) -curDamage);
 		}
 		
-		if (e instanceof MagicUser) {
-			((MagicUser) e).addMP((int) -curDamage);
+		if (cause instanceof QuestPlayer) {
+			QuestPlayer qp = (QuestPlayer) cause;
+			if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)
+				&& qp.getPlayer().isOnline()) {
+				Player p = qp.getPlayer().getPlayer();
+				
+				String msg;
+				String name = e.getCustomName();
+				if (name == null) {
+					name = YamlWriter.toStandardFormat(cause.getEntity().getType().toString());
+				}
+				msg = ChatColor.DARK_GRAY + "You drained " + ChatColor.DARK_BLUE + "%.2f" 
+						+ ChatColor.DARK_GRAY + " mana from" + ChatColor.GRAY + name + ChatColor.RESET;
+				
+				p.sendMessage(String.format(msg, curDamage));
+			}
 		}
 	}
 	
