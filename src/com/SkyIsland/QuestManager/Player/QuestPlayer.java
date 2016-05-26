@@ -1267,6 +1267,10 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 			List<String> descList = new LinkedList<>();
 			Spell sp = QuestManagerPlugin.questManagerPlugin.getSpellManager().getSpell(t);
 			if (sp != null) {
+				
+				descList.add(ChatColor.RED + sp.getName());
+				descList.add(ChatColor.GOLD + "Difficulty: " + sp.getDifficulty());
+				
 				String desc;
 				desc = sp.getDescription();
 				
@@ -1630,6 +1634,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		}
 		
 		if (mp < spell.getCost()) {
+			getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);
 			return;
 		}
 		

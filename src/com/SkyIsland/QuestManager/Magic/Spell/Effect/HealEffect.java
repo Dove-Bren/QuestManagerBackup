@@ -127,7 +127,8 @@ public class HealEffect extends SpellEffect {
 			if (cause instanceof QuestPlayer) {
 				QuestPlayer qp = (QuestPlayer) cause;
 				if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)
-					&& qp.getPlayer().isOnline()) {
+					&& qp.getPlayer().isOnline() && !qp.getPlayer().getUniqueId()
+					.equals(target.getUniqueId())) {
 					Player p = qp.getPlayer().getPlayer();
 					
 					String msg;

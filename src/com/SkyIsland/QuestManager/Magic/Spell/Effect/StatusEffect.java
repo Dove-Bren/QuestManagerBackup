@@ -171,7 +171,7 @@ public class StatusEffect extends SpellEffect {
 			list.add(ChatColor.WHITE + "or the effect runs out");
 			
 			int rate = 25, c = effect.getAmplifier();
-			while (c >= 0 && rate > 1) {
+			while (c > 0 && rate > 1) {
 				c --;
 				rate /= 2;
 			}
@@ -184,7 +184,7 @@ public class StatusEffect extends SpellEffect {
 			list.add(ChatColor.WHITE + "Restores health gradually");
 			
 			int rate = 50, c = effect.getAmplifier();
-			while (c >= 0 && rate > 1) {
+			while (c > 0 && rate > 1) {
 				c --;
 				rate /= 2;
 			}
@@ -214,7 +214,7 @@ public class StatusEffect extends SpellEffect {
 			list.add(ChatColor.WHITE + ", the effect runs out, or death");
 			
 			int rate = 40, c = effect.getAmplifier();
-			while (c >= 0 && rate > 1) {
+			while (c > 0 && rate > 1) {
 				c --;
 				rate /= 2;
 			}

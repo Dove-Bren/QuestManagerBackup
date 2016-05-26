@@ -2,6 +2,7 @@ package com.SkyIsland.QuestManager.Player.Skill;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.SkyIsland.QuestManager.Player.Skill.Skill.Type;
 
@@ -28,7 +29,7 @@ public class SkillManager {
 	}
 	
 	public Set<Skill> getSkills(Type skillType) {
-		Set<Skill> ret = new HashSet<>(skills.size());
+		Set<Skill> ret = new TreeSet<>();
 		for (Skill skill : skills) {
 			if (skill.getType() == skillType) {
 				ret.add(skill);

@@ -22,7 +22,7 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
  * @author Skyler
  *
  */
-public abstract class Skill {
+public abstract class Skill implements Comparable<Skill> {
 	
 	public enum Type {
 		COMBAT,
@@ -145,5 +145,10 @@ public abstract class Skill {
 		}
 		
 		attribute.addModifier(new AttributeModifier(name, amt, AttributeModifier.Operation.ADD_SCALAR));
+	}
+	
+	@Override
+	public int compareTo(Skill o) {
+		return getName().compareTo(o.getName());
 	}
 }
