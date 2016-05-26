@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
@@ -82,8 +84,31 @@ public class DamageMPEffect extends SpellEffect {
 		}
 		
 		if (e instanceof Player) {
-			MagicUser qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager()
+			QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager()
 					.getPlayer((Player) e);
+			
+			if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)) {
+				
+				String msg;
+				if (cause instanceof QuestPlayer && ((QuestPlayer) cause).getPlayer().getUniqueId()
+						.equals(qp.getPlayer().getUniqueId())) {
+					//healed self
+					msg = ChatColor.DARK_GRAY + "You lost " + ChatColor.DARK_BLUE + "%.2f"
+							+ ChatColor.DARK_GRAY + " mana" + ChatColor.RESET;
+				} else {
+					String name = cause.getEntity().getCustomName();
+					if (name == null) {
+						name = cause.getEntity().getType().toString();
+					}
+					msg = ChatColor.GRAY + cause.getEntity().getCustomName() + ChatColor.DARK_GRAY 
+							+ " damaged your mana by " + ChatColor.DARK_BLUE + "%.2f" + ChatColor.DARK_GRAY
+							+ " points";
+				}
+				
+				qp.getPlayer().getPlayer().sendMessage(String.format(msg, curDamage));
+				
+			}
+			
 			qp.addMP((int) -curDamage);
 			return;
 		}

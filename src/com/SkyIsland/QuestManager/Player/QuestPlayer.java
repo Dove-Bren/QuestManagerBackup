@@ -90,7 +90,7 @@ import io.puharesource.mc.titlemanager.api.TitleObject;
 public class QuestPlayer implements Participant, Listener, MagicUser {
 	
 	public static final String damageMessage = ChatColor.GRAY + "%s "
-			+ ChatColor.DARK_GRAY + "did " + ChatColor.RED + "%.2f damage"
+			+ ChatColor.DARK_GRAY + "did " + ChatColor.DARK_RED + "%.2f damage"
 			+ ChatColor.DARK_GRAY + " to you";
 	
 	public static final String damageBlockMessage = ChatColor.DARK_GRAY + "You received " 

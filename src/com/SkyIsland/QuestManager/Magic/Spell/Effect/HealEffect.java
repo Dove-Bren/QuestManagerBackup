@@ -4,14 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
@@ -72,9 +76,9 @@ public class HealEffect extends SpellEffect {
 	}
 	
 	@Override
-	public void apply(Entity caster, MagicUser cause) {
-		if (caster instanceof LivingEntity) {
-			LivingEntity e = (LivingEntity) caster;
+	public void apply(Entity target, MagicUser cause) {
+		if (target instanceof LivingEntity) {
+			LivingEntity e = (LivingEntity) target;
 			
 			double curAmount = amount;
 			if (cause instanceof QuestPlayer) {
@@ -90,6 +94,33 @@ public class HealEffect extends SpellEffect {
 			
 			if (event.isCancelled()) {
 				return;
+			}
+			
+			if (target instanceof Player) {
+				Player p = (Player) target;
+				if (QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(p)
+						.getOptions().getOption(PlayerOptions.Key.CHAT_COMBAT_DAMAGE)) {
+					
+					String msg;
+					if (cause instanceof QuestPlayer && ((QuestPlayer) cause).getPlayer().getUniqueId()
+							.equals(target.getUniqueId())) {
+						//healed self
+						msg = ChatColor.DARK_GRAY + "You were healed for " + ChatColor.GREEN + "%.2f"
+								+ ChatColor.DARK_GRAY + " damage" + ChatColor.RESET;
+					} else {
+						String name = cause.getEntity().getCustomName();
+						if (name == null) {
+							name = cause.getEntity().getType().toString();
+						}
+						msg = ChatColor.GRAY + cause.getEntity().getCustomName() + ChatColor.DARK_GRAY 
+								+ " healed you for " + ChatColor.GREEN + "%.2f" + ChatColor.DARK_GRAY
+								+ " damage";
+					}
+					
+					p.sendMessage(String.format(msg, curAmount));
+				
+				}
+				
 			}
 			
 			e.setHealth(Math.min(e.getMaxHealth(), 

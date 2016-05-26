@@ -25,7 +25,7 @@ public class CombatEvent extends Event {
 	public static final String noDamageMessage = ChatColor.YELLOW + "Your attack had no effect!" + ChatColor.RESET;
 	
 	public static final String damageMessage = ChatColor.DARK_GRAY + "Your attack did "
-			+ ChatColor.DARK_GREEN + "%.2f damage" + ChatColor.DARK_GRAY + " to "
+			+ ChatColor.RED + "%.2f damage" + ChatColor.DARK_GRAY + " to "
 			+ ChatColor.GRAY + "%s" + ChatColor.RESET;
 	
 	public static void doMiss(QuestPlayer misser, Location targetLocation) {

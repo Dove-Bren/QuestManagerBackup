@@ -19,6 +19,15 @@ public class YamlWriter {
 	
 	public static final int prefixRepeat = 10;
 	
+	/**
+	 * Takes a string and changes the first letter to be capital, and the rest lowercase
+	 * @param string
+	 * @return
+	 */
+	public static String toStandardCase(String string) {
+		return (string.substring(0, 1).toUpperCase()) + (string.substring(1).toLowerCase());
+	}
+	
 	private class Entry {
 		private String key;
 		
