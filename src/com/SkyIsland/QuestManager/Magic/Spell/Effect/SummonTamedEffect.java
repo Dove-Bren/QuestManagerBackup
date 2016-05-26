@@ -165,7 +165,7 @@ public class SummonTamedEffect extends SpellEffect {
 		
 		Tameable tame = (Tameable) ent;
 		tame.setTamed(true);
-		tame.setOwner((AnimalTamer) cause);
+		tame.setOwner((AnimalTamer) cause.getEntity());
 		
 		ent.setCustomName(cause.getEntity().getName() + "'s " + name);
 		ent.setCustomNameVisible(true);
