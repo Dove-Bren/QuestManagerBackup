@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Effects.AuraEffect;
+import com.SkyIsland.QuestManager.Effects.RingEffect;
 import com.SkyIsland.QuestManager.NPC.QuestMonsterNPC;
 import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
@@ -28,6 +29,8 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 	
 	private AuraEffect effect;
 	
+	private RingEffect ef2;
+	
 	public Summon(UUID casterID, Entity entity, int duration) {
 		this.entityID = entity.getUniqueId();
 		this.entity = entity;
@@ -35,6 +38,9 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		
 		this.effect = new AuraEffect(Effect.FLYING_GLYPH, 3, 1);
 		effect.play(entity);
+		
+		this.ef2 = new RingEffect(Effect.FLAME, 3, 3, 1);
+		ef2.play(entity);
 		
 		Alarm.getScheduler().schedule(this, 0, duration);
 		Bukkit.getPluginManager().registerEvents(this, 
@@ -57,6 +63,7 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		}
 		
 		effect.stop();
+		ef2.stop();
 		
 		QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
 	}
@@ -117,6 +124,9 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		
 		playDeathEffect(entity.getLocation());
 		entity.remove();
+		
+		effect.stop();
+		ef2.stop();
 	}
 	
 	public UUID getCasterID() {
@@ -128,6 +138,7 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		if (e.getEntity().getUniqueId().equals(entityID)) {
 			//is summon entity
 			effect.stop();
+			ef2.stop();
 			
 			if (Alarm.getScheduler().unregister(this))
 				QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
