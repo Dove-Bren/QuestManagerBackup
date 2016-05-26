@@ -10,7 +10,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Player.PlayerOptions;
@@ -18,6 +20,8 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
 public class DamageEffect extends SpellEffect {
+	
+	public static final String damageMetaKey = "QM_magic_damage";
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -86,7 +90,11 @@ public class DamageEffect extends SpellEffect {
 			}			
 			
 			LivingEntity targ = (LivingEntity) e;
+			targ.setMetadata(damageMetaKey, new FixedMetadataValue
+					(QuestManagerPlugin.questManagerPlugin, true));
 			targ.damage(curDamage, cause.getEntity());
+			targ.setMetadata(damageMetaKey, new FixedMetadataValue
+					(QuestManagerPlugin.questManagerPlugin, true));
 			
 			if (cause instanceof QuestPlayer) {
 				QuestPlayer qp = (QuestPlayer) cause;

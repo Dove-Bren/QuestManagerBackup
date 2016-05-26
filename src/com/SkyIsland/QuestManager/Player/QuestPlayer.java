@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
@@ -42,6 +43,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.metadata.MetadataValue;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
@@ -52,6 +54,7 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
@@ -1696,7 +1699,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		if (!(e.getDamager() instanceof Player)) {
 			return;
 		}
-		
+			
 		Player player = (Player) e.getDamager();
 		if (!this.playerID.equals(player.getUniqueId())) {
 			return;
@@ -1705,6 +1708,17 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 		if (!(e.getEntity() instanceof LivingEntity)) {
 			return;
 		}
+		
+		if (!e.getCause().equals(DamageCause.ENTITY_ATTACK) && !e.getCause().equals(DamageCause.PROJECTILE)) {
+			return;
+		}
+		
+		List<MetadataValue> meta = e.getEntity().getMetadata(DamageEffect.damageMetaKey);
+		
+		if (meta != null && !meta.isEmpty() && meta.get(0).asBoolean()) {
+			return;
+		}
+		
 		LivingEntity target = (LivingEntity) e.getEntity();
 		
 		//our player just damaged something. who knows what. Don't matter
