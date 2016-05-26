@@ -1270,6 +1270,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser {
 				
 				descList.add(ChatColor.RED + sp.getName());
 				descList.add(ChatColor.GOLD + "Difficulty: " + sp.getDifficulty());
+				descList.add(ChatColor.BLUE + "Mana Cost: " + sp.getCost());
 				
 				String desc;
 				desc = sp.getDescription();
