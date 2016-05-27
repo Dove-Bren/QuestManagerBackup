@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -1598,7 +1599,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			return;
 		}
 		
-		if (mp < spell.getCost()) {
+		if (!getPlayer().getPlayer().getGameMode().equals(GameMode.CREATIVE) && 
+				mp < spell.getCost()) {
 			getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);
 			return;
 		}
