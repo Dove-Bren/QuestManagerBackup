@@ -47,6 +47,14 @@ public class SpellWeavingManager {
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 		
 		for (SpellWeavingSpell spell : (List<SpellWeavingSpell>) config.getList("spells")) {
+			if (spell == null || spell.getSpellRecipe() == null
+					|| spell.getSpellRecipe().getComponents().size() < 3) {
+				QuestManagerPlugin.questManagerPlugin.getLogger().warning(
+						"Unable to register spell-weaving spell " + spell.getName()
+						+ " (does it have 3 or more recipe components?)");
+				continue;
+			}
+			
 			if (spell.getSpellRecipe().isOrdered()) {
 				this.orderedSpells.add(spell);
 			} else {
@@ -81,18 +89,30 @@ public class SpellWeavingManager {
 	 * Registers the spell to the manager. This allows the spell to be looked up and matches when a user
 	 * attempts to cast a spell-weaving spell.
 	 * <p>
+	 * Because spell weaving spells perform in a defined geometry, there must be at least three runes
+	 * per spell recipe. There can be more, but each must have at least three.
+	 * </p>
+	 * <p>
 	 * Once a spell is registered, it should <b>not</b> be altered. While most alterations will not cause
 	 * any discrepency, changing whether the spell is ordered or not will cause it to potentially be
 	 * evaluated in the wrong order and invalidate the preference promised in {@link #getSpell(List)}.
 	 * </p>
 	 * @param spell
+	 * @return Whether the spell was added or not. False if the spell is null or has less than 3 components.
 	 */
-	public void registerSpell(SpellWeavingSpell spell) {
+	public boolean registerSpell(SpellWeavingSpell spell) {
+		if (spell == null || spell.getSpellRecipe() == null
+				|| spell.getSpellRecipe().getComponents().size() < 3) {
+			return false;
+		}
+		
 		if (spell.getSpellRecipe().isOrdered()) {
 			this.orderedSpells.add(spell);
 		} else {
 			this.spells.add(spell);
 		}
+		
+		return true;
 	}
 	
 	/**

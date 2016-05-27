@@ -2,6 +2,8 @@ package com.SkyIsland.QuestManager.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,6 +56,8 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
+import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingManager;
+import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
@@ -99,6 +103,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	public static final String damageBlockMessage = ChatColor.DARK_GRAY + "You received " 
 			+ ChatColor.RED + "%.2f damage" + ChatColor.RESET;
+	
+	public static final String pylonsResetMessage = ChatColor.DARK_GRAY + "Your spell pylons have been cleared"
+			+ ChatColor.RESET;
 	
 	public static boolean meetsRequirement(QuestPlayer player, String requirement) {
 		if (requirement.contains("|")) {
@@ -803,6 +810,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		if (!getPlayer().isOnline() || e.isCancelled()) {
 			return;
+		}
+		
+		if (!e.getFrom().getWorld().equals(e.getDestination().getLocation(getPlayer().getPlayer()).getWorld())) {
+			this.clearSpellPylons();
+			getPlayer().getPlayer().sendMessage(pylonsResetMessage);
 		}
 			
 		if (e.getTeleportee().equals(getPlayer())) {
@@ -1812,4 +1824,201 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	public void clearSpellPylons() {
 		this.pylons.clear();
 	}
+
+	@Override
+	public void castSpellWeavingSpell() {
+		
+		SpellWeavingSpell spell;
+		List<String> typeList = new ArrayList<String>(pylons.size());
+		List<Location> points = new ArrayList<Location>(pylons.size());
+		for (SpellPylon pylon : pylons) {
+			typeList.add(pylon.getType());
+			points.add(pylon.getLocation());
+			pylon.remove();
+		}
+		
+		pylons.clear();
+		
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		spell = QuestManagerPlugin.questManagerPlugin.getSpellWeavingManager()
+				.getSpell(typeList);
+				
+		if (spell == null) {
+			getPlayer().getPlayer().sendMessage(SpellWeavingManager.badRecipeMessage);
+			return;
+		}
+		
+		if (!getPlayer().getPlayer().getGameMode().equals(GameMode.CREATIVE) && 
+				mp < spell.getCost()) {
+			getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()) {
+			return;
+		}
+		
+		addMP(-spell.getCost());
+		
+		switch (spell.getTargetType()) {
+		case ENTITY:
+			spell.castOnEntities(this, getEntitiesInBound(points));
+			break;
+		case BLOCK:
+			spell.castOnLocations(this, getBlocksInBound(points));
+			break;
+		case BOTH:
+			spell.castOnAll(this, getEntitiesInBound(points), getBlocksInBound(points));
+			break;
+		}
+		
+	}
+	
+	/**
+	 * Returns a list of all entities in the custom multi-point bounding poly provided.<br />
+	 * Behavior is undefined when all listed points are not in the same world (as we use
+	 * one of the points' world to get a list of entities to check!)
+	 * @param points
+	 * @return
+	 */
+	private List<Entity> getEntitiesInBound(List<Location> points) {
+		List<Entity> list = new LinkedList<>();
+		
+		if (points == null || points.isEmpty()) {
+			return list;
+		}
+		
+		//optimizations: get absolute min, max for initial discard of entities
+		//               get center
+		double minx = 0, minz = 0, maxx = 0, maxz = 0;
+		double centerx = 0, centerz = 0;
+		boolean flip = false;
+		for (Location loc : points) {
+			centerx += loc.getX();
+			centerz += loc.getY();
+			
+			if (!flip) {
+				flip = true;
+				minx = maxx = loc.getX();
+				minz = maxz = loc.getZ();
+				continue;
+			}
+			
+			
+			if (loc.getX() < minx)
+				minx = loc.getX();
+			if (loc.getX() > maxx)
+				maxx = loc.getX();
+			if (loc.getZ() < minz)
+				minz = loc.getZ();
+			if (loc.getZ() > maxz)
+				maxz = loc.getZ();
+		}
+		
+		//finish center calculation
+		centerx = centerx / points.size();
+		centerz = centerz / points.size();
+		
+		final double centx = centerx, centz = centerz;
+		
+		//sort points for convext-ivity
+		Collections.sort(points, new Comparator<Location>(){
+
+			@Override
+			public int compare(Location o1, Location o2) {
+				//Code taken from
+				//http://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+				if (o1.getX() - centx >= 0 && o2.getX() - centx < 0)
+			        return -1;
+			    if (o1.getX() - centx < 0 && o2.getX() - centx >= 0)
+			        return 1;
+			    if (o1.getX() - centx == 0 && o2.getX() - centx == 0) {
+			        if (o1.getY() - centz >= 0 || o2.getY() - centz >= 0)
+			            return Double.compare(o2.getY(), o1.getY());
+			        return Double.compare(o1.getY(), o2.getY());
+			    }
+
+			    // compute the cross product of vectors (center -> a) x (center -> b)
+			    double det = (o1.getX() - centx) * (o2.getY() - centz) - (o2.getX() - centx) * (o1.getY() - centz);
+			    if (det < 0)
+			        return -1;
+			    if (det > 0)
+			        return 1;
+
+			    // points a and b are on the same line from the center
+			    // check which point is closer to the center
+			    double d1 = (o1.getX() - centx) * (o1.getX() - centx) + (o1.getY() - centz) * (o1.getY() - centz);
+			    double d2 = (o2.getX() - centx) * (o2.getX() - centx) + (o2.getY() - centz) * (o2.getY() - centz);
+			    return Double.compare(d2,d1);
+			}
+			
+		});
+		
+		for (Entity entity : points.get(0).getWorld().getEntities()) {
+			if (   entity.getLocation().getX() < minx
+				|| entity.getLocation().getZ() < minz
+				|| entity.getLocation().getX() > maxx
+				|| entity.getLocation().getZ() > maxz) {
+				continue; //early elimination based on abs max, min
+			}
+			
+			
+			//get line closest
+			double minDist = 0, dist;
+			double x0, x1, x2, z0, z1, z2;
+			x0 = entity.getLocation().getX();
+			z0 = entity.getLocation().getZ();
+			flip = true;
+			Location l1, l2, minl1 = null, minl2 = null;
+			l1 = null;
+			Iterator<Location> it = points.iterator();
+			l2 = points.get(points.size() - 1);
+			while (it.hasNext()) {
+				l1 = l2;
+				l2 = it.next();
+				
+				x1 = l1.getX(); z1 = l1.getZ();
+				x2 = l2.getX(); z2 = l2.getZ();
+				
+				dist = (
+						Math.abs(
+								  ((x1 - x0) * (z2 - z1)) - ((x1 - x2) * (z0 - z1))
+								)
+						/
+						Math.sqrt(
+						  Math.pow(z2 - z1, 2)
+						  +
+						  Math.pow(x2 - x1, 2)
+						)
+						);
+				
+				if (flip || dist < minDist) {
+					flip = false;
+					minDist = dist;
+					minl1 = l1; minl2 = l2;
+				}
+			}
+			
+			//minl1, minl2 are points with minimum distance. 
+			//all we need to do now is return if we're on the same side as the center (the inside)
+			if(((z0 - centerz)*(minl1.getX() - x0) + (centerx - x0)*(minl1.getZ() - z0))
+					* ((z0 - centerz)*(minl2.getX() - x0) + (centerx - x0)*(minl2.getZ() - z0)) < 0) {
+				list.add(entity);
+			}
+		}
+				
+		return list;
+	}
+	
+	private List<Location> getBlocksInBound(List<Location> points) {
+		//TODO
+		return null;
+	}
+	
+	
+	
+	
 }

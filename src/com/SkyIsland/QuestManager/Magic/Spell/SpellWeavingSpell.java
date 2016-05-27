@@ -27,6 +27,12 @@ import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
  *
  */
 public class SpellWeavingSpell extends Spell implements ConfigurationSerializable {
+	
+	public enum SpellTarget {
+		ENTITY,
+		BLOCK,
+		BOTH;
+	}
 
 	public static class SpellWeavingRecipe {
 		private List<String> components;
@@ -119,6 +125,8 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 	
 	private SpellWeavingRecipe recipe;
 	
+	private SpellTarget target;
+	
 	/**
 	 * Registers this class as configuration serializable with all defined 
 	 * {@link aliases aliases}
@@ -153,10 +161,11 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 		}
 	}
 	
-	public SpellWeavingSpell(int cost, int difficulty, String name, String description) {
+	public SpellWeavingSpell(int cost, int difficulty, String name, String description, SpellTarget target) {
 		super(cost, difficulty, name, description);
 		
 		this.recipe = null;
+		this.target = target;
 	}
 	
 	public void setSpellRecipe(SpellWeavingRecipe recipe) {
@@ -167,6 +176,10 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 		return this.recipe;
 	}
 	
+	public SpellTarget getTargetType() {
+		return this.target;
+	}
+	
 	@Override
 	public Map<String, Object> serialize() {
 		Map<String, Object> map = new HashMap<>();
@@ -175,6 +188,7 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 		map.put("cost", getCost());
 		map.put("description", getDescription());
 		map.put("difficulty", getDifficulty());
+		map.put("targetType", target.name());
 		map.put("recipe.types", recipe.components);
 		map.put("recipe.isOrdered", recipe.isOrdered);
 		map.put("effects", getSpellEffects());
@@ -192,7 +206,8 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 				(Integer) map.get("cost"),
 				(Integer) map.get("difficulty"),
 				(String) map.get("name"),
-				(String) map.get("description")
+				(String) map.get("description"),
+				SpellTarget.valueOf((String) map.get("targetType"))
 				);
 		
 		spell.getSpellEffects().addAll(effects);
@@ -269,6 +284,8 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 	
 	private void applyEntities(MagicUser caster, Collection<Entity> targets) {
 				
+		System.out.println("casting on " + targets.size() + " entities");
+		
 		Entity entity = caster.getEntity();
 		
 		QuestEffect ef = new ChargeEffect(Effect.DRAGON_BREATH);
@@ -281,6 +298,14 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 	}
 	
 	private void applyLocations(MagicUser caster, Collection<Location> targetLocations) {
+Entity entity = caster.getEntity();
 		
+		QuestEffect ef = new ChargeEffect(Effect.DRAGON_BREATH);
+		ef.play(entity, null);
+		
+		for (Location loc : targetLocations)
+		for (SpellEffect effect : this.getSpellEffects()) {
+			effect.apply(loc, caster);
+		}
 	}
 }

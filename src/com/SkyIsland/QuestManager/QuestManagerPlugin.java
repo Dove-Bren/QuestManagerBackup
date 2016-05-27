@@ -41,6 +41,7 @@ import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageMPEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageUndeadEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.FireEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.HealEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.InvokeSpellWeavingEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.StatusEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SummonTamedEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SwapEffect;
@@ -259,6 +260,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SwapEffect.registerWithAliases();
 		SummonTamedEffect.registerWithAliases();
 		FireEffect.registerWithAliases();
+		InvokeSpellWeavingEffect.registerWithAliases();
 		DamageUndeadEffect.registerWithAliases();
 		CastPylonEffect.registerWithAliases();
 		SpellWeavingSpell.registerWithAliases();
