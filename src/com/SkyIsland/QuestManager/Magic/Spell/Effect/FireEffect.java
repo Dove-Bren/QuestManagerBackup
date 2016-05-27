@@ -7,7 +7,9 @@ import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.metadata.FixedMetadataValue;
 
+import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 
 /**
@@ -76,7 +78,11 @@ public class FireEffect extends SpellEffect {
 		if (e instanceof LivingEntity) {
 			LivingEntity targ = (LivingEntity) e;
 			targ.setFireTicks(duration);
+			targ.setMetadata(DamageEffect.damageMetaKey, new FixedMetadataValue
+					(QuestManagerPlugin.questManagerPlugin, true));
 			targ.damage(0.0, cause.getEntity());
+			targ.setMetadata(DamageEffect.damageMetaKey, new FixedMetadataValue
+					(QuestManagerPlugin.questManagerPlugin, true));
 		}
 	}
 	

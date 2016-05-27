@@ -99,13 +99,16 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	public static final String damageMessage = ChatColor.GRAY + "%s "
 			+ ChatColor.DARK_GRAY + "did " + ChatColor.DARK_RED + "%.2f damage"
-			+ ChatColor.DARK_GRAY + " to you";
+			+ ChatColor.DARK_GRAY + " to you" + ChatColor.RESET;
 	
 	public static final String damageBlockMessage = ChatColor.DARK_GRAY + "You received " 
 			+ ChatColor.RED + "%.2f damage" + ChatColor.RESET;
 	
 	public static final String pylonsResetMessage = ChatColor.DARK_GRAY + "Your spell pylons have been cleared"
 			+ ChatColor.RESET;
+	
+	public static final String spellWeavingManaMesage = ChatColor.DARK_GRAY + "Your energies were properly"
+			+ " attuned, but you lacked the mana to properly invoke your spell" + ChatColor.RESET;
 	
 	public static boolean meetsRequirement(QuestPlayer player, String requirement) {
 		if (requirement.contains("|")) {
@@ -1853,6 +1856,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		if (!getPlayer().getPlayer().getGameMode().equals(GameMode.CREATIVE) && 
 				mp < spell.getCost()) {
+			getPlayer().getPlayer().sendMessage(spellWeavingManaMesage);
 			getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);
 			return;
 		}
