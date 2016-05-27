@@ -31,8 +31,11 @@ import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellManager;
+import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingManager;
+import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.AreaEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.BlockEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.CastPylonEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageMPEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageUndeadEffect;
@@ -119,6 +122,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private BankStorageManager bankManager;
 	
+	private SpellWeavingManager spellWeavingManager;
+	
 	private QuestManager manager;
 	
 	private ChatGuiHandler chatGuiHandler;
@@ -142,6 +147,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private final static String playerConfigFileName = "players.yml";
 	
 	private final static String bankDataFileName = "banks.yml";
+	
+	private final static String spellWeavingFileName = "spellWeaving.yml";
 	
 	public static final double version = 1.00;
 	
@@ -253,6 +260,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		SummonTamedEffect.registerWithAliases();
 		FireEffect.registerWithAliases();
 		DamageUndeadEffect.registerWithAliases();
+		CastPylonEffect.registerWithAliases();
+		SpellWeavingSpell.registerWithAliases();
 		Loot.registerWithAliases();
 		ConfigurationSerialization.registerClass(PlayerOptions.class);
 		BankStorageManager.registerSerialization();
@@ -313,7 +322,15 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		bankManager = new BankStorageManager(new File(getDataFolder(), bankDataFileName));
 		
+		spellWeavingManager = new SpellWeavingManager(new File(getDataFolder(), spellWeavingFileName));
 		
+//		SpellWeavingSpell spell = new SpellWeavingSpell("Combusion", 0, 15, "Catches stuff on fire");
+//		spell.addSpellEffect(new FireEffect(10));
+//		spell.setSpellRecipe(new SpellWeavingRecipe(Lists.asList("Soul", new String[]{"Spirit"}), false));
+//		
+//		spellWeavingManager.registerSpell(
+//				spell
+//				);
 		
 //		///////////////////////////////////////////////////////////////////////////////
 //					
@@ -344,6 +361,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		//save user database
 		playerManager.save(new File(getDataFolder(), playerConfigFileName));
 		bankManager.save(new File(getDataFolder(), bankDataFileName));
+		spellWeavingManager.save(new File(getDataFolder(), spellWeavingFileName));
 		stopAllQuests();
 		summonManager.removeSummons();
 		
@@ -695,5 +713,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public BankStorageManager getBankManager() {
 		return bankManager;
+	}
+	
+	public SpellWeavingManager getSpellWeavingManager() {
+		return spellWeavingManager;
 	}
 }

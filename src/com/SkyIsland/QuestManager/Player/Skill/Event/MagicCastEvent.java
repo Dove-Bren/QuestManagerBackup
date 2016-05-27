@@ -13,6 +13,11 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
  *
  */
 public class MagicCastEvent extends Event {
+	
+	public enum MagicType {
+		MAGERY,
+		SPELLWEAVING;
+	}
 
 	private static final HandlerList handlers = new HandlerList();
 		
@@ -29,14 +34,21 @@ public class MagicCastEvent extends Event {
 	
 	private Spell castSpell;
 	
+	private MagicType type;
+	
 	private boolean isFail;
 	
-	public MagicCastEvent(QuestPlayer player, Spell spell) {
+	public MagicCastEvent(QuestPlayer player, MagicType type, Spell spell) {
 		this.player = player;
+		this.type = type;
 		this.castSpell = spell;
 		isFail = false;
 	}
 
+	public MagicType getType() {
+		return type;
+	}
+	
 	public QuestPlayer getPlayer() {
 		return player;
 	}

@@ -14,10 +14,8 @@ import org.bukkit.entity.Tameable;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
-import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.Summon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
-import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
 import net.md_5.bungee.api.ChatColor;
 

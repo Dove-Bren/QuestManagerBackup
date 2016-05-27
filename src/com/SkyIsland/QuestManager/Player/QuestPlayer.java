@@ -18,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -51,6 +50,7 @@ import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Magic.MagicRegenEvent;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
+import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
@@ -159,6 +159,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	private Map<Material, String> storedSpells;
 	
+	private List<SpellPylon> pylons;
+	
 	private List<String> spells;
 	
 	private String title;
@@ -211,45 +213,6 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		}
 	}
 	
-	/**
-	 * Constructs a QuestPlayer from the given configuration.<br />
-	 * The passed configuration is expected to be the output of the {@link #toConfig()} method.
-	 * @param config
-	 * @return
-	 * @throws InvalidConfigurationException
-	 */
-//	public static QuestPlayer fromConfig(YamlConfiguration config) throws InvalidConfigurationException {
-//		
-//		QuestPlayer qp = null;
-//		
-//		if (!config.contains("Player") || !config.contains("History") || !config.contains("Quests")) {
-//			throw new InvalidConfigurationException();
-//		}
-//		
-//		
-//		
-//		/*
-//		 * config.set("Player", player.getUniqueId().toString());
-//		config.set("History", history.toConfig());
-//		config.set("Quests", currentQuests);
-//		 */
-//		
-//		qp = new QuestPlayer();
-//		
-//		UUID id = UUID.fromString(config.getString("Player"));
-//		OfflinePlayer player = Bukkit.getOfflinePlayer(id);
-//		History history = History.fromConfig((YamlConfiguration) config.getConfigurationSection("History"));
-//		@SuppressWarnings("unchecked")
-//		List<Quest> currentQuests = (List<Quest>) config.getList("Quests");
-//		
-//		qp.player = player;
-//		qp.history = history;
-//		qp.quests = currentQuests;
-//		
-//		return qp;
-//		
-//	}
-	
 	private QuestPlayer() {
 		System.out.println("creation");
 		this.fame = 0;
@@ -265,6 +228,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		this.journalNotes = new LinkedList<String>();
 		this.spells = new LinkedList<>();
 		this.storedSpells = new HashMap<>();
+		this.pylons = new LinkedList<SpellPylon>();
 		this.skillLevels = new HashMap<>();
 		this.skillXP = new HashMap<>();
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
@@ -1830,5 +1794,20 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	@Override
 	public int compareTo(QuestPlayer o) {
 		return this.getIDString().compareTo(o.getIDString());
+	}
+	
+	@Override
+	public List<SpellPylon> getSpellPylons() {
+		return this.pylons;
+	}
+	
+	@Override
+	public void addSpellPylon(SpellPylon pylon) {
+		this.pylons.add(pylon);
+	}
+	
+	@Override
+	public void clearSpellPylons() {
+		this.pylons.clear();
 	}
 }
