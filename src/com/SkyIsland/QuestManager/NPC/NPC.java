@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
@@ -120,6 +121,7 @@ public abstract class NPC implements ConfigurationSerializable, Listener, Tickab
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractAtEntityEvent e) {
 		if (!e.isCancelled())
+		if (e.getHand().equals(EquipmentSlot.HAND))
 		if (e.getRightClicked().getUniqueId().equals(id)) {
 			e.setCancelled(true);
 			this.interact(e.getPlayer());

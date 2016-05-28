@@ -39,7 +39,7 @@ public class ArcherySkill extends LogSkill implements Listener {
 		
 		int lvl = player.getSkillLevel(this);
 		
-		ret += "\n\n" + ChatColor.GREEN + "Arrow Speed: " + (100 + (lvl * levelRate)) + "%" + ChatColor.RESET;
+		ret += "\n\n" + ChatColor.GREEN + "Arrow Speed: " + (100 * (1 + lvl * levelRate)) + "%" + ChatColor.RESET;
 		
 		return ret;
 	}
@@ -115,7 +115,7 @@ public class ArcherySkill extends LogSkill implements Listener {
 		}
 	}
 	
-	@EventHandler(priority=EventPriority.LOW)
+	@EventHandler(priority=EventPriority.HIGH)
 	public void onHitLand(CombatEvent e) {
 		if (e.getWeapon() == null || !e.getWeapon().getType().name().toLowerCase().contains("bow")) {
 			return;

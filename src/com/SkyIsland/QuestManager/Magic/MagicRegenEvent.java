@@ -33,6 +33,7 @@ public class MagicRegenEvent extends Event implements Cancellable {
 	public MagicRegenEvent(MagicUser entity, double amount) {
 		this.entity = entity;
 		this.amount = amount;
+		this.modifier = 0;
 	}
 
 	public double getAmount() {

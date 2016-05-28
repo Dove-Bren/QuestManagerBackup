@@ -71,6 +71,7 @@ import com.SkyIsland.QuestManager.Player.Skill.SkillManager;
 import com.SkyIsland.QuestManager.Player.Skill.Default.ArcherySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.AxeSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.BowSkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.ConcentrationSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagicWeaverSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SorcerySkill;
@@ -420,6 +421,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager.registerSkill(new TacticsSkill());
 		skillManager.registerSkill(new ArcherySkill());
 		skillManager.registerSkill(new SorcerySkill());
+		skillManager.registerSkill(new ConcentrationSkill());
 	}
 	
 	
@@ -480,13 +482,20 @@ public class QuestManagerPlugin extends JavaPlugin {
 			}
 			
 			if (args[0].equalsIgnoreCase("grantSpell")) {
-				if (args.length != 3) {
+				if (args.length < 3) {
 					sender.sendMessage(ChatColor.RED + "usage: /questmanager grantspell [user] [spell]");
 					return true;
 				}
 				
 				String playerName = args[1];
 				String spellName = args[2];
+				
+				if (args.length > 3) {
+					for (int i = 3; i < args.length; i++) {
+						spellName += " " + args[i];
+					}
+				}
+				
 				Player player = Bukkit.getPlayer(playerName);
 				
 				if (player == null) {

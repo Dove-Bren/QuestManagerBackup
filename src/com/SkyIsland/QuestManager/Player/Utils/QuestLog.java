@@ -227,15 +227,15 @@ public class QuestLog {
 					title = new FancyMessage("\n  " + s.getName())
 							.tooltip(desc)
 							.color(ChatColor.BLACK)
-						.then(" (" + qp.getSkillLevel(s) + ", "
-							+ ((int) (qp.getSkillExperience(s)*100)) + "%)")
+						.then(" " + qp.getSkillLevel(s) + "."
+							+ ((int) (qp.getSkillExperience(s)*100)) + "")
 							.color(ChatColor.DARK_GREEN);
 				} else {
 					title.then("\n  " + s.getName())
 							.tooltip(desc)
 							.color(ChatColor.BLACK)
-						.then(" (" + qp.getSkillLevel(s) + ", "
-							+ ((int) (qp.getSkillExperience(s)*100)) + "%)")
+						.then(" " + qp.getSkillLevel(s) + "."
+							+ ((int) (qp.getSkillExperience(s)*100)) + "")
 							.color(ChatColor.DARK_GREEN);
 					lines++;
 				}

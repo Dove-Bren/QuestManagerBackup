@@ -33,7 +33,7 @@ public class ConcentrationSkill extends LogReducedSkill implements Listener {
 		
 		int lvl = player.getSkillLevel(this);
 				
-		ret += "\n\n" + ChatColor.GREEN + "Recharge Rate: " + (100 + (lvl * levelRate)) + "%" + ChatColor.RESET;
+		ret += "\n\n" + ChatColor.GREEN + "Recharge Rate: " + (100 * (1 + lvl * levelRate)) + "%" + ChatColor.RESET;
 		
 		return ret;
 	}
@@ -105,7 +105,7 @@ public class ConcentrationSkill extends LogReducedSkill implements Listener {
 		
 		int lvl = player.getSkillLevel(this);
 				
-		e.setModifier(e.getModifier() + (lvl / levelRate));
+		e.setModifier(e.getModifier() + (lvl * levelRate));
 		
 		this.perform(player);  
 		

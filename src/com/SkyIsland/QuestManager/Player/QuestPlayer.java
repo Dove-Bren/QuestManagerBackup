@@ -1505,7 +1505,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		if (getPlayer().isOnline()) {
 			Player p = (Player) getPlayer();
-			p.setExp( Math.min(.99f, (float) mp / (float) maxMp));
+			p.setExp( Math.min(.99f, (float) (mp / maxMp)));
 			//p.setExp(mp / maxMp);
 		}
 	}
@@ -1513,10 +1513,15 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	/**
 	 * Regens the player's MP by the amount specified.<br />
 	 * If the amount is negative, the player regens a fraction of their max mp (-amount%)
+	 * If the player is at or past full mana, this function will return out immediately
 	 * @param amt
 	 */
 	public void regenMP(double amt) {
 		if (amt == 0) {
+			return;
+		}
+		
+		if (mp >= maxMp) {
 			return;
 		}
 		
