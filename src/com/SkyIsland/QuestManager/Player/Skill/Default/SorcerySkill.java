@@ -9,31 +9,32 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.LogSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
-import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
-import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
+import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
+import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
 import com.google.common.collect.Lists;
 
-public class TwoHandedSkill extends LogSkill implements Listener {
+public class SorcerySkill extends LogSkill implements Listener {
 	
-	public static final String configName = "TwoHanded.yml";
+	public static final String configName = "Sorcery.yml";
 
 	public Type getType() {
 		return Skill.Type.COMBAT;
 	}
 	
 	public String getName() {
-		return "Two Handed";
+		return "Sorcery";
 	}
 	
 	public String getDescription(QuestPlayer player) {
-		String ret = ChatColor.WHITE + "The Two Handed skill involves a player using a single weapon to attack, with nothing"
-				+ " in their offhand.";
+		String ret = ChatColor.WHITE + "Sorcery applies when a player is only equiped with magic. The magic the "
+				+ "player can focus is more potent than when trying to combine it's use with other objects.";
 		
 		int lvl = player.getSkillLevel(this);
 		
@@ -49,19 +50,19 @@ public class TwoHandedSkill extends LogSkill implements Listener {
 	
 	@Override
 	public String getConfigKey() {
-		return "Two_Handed";
+		return "Sorcery";
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof TwoHandedSkill);
+		return (o instanceof SorcerySkill);
 	}
 	
 	private int startingLevel;
 	
 	private int levelRate;
 	
-	public TwoHandedSkill() {
+	public SorcerySkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
 		YamlConfiguration config = createConfig(configFile);
@@ -99,11 +100,19 @@ public class TwoHandedSkill extends LogSkill implements Listener {
 	}
 	
 	@EventHandler
-	public void onCombat(CombatEvent e) {
+	public void onMagicCast(MagicApplyEvent e) {
+		
+		
 		Player p = e.getPlayer().getPlayer().getPlayer();
 		
-		if (!ForgeAction.Repairable.isRepairable(e.getWeapon().getType())
-				|| (p.getInventory().getItemInOffHand() != null && e.getOtherItem().getType() != Material.AIR)) {
+		ItemStack weapon = p.getInventory().getItemInMainHand();
+		if (!SpellHolder.SpellHolderDefinition.isHolder(weapon)) {
+			//that cna't be it. must be in their offhand
+			weapon = p.getInventory().getItemInOffHand();
+		}
+		
+		if (!SpellHolder.SpellHolderDefinition.isHolder(weapon)
+				|| (p.getInventory().getItemInOffHand() != null && p.getInventory().getItemInOffHand().getType() != Material.AIR)) {
 			return;
 		}
 		
@@ -112,8 +121,6 @@ public class TwoHandedSkill extends LogSkill implements Listener {
 		//just increase damage based on level
 		//every n levels, one more damage
 		e.setModifiedDamage(e.getModifiedDamage() + (lvl / levelRate));
-		
-		this.perform(e.getPlayer(), e.isMiss());
 		
 	}
 	

@@ -155,7 +155,7 @@ public class QuestLog {
 			.then("\n\n  Completed Quests: " + qp.getCompletedQuests().size())
 				.color(ChatColor.DARK_BLUE)
 				.tooltip(qp.getCompletedQuests())
-			.then("\n\n\n\n          Options")
+			.then("\n\n\n\n         Options")
 				.color(ChatColor.DARK_GRAY)
 				.tooltip(ChatColor.BLUE + "Click to manage options")
 				.command("/player options");

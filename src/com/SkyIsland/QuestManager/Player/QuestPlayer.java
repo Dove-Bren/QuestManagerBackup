@@ -1703,6 +1703,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			return;
 		}
 		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+				.contains(e.getEntity().getWorld().getName())) {
+			return;
+		}
+		
 		if (e.getEntity() instanceof Player) {
 			if (((Player) e.getEntity()).getUniqueId().equals(this.playerID)) {
 				//we just got hurt
@@ -1819,7 +1824,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		int skillLevel = getSkillLevel(skill);
 		Player p = getPlayer().getPlayer();
 		p.sendMessage(ChatColor.GREEN + "You've obtained level " + ChatColor.GOLD 
-				+ skillLevel + ChatColor.GREEN + " up in " + skill.getName() + ChatColor.RESET);
+				+ skillLevel + ChatColor.GREEN + " in " + skill.getName() + ChatColor.RESET);
 		
 		if (this.party != null) {
 			for (QuestPlayer qp : party.getParticipants()) {
