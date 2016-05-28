@@ -4,6 +4,8 @@ package com.SkyIsland.QuestManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,6 +33,7 @@ import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
+import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingSpell;
@@ -153,6 +156,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	private final static String configFileName = "QuestManagerConfig.yml";
 	
 	private final static String playerConfigFileName = "players.yml";
+	
+	private final static String playerConfigBackupName = "players.backup";
 	
 	private final static String bankDataFileName = "banks.yml";
 	
@@ -300,6 +305,15 @@ public class QuestManagerPlugin extends JavaPlugin {
 			}
 
 			//get Player data & manager
+			try {
+				Files.copy(playerFile.toPath(), (new File(getDataFolder(), playerConfigBackupName)).toPath(),
+						StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				getLogger().warning("Unable to make backup file!");
+			}
+			
 			YamlConfiguration playerConfig = new YamlConfiguration();
 			try {
 				playerConfig.load(playerFile);
@@ -464,6 +478,51 @@ public class QuestManagerPlugin extends JavaPlugin {
 				}
 				
 			}
+			
+			if (args[0].equalsIgnoreCase("grantSpell")) {
+				if (args.length != 3) {
+					sender.sendMessage(ChatColor.RED + "usage: /questmanager grantspell [user] [spell]");
+					return true;
+				}
+				
+				String playerName = args[1];
+				String spellName = args[2];
+				Player player = Bukkit.getPlayer(playerName);
+				
+				if (player == null) {
+					sender.sendMessage("Unable to find player " + playerName);
+					return true;
+				}
+				
+				Spell spell = spellManager.getSpell(spellName);
+				if (spell == null) {
+					sender.sendMessage(ChatColor.RED + "Unable to find defined spell " + ChatColor.DARK_PURPLE
+							+ spellName + ChatColor.RESET);
+					sender.sendMessage("Please pick a spell from the following:");
+					String msg = "";
+					
+					if (spellManager.getSpells().isEmpty()) {
+						msg = ChatColor.RED + "No defined spells!";
+					} else {
+						boolean flip = false;
+						for (String name : spellManager.getSpells()) {
+							msg += (flip ? ChatColor.BLUE : ChatColor.GREEN);
+							msg += "   " + name;
+						}
+					}
+					
+					sender.sendMessage(msg);
+				} else {
+					QuestPlayer qp = playerManager.getPlayer(player);
+					qp.addSpell(spellName);
+					sender.sendMessage(ChatColor.GREEN + playerName + " has been given " + ChatColor.DARK_PURPLE
+							+ spellName);
+				}
+				
+				return true;
+			}
+			
+			return false;
 			
 		}
 		

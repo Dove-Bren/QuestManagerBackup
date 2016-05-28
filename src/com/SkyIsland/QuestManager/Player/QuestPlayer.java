@@ -170,9 +170,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	private int maxHp;
 	
-	private int mp;
+	private double mp;
 	
-	private int maxMp;
+	private double maxMp;
 	
 	private Map<Material, String> storedSpells;
 	
@@ -707,11 +707,11 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			qp.alphaFame = qp.fame;
 		}
 		if (map.containsKey("mp")) {
-			qp.mp = (int) map.get("mp");
+			qp.mp = (double) map.get("mp");
 		} //else handled by default constructor
 		
 		if (map.containsKey("maxmp")) {
-			qp.maxMp = (int) map.get("maxmp");
+			qp.maxMp = (double) map.get("maxmp");
 		} //else again handled by default constructor
 		
 		if (map.containsKey("maxhp")) {
@@ -885,7 +885,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled()
 				 && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenXP() != 0) {
-			int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenXP();
+			double amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenXP();
 			regenMP(amt);
 		}
 		
@@ -1491,16 +1491,16 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	}
 
 	@Override
-	public int getMP() {
+	public double getMP() {
 		return mp;
 	}
 	
-	public int getMaxMp() {
+	public double getMaxMp() {
 		return maxMp;
 	}
 
 	@Override
-	public void addMP(int amount) {
+	public void addMP(double amount) {
 		mp = Math.max(Math.min(maxMp, mp + amount), 0);
 		
 		if (getPlayer().isOnline()) {
@@ -1515,7 +1515,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	 * If the amount is negative, the player regens a fraction of their max mp (-amount%)
 	 * @param amt
 	 */
-	public void regenMP(int amt) {
+	public void regenMP(double amt) {
 		if (amt == 0) {
 			return;
 		}
@@ -1527,6 +1527,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		if (e.isCancelled()) {
 			return;
 		}
+		
+		amt = e.getFinalAmount();
 		
 		if (amt < 0) {
 			//it's a rate
@@ -1544,7 +1546,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		if (e.getEntity().getKiller() != null && 
 				e.getEntity().getKiller().equals(getPlayer())) {
 			//we killed it; regen mana
-			int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenKill();
+			double amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenKill();
 			regenMP(amt);
 			return;
 		}
@@ -1579,7 +1581,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			case RABBIT:
 			case RABBIT_STEW:
 			case RAW_FISH:	
-				int amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenFood();
+				double amt = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicRegenFood();
 				regenMP(amt);	
 				break;
 			default:

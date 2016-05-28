@@ -181,8 +181,8 @@ public class PlayerManager implements Tickable {
 	@Override
 	public void tick() {
 		PluginConfiguration pc = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
-		int day = pc.getMagicRegenDay();
-		int night = pc.getMagicRegenNight();
+		double day = pc.getMagicRegenDay();
+		double night = pc.getMagicRegenNight();
 		for (QuestPlayer qp : players.values()) {
 			OfflinePlayer p = qp.getPlayer();
 			if (qp.getPlayer().isOnline() && QuestManagerPlugin.questManagerPlugin.getPluginConfiguration()

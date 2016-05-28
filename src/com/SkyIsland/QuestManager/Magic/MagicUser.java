@@ -8,9 +8,9 @@ public interface MagicUser {
 	
 	public Entity getEntity();
 	
-	public int getMP();
+	public double getMP();
 	
-	public void addMP(int amount);
+	public void addMP(double amount);
 	
 	public void addSpellPylon(SpellPylon pylon);
 	

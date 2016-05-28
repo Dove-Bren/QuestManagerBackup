@@ -173,7 +173,8 @@ public class MagicWeaverSkill extends LogSkill implements Listener {
 		QuestPlayer qp = (QuestPlayer) e.getEntity();
 		double rate = qp.getSkillLevel(this) * manaRate;
 		
-		e.setAmount((int) (e.getAmount() * rate)); 
+		//e.setAmount((int) (e.getAmount() * rate));
+		e.setModifier(e.getModifier() + rate);
 	}
 	
 }

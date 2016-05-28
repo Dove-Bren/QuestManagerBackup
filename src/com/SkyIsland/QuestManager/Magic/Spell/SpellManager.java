@@ -3,6 +3,7 @@ package com.SkyIsland.QuestManager.Magic.Spell;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -74,5 +75,13 @@ public class SpellManager {
 	
 	public Spell getSpell(String name) {
 		return spells.get(name);
+	}
+	
+	/**
+	 * Returns a list of all registered spell names
+	 * @return
+	 */
+	public Set<String> getSpells() {
+		return spells.keySet();
 	}
 }

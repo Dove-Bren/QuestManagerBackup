@@ -233,16 +233,16 @@ public class PluginConfiguration {
 	 * Negative amounts indicate a percentage to regen rather than a constant (-(return)%)
 	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
 	 */
-	public int getMagicRegenDay() {
-		return config.getInt(PluginConfigurationKey.DAYREGEN.key);
+	public double getMagicRegenDay() {
+		return config.getDouble(PluginConfigurationKey.DAYREGEN.key);
 	}
 	
 	/**
 	 * Amount to regen at night
 	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
 	 */
-	public int getMagicRegenNight() {
-		return config.getInt(PluginConfigurationKey.NIGHTREGEN.key);
+	public double getMagicRegenNight() {
+		return config.getDouble(PluginConfigurationKey.NIGHTREGEN.key);
 	}
 	
 	/**
@@ -256,24 +256,24 @@ public class PluginConfiguration {
 	 * The amount of mp to regen when a player gets a kill
 	 * @return The amount to regen; positive values indicate a contant, negative a rate (out of 100)
 	 */
-	public int getMagicRegenKill() {
-		return config.getInt(PluginConfigurationKey.KILLREGEN.key);
+	public double getMagicRegenKill() {
+		return config.getDouble(PluginConfigurationKey.KILLREGEN.key);
 	}
 	
 	/**
 	 * The amount to regen per xp picked up by a player
 	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
 	 */
-	public int getMagicRegenXP() {
-		return config.getInt(PluginConfigurationKey.XPREGEN.key);
+	public double getMagicRegenXP() {
+		return config.getDouble(PluginConfigurationKey.XPREGEN.key);
 	}
 	
 	/**
 	 * Amount to regen when a player consumes a food item
 	 * @return The amount to regen; positive values indicate a constant, negative a rate (out of 100)
 	 */
-	public int getMagicRegenFood() {
-		return config.getInt(PluginConfigurationKey.FOODREGEN.key);
+	public double getMagicRegenFood() {
+		return config.getDouble(PluginConfigurationKey.FOODREGEN.key);
 	}
 	
 	/**
@@ -488,12 +488,12 @@ public class PluginConfiguration {
 		//magic options
 		config.set(PluginConfigurationKey.ALLOWMAGIC.key, true);
 		config.set(PluginConfigurationKey.MANADEFAULT.key, 20);
-		config.set(PluginConfigurationKey.DAYREGEN.key, 1);
-		config.set(PluginConfigurationKey.NIGHTREGEN.key, 1);
+		config.set(PluginConfigurationKey.DAYREGEN.key, 1.0);
+		config.set(PluginConfigurationKey.NIGHTREGEN.key, 1.0);
 		config.set(PluginConfigurationKey.OUTSIDEREGEN.key, false);
-		config.set(PluginConfigurationKey.KILLREGEN.key, 0);
-		config.set(PluginConfigurationKey.XPREGEN.key, 0);
-		config.set(PluginConfigurationKey.FOODREGEN.key, 0);
+		config.set(PluginConfigurationKey.KILLREGEN.key, 0.0);
+		config.set(PluginConfigurationKey.XPREGEN.key, 0.0);
+		config.set(PluginConfigurationKey.FOODREGEN.key, 0.0);
 		
 		List<String> worlds = new ArrayList<String>();
 		worlds.add("QuestWorld");
