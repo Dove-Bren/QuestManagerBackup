@@ -154,7 +154,11 @@ public class QuestLog {
 				.color(ChatColor.DARK_GREEN)
 			.then("\n\n  Completed Quests: " + qp.getCompletedQuests().size())
 				.color(ChatColor.DARK_BLUE)
-				.tooltip(qp.getCompletedQuests());
+				.tooltip(qp.getCompletedQuests())
+			.then("\n\n\n\n          Options")
+				.color(ChatColor.DARK_GRAY)
+				.tooltip(ChatColor.BLUE + "Click to manage options")
+				.command("/player options");
 		
 		builder += generatePageJSON(title.toJSONString().replace("\"", escq));
 		

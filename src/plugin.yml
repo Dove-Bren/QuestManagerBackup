@@ -38,5 +38,5 @@ commands:
         description: QuestManager admin command
         permission: questmanager.admin
     player:
-        usage: /player [title]
+        usage: /player [title | options]
         description: Displays player menus

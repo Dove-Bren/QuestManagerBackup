@@ -3,11 +3,14 @@ package com.SkyIsland.QuestManager.UI.Menu.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.UI.Menu.Action.MenuAction;
+
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * An item used in an inventory menu.<br />
@@ -38,17 +41,22 @@ public class BasicInventoryItem extends InventoryItem {
 		if (tooltip == null) {
 			meta.setDisplayName("");
 		} else {
-			meta.setDisplayName(tooltip.get(0));
+			meta.setDisplayName(ChatColor.GRAY + tooltip.get(0) + ChatColor.RESET);
 		}
 		
 		if (tooltip.size() > 1) {
 			List<String> lore = new ArrayList<>(tooltip.size() - 1);
 			for (int i = 1; i < tooltip.size(); i++) {
-				lore.add(tooltip.get(i));
+				lore.add(ChatColor.GRAY + tooltip.get(i));
 			}
 			meta.setLore(lore);
 		}
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_ENCHANTS,
+				ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_UNBREAKABLE);
+		
 		icon.setItemMeta(meta);
+		
+		
 		this.item = icon;
 		this.action = action;
 	}
