@@ -27,6 +27,7 @@ import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
 import com.SkyIsland.QuestManager.Loot.Loot;
+import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
@@ -70,6 +71,7 @@ import com.SkyIsland.QuestManager.Player.Skill.Default.MagicWeaverSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SwordAndShieldSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SwordsmanshipSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.TwoHandedSkill;
+import com.SkyIsland.QuestManager.Player.Utils.SpellWeavingInvoker;
 import com.SkyIsland.QuestManager.Quest.Quest;
 import com.SkyIsland.QuestManager.Quest.Requirements.ArriveRequirement;
 import com.SkyIsland.QuestManager.Quest.Requirements.ChestRequirement;
@@ -325,6 +327,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		bankManager = new BankStorageManager(new File(getDataFolder(), bankDataFileName));
 		
 		spellWeavingManager = new SpellWeavingManager(new File(getDataFolder(), spellWeavingFileName));
+		new SpellWeavingInvoker();
 		
 //		SpellWeavingSpell spell = new SpellWeavingSpell("Combusion", 0, 15, "Catches stuff on fire");
 //		spell.addSpellEffect(new FireEffect(10));
@@ -366,6 +369,13 @@ public class QuestManagerPlugin extends JavaPlugin {
 		spellWeavingManager.save(new File(getDataFolder(), spellWeavingFileName));
 		stopAllQuests();
 		summonManager.removeSummons();
+		for (QuestPlayer p : playerManager.getPlayers()) {
+			for (SpellPylon pylon : p.getSpellPylons()) {
+				pylon.remove();
+			}
+			
+			p.clearSpellPylons();
+		}
 		
 		
 	}

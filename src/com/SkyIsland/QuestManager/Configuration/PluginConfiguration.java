@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
 import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
+import com.SkyIsland.QuestManager.Player.Utils.SpellWeavingInvoker;
 
 /**
  * Wrapper class for configuration files needed by the plugin.<br />
@@ -51,6 +52,10 @@ public class PluginConfiguration {
 		XPREGEN("magic.regenOnXP"),
 		FOODREGEN("magic.regenOnFood"),
 		HOLDERNAME("interface.magic.holderName"),
+		ALLOWWEAVING("spellweaving.enabled"),
+		USEINVOKER("spellweaving.useInvoker"),
+		INVOKERNAME("interface.spellweaving.invokerName"),
+		INVOKERTYPE("interface.spellweaving.invokerType"),
 		ALTERTYPE("interface.magic.alterBlockType"),
 		WORLDS("questWorlds"),
 		//QUESTS("quests"),
@@ -104,6 +109,11 @@ public class PluginConfiguration {
 		if (getCompassEnabled()) {
 			Compass.CompassDefinition.setCompassType(getCompassType());
 			Compass.CompassDefinition.setDisplayName(getCompassName());
+		}
+		
+		if (getUseWeavingInvoker()) {
+			SpellWeavingInvoker.InvokerDefinition.setDisplayName(getSpellInvokerName());
+			SpellWeavingInvoker.InvokerDefinition.setInvokerType(getInvokerType());
 		}
 		
 		SpellHolder.SpellHolderDefinition.setDisplayName(getSpellHolderName());
@@ -398,6 +408,38 @@ public class PluginConfiguration {
 	 */
 	public Material getAlterType() {
 		return Material.valueOf(config.getString(PluginConfigurationKey.ALTERTYPE.key));
+	}
+	
+	/**
+	 * Gets whether spell weaving is enabled on this server
+	 * @return
+	 */
+	public boolean getAllowSpellWeaving() {
+		return config.getBoolean(PluginConfigurationKey.ALLOWWEAVING.key, true);
+	}
+	
+	/**
+	 * Gets whther or not to use the spell invoker
+	 * @return
+	 */
+	public boolean getUseWeavingInvoker() {
+		return config.getBoolean(PluginConfigurationKey.USEINVOKER.key, true);
+	}
+	
+	/**
+	 * This manager's custom invoker name
+	 * @return
+	 */
+	public String getSpellInvokerName() {
+		return config.getString(PluginConfigurationKey.INVOKERNAME.key);
+	}
+	
+	/**
+	 * The material used to stand for the spell weaving invoker
+	 * @return
+	 */
+	public Material getInvokerType() {
+		return Material.valueOf(config.getString(PluginConfigurationKey.INVOKERTYPE.key));
 	}
 	
 	/**

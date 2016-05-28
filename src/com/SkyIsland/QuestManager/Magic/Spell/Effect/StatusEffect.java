@@ -11,6 +11,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -117,6 +118,17 @@ public class StatusEffect extends SpellEffect {
 					message.send(qp.getPlayer().getPlayer());
 					
 				}
+			} else {
+				//non player
+				//damage them for 0 if it's negative effect? 
+				if (isEffectHarmful(effect.getType())) {
+					targ.setMetadata(DamageEffect.damageMetaKey, new FixedMetadataValue
+							(QuestManagerPlugin.questManagerPlugin, true));
+					targ.damage(0.0, cause.getEntity());
+					targ.setMetadata(DamageEffect.damageMetaKey, new FixedMetadataValue
+							(QuestManagerPlugin.questManagerPlugin, true));
+				}
+				
 			}
 		}
 	}
@@ -259,6 +271,24 @@ public class StatusEffect extends SpellEffect {
 		
 		
 		return list;
+	}
+	
+	public boolean isEffectHarmful(PotionEffectType type) {
+		if (type.equals(PotionEffectType.BLINDNESS) 
+			|| type.equals(PotionEffectType.CONFUSION) 
+			|| type.equals(PotionEffectType.HARM) 
+			|| type.equals(PotionEffectType.HUNGER) 
+			|| type.equals(PotionEffectType.LEVITATION) 
+			|| type.equals(PotionEffectType.POISON) 
+			|| type.equals(PotionEffectType.SLOW) 
+			|| type.equals(PotionEffectType.SLOW_DIGGING) 
+			|| type.equals(PotionEffectType.UNLUCK) 
+			|| type.equals(PotionEffectType.WEAKNESS) 
+			|| type.equals(PotionEffectType.WITHER)) {
+			return true;
+		}
+				
+		return false;
 	}
 	
 	

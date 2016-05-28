@@ -108,7 +108,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			+ ChatColor.RESET;
 	
 	public static final String spellWeavingManaMesage = ChatColor.DARK_GRAY + "Your energies were properly"
-			+ " attuned, but you lacked the mana to properly invoke your spell" + ChatColor.RESET;
+			+ " attuned, but you " + ChatColor.GRAY + "lacked the mana" + ChatColor.DARK_GRAY 
+			+ " to properly invoke your spell" + ChatColor.RESET;
 	
 	public static boolean meetsRequirement(QuestPlayer player, String requirement) {
 		if (requirement.contains("|")) {
