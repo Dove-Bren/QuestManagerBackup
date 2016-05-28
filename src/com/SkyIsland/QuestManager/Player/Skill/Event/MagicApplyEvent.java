@@ -45,9 +45,8 @@ public class MagicApplyEvent extends Event {
 		this.player = player;
 		this.damage = damage;
 		this.modifiedDamage = 0.0;
-		this.efficiency = 1.0;
-	}
-
+		this.efficiency = 1.0;}
+	
 	public QuestPlayer getPlayer() {
 		return player;
 	}

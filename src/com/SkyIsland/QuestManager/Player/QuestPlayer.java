@@ -1244,6 +1244,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		LinkedList<ChatMenuOption> opts = new LinkedList<ChatMenuOption>();
 		
+		//spells.sort(null); Not working. Dunno why :S
+		
 		for (String t : spells) {
 			List<String> descList = new LinkedList<>();
 			Spell sp = QuestManagerPlugin.questManagerPlugin.getSpellManager().getSpell(t);

@@ -17,22 +17,27 @@ import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent.MagicType;
 import com.google.common.collect.Lists;
 
-public class MagerySkill extends Skill implements Listener {
+/**
+ * Dictates the difficulty and potential of spell weaving spells
+ * @author Skyler
+ *
+ */
+public class SpellWeavingSkill extends Skill implements Listener {
 	
-	public static final String configName = "Magery.yml";
+	public static final String configName = "SpellWeaving.yml";
 
 	public Type getType() {
 		return Skill.Type.COMBAT;
 	}
 	
 	public String getName() {
-		return "Magery";
+		return "SpellWeaving";
 	}
 	
 	public String getDescription(QuestPlayer player) {
-		String ret = ChatColor.WHITE + "The Magery skill governs the player's ability to cast spells, and "
-				+ "produce meaningful results. Magery skill combats spell difficulty, and is the main "
-				+ "determining factor in spell success or failure.";
+		String ret = ChatColor.WHITE + "Spell Weaving determines a player's potential in spell-weaving magics."
+				+ " Spell Weaving determins the difficulty of spells a player can perform, and how effective all"
+				+ " magic cast is.";
 		
 		int lvl = player.getSkillLevel(this);
 		int mastery = Math.max(0, (int) ((difficultyRatio * lvl) - levelGrace));
@@ -50,27 +55,27 @@ public class MagerySkill extends Skill implements Listener {
 	
 	@Override
 	public String getConfigKey() {
-		return "Magery";
+		return "SpellWeaving";
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof MagerySkill);
+		return (o instanceof SpellWeavingSkill);
 	}
 	
 	private int startingLevel;
 	
 	/**
-	 * Magery damage increase. Multiplicitive. What bonus % to add (.15 is 15%, or 115% damage done with magery alone)
+	 * SpellWeaving damage increase. Multiplicitive. What bonus % to add (.15 is 15%, or 115% damage done with magery alone)
 	 */
 	private double levelRate;
 	
 	/**
-	 * How many player magery levels correspond to 1 difficulty level?
-	 * In other words, at what magery level should a player be able to cast a level x spell? n*x, where n
+	 * How many player SpellWeaving levels correspond to 1 difficulty level?
+	 * In other words, at what SpellWeaving level should a player be able to cast a level x spell? n*x, where n
 	 * is the ratio.
-	 * If magery goes from 0-100 and difficulty goes from 0-100, then 1 is perfect. if magery goes from
-	 * 0-100 and difficulty goes from 0-10, a ratio of 10 is perfect. (10 magery levels per difficulty)
+	 * If SpellWeaving goes from 0-100 and difficulty goes from 0-100, then 1 is perfect. if SpellWeaving goes from
+	 * 0-100 and difficulty goes from 0-10, a ratio of 10 is perfect. (10 SpellWeaving levels per difficulty)
 	 */
 	private double difficultyRatio;
 		
@@ -82,7 +87,7 @@ public class MagerySkill extends Skill implements Listener {
 	
 	private double rateDecrease;
 	
-	public MagerySkill() {
+	public SpellWeavingSkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
 		YamlConfiguration config = createConfig(configFile);
@@ -107,7 +112,7 @@ public class MagerySkill extends Skill implements Listener {
 			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
 				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
 				.addLine("bonusDamagePerLevel", 0.01, Lists.newArrayList("How many damage is added per level, as a % (0.5 is 50%)", "[double]"))
-				.addLine("difficultyRatio", 1.0, Lists.newArrayList("How many player magery levels correspond to 1 difficulty level?", "In other words, at what magery level should a player be able to cast a", "level x spell? n*x, where n is the ratio. If magery goes from 0-100", "and difficulty goes from 0-100, then 1 is perfect. If magery goes from 0-100 and difficulty", "goes from 0-10, a ratio of 10 is perfect. (10 magery levels per difficulty)", "[double] "))
+				.addLine("difficultyRatio", 1.0, Lists.newArrayList("How many player spellwaving levels correspond to 1 difficulty level?", "In other words, at what spellweaving level should a player be able to cast a", "level x spell? n*x, where n is the ratio. If spellweaving goes from 0-100", "and difficulty goes from 0-100, then 1 is perfect. If spellweaving goes from 0-100 and difficulty", "goes from 0-10, a ratio of 10 is perfect. (10 spellweaving levels per difficulty)", "[double] "))
 				.addLine("levelGrace", 5, Lists.newArrayList("How many levels over the appropriate level (according to the", "difficulty ratio) a player must be to no longer make", "checks on spell failure", "[int]"))
 				.addLine("hitchancePenalty", 3.0, Lists.newArrayList("The penalty per level under apprentiveLevel given to the", "chance to hit. Penalty is", "(  ([calculated spell level] + levelGrace) * hitchancePenalty )", "[double]"));
 			
@@ -126,7 +131,7 @@ public class MagerySkill extends Skill implements Listener {
 	
 	@EventHandler
 	public void onMagicCast(MagicCastEvent e) {
-		if (e.getType() != MagicType.MAGERY) {
+		if (e.getType() != MagicType.SPELLWEAVING) {
 			return;
 		}
 		

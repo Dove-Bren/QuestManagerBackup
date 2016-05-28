@@ -68,6 +68,7 @@ import com.SkyIsland.QuestManager.Player.Skill.SkillManager;
 import com.SkyIsland.QuestManager.Player.Skill.Default.AxeSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagicWeaverSkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.SpellWeavingSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SwordAndShieldSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SwordsmanshipSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.TwoHandedSkill;
@@ -396,6 +397,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager.registerSkill(new MagicWeaverSkill());
 		skillManager.registerSkill(new AxeSkill());
 		skillManager.registerSkill(new SwordsmanshipSkill());
+		skillManager.registerSkill(new SpellWeavingSkill());
 	}
 	
 	
