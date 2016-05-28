@@ -130,8 +130,8 @@ public class MagicWeaverSkill extends LogSkill implements Listener {
 	public void onCombat(CombatEvent e) {
 		Player p = e.getPlayer().getPlayer().getPlayer();
 		
-		if (!ForgeAction.Repairable.isRepairable(p.getInventory().getItemInMainHand().getType())
-				|| (p.getInventory().getItemInOffHand() == null || !SpellHolder.SpellHolderDefinition.isHolder(p.getInventory().getItemInOffHand()))) {
+		if (!ForgeAction.Repairable.isRepairable(e.getWeapon().getType())
+				|| (e.getWeapon() == null || !SpellHolder.SpellHolderDefinition.isHolder(e.getOtherItem()))) {
 			Skill.setAttributeModifier(p.getAttribute(Attribute.GENERIC_ATTACK_SPEED), modifierName, 0);
 			return;
 		}
@@ -143,7 +143,7 @@ public class MagicWeaverSkill extends LogSkill implements Listener {
 		//bonus attack damage
 		Skill.setAttributeModifier(p.getAttribute(Attribute.GENERIC_ATTACK_SPEED), modifierName, rate);
 		
-		System.out.println("reported attack speed: " + p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getBaseValue() + " -> " + p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue());
+		//System.out.println("reported attack speed: " + p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getBaseValue() + " -> " + p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).getValue());
 		
 		this.perform(e.getPlayer(), lvl - levelPenalty, e.isMiss()); //only get a 'cause miss' if this skill caused it 
 		

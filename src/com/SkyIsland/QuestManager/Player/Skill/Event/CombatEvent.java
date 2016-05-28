@@ -7,6 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
@@ -67,6 +68,10 @@ public class CombatEvent extends Event {
 	
 	private LivingEntity target;
 	
+	private ItemStack weapon;
+	
+	private ItemStack otheritem;
+	
 	/**
 	 * The base amount of damage the player is going to do
 	 */
@@ -84,10 +89,12 @@ public class CombatEvent extends Event {
 	
 	private boolean isMiss;
 	
-	public CombatEvent(QuestPlayer player, LivingEntity target, double damage) {
+	public CombatEvent(QuestPlayer player, LivingEntity target, ItemStack weapon, ItemStack otheritem, double damage) {
 		this.player = player;
 		this.target = target;
 		this.damage = damage;
+		this.weapon = weapon;
+		this.otheritem = otheritem;
 		this.modifiedDamage = 0.0;
 		this.efficiency = 1.0;
 		isMiss = false;
@@ -103,6 +110,14 @@ public class CombatEvent extends Event {
 
 	public LivingEntity getTarget() {
 		return target;
+	}
+	
+	public ItemStack getWeapon() {
+		return weapon;
+	}
+	
+	public ItemStack getOtherItem() {
+		return otheritem;
 	}
 
 	public void setTarget(LivingEntity target) {

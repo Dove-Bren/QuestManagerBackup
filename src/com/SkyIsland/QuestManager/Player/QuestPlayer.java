@@ -46,6 +46,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.projectiles.ProjectileSource;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
@@ -1710,11 +1711,33 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			}
 		}
 		
+		Player player = null;
+		ItemStack weapon = null, other = null;;
 		if (!(e.getDamager() instanceof Player)) {
-			return;
+			if (e.getDamager() instanceof Projectile) {
+				ProjectileSource source = ((Projectile) e.getDamager()).getShooter();
+				if (source instanceof Player) {
+					player = (Player) source;
+					if (player.getInventory().getItemInMainHand().getType() == Material.BOW) {
+						weapon = player.getInventory().getItemInMainHand(); 
+						other = player.getInventory().getItemInOffHand();
+					} else {
+						weapon = player.getInventory().getItemInOffHand();
+						other = player.getInventory().getItemInMainHand();
+					}
+				}
+			} else
+				return;
 		}
-			
-		Player player = (Player) e.getDamager();
+		
+		
+		
+		if (player == null) {
+			player = (Player) e.getDamager();
+			weapon = player.getInventory().getItemInMainHand();
+			other = player.getInventory().getItemInOffHand();
+		}
+		
 		if (!this.playerID.equals(player.getUniqueId())) {
 			return;
 		}
@@ -1736,7 +1759,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		LivingEntity target = (LivingEntity) e.getEntity();
 		
 		//our player just damaged something. who knows what. Don't matter
-		CombatEvent event = new CombatEvent(this, target, e.getFinalDamage());
+		CombatEvent event = new CombatEvent(this, target, weapon, other, e.getFinalDamage());
 		Bukkit.getPluginManager().callEvent(event);
 		
 		if (event.isMiss()) {

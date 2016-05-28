@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -103,10 +102,8 @@ public class SwordAndShieldSkill extends Skill implements Listener {
 	
 	@EventHandler
 	public void onCombat(CombatEvent e) {
-		Player p = e.getPlayer().getPlayer().getPlayer();
-		
-		if (!ForgeAction.Repairable.isRepairable(p.getInventory().getItemInMainHand().getType())
-				|| (p.getInventory().getItemInOffHand() == null || p.getInventory().getItemInOffHand().getType() != Material.SHIELD)) {
+		if (!ForgeAction.Repairable.isRepairable(e.getWeapon().getType())
+				|| (e.getOtherItem() == null || e.getOtherItem().getType() != Material.SHIELD)) {
 			return;
 		}
 		

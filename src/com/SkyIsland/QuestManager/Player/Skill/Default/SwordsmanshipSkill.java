@@ -115,7 +115,7 @@ public class SwordsmanshipSkill extends LogSkill implements Listener {
 	public void onCombat(CombatEvent e) {
 		Player p = e.getPlayer().getPlayer().getPlayer();
 		
-		if (!p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("sword")) {
+		if (!e.getWeapon().getType().name().toLowerCase().contains("sword")) {
 			Skill.setAttributeModifier(p.getAttribute(Attribute.GENERIC_ATTACK_SPEED), modifierName, 0);
 			return;
 		}
