@@ -3,23 +3,31 @@ package com.SkyIsland.QuestManager.Magic;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Effects.AuraEffect;
-import com.SkyIsland.QuestManager.Effects.RingEffect;
 import com.SkyIsland.QuestManager.NPC.QuestMonsterNPC;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
+import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
 
 public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Listener {
+	
+	public static final String deathMessage = ChatColor.DARK_GRAY + "Your summon has been dismissed" 
+	+ ChatColor.RESET;
 	
 	private UUID entityID;
 	
@@ -29,19 +37,14 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 	
 	private AuraEffect effect;
 	
-	private RingEffect ef2;
-	
 	public Summon(UUID casterID, Entity entity, int duration) {
 		this.entityID = entity.getUniqueId();
 		this.entity = entity;
 		this.casterID = casterID;
 		
-		this.effect = new AuraEffect(Effect.FLYING_GLYPH, 3, 1);
+		this.effect = new AuraEffect(Effect.FLYING_GLYPH, 2, 1);
 		effect.play(entity);
-		
-		this.ef2 = new RingEffect(Effect.FLAME, 3, 3, 1);
-		ef2.play(entity);
-		
+				
 		Alarm.getScheduler().schedule(this, 0, duration);
 		Bukkit.getPluginManager().registerEvents(this, 
 				QuestManagerPlugin.questManagerPlugin);
@@ -56,6 +59,20 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Unable to locate and remove "
 				+ "summon!");
 		} else {
+			
+			if (entity instanceof Tameable) {
+				Tameable me = (Tameable) entity;
+				AnimalTamer tamer = me.getOwner();
+				
+				if (tamer instanceof Player) {
+					QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+							(Player) tamer);
+					if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_PET_DISMISSAL)) {
+						((Player) tamer).sendMessage(deathMessage);
+					}
+				}
+			}
+			
 			e.getLocation().getChunk().load();
 			e.remove();
 			
@@ -63,7 +80,6 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		}
 		
 		effect.stop();
-		ef2.stop();
 		
 		QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
 	}
@@ -126,7 +142,6 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		entity.remove();
 		
 		effect.stop();
-		ef2.stop();
 	}
 	
 	public UUID getCasterID() {
@@ -138,10 +153,24 @@ public class Summon extends QuestMonsterNPC implements Alarmable<Integer>, Liste
 		if (e.getEntity().getUniqueId().equals(entityID)) {
 			//is summon entity
 			effect.stop();
-			ef2.stop();
 			
-			if (Alarm.getScheduler().unregister(this))
+			if (Alarm.getScheduler().unregister(this)) {
 				QuestManagerPlugin.questManagerPlugin.getSummonManager().unregisterSummon(this);
+			
+				if (entity instanceof Tameable) {
+					Tameable me = (Tameable) entity;
+					AnimalTamer tamer = me.getOwner();
+					
+					if (tamer instanceof Player) {
+						QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(
+								(Player) tamer);
+						if (qp.getOptions().getOption(PlayerOptions.Key.CHAT_PET_DISMISSAL)) {
+							((Player) tamer).sendMessage(deathMessage);
+						}
+					}
+				}
+			}
+			
 			return;
 		}
 		

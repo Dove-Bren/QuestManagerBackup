@@ -17,7 +17,8 @@ public class PlayerOptions implements ConfigurationSerializable {
 	
 	public enum Key {
 		CHAT_COMBAT_DAMAGE("chat.combat.damage"),
-		CHAT_COMBAT_RESULT("chat.combat.result");
+		CHAT_COMBAT_RESULT("chat.combat.result"),
+		CHAT_PET_DISMISSAL("chat.summon.dismissal");
 		
 		private String key;
 		
