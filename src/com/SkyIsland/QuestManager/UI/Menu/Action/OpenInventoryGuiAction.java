@@ -5,13 +5,13 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.UI.Menu.InventoryMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.GuiInventory;
 
-public class OpenShopAction implements MenuAction {
+public class OpenInventoryGuiAction implements MenuAction {
 	
 	private GuiInventory inv;
 	
 	private QuestPlayer player;
 	
-	public OpenShopAction(QuestPlayer player, GuiInventory inv) {
+	public OpenInventoryGuiAction(QuestPlayer player, GuiInventory inv) {
 		this.inv = inv;
 		this.player = player;
 	}

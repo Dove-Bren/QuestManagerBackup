@@ -74,6 +74,7 @@ import com.SkyIsland.QuestManager.Quest.History.HistoryEvent;
 import com.SkyIsland.QuestManager.Quest.Requirements.Requirement;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.ChatMenuOption;
+import com.SkyIsland.QuestManager.UI.Menu.InventoryMenu;
 import com.SkyIsland.QuestManager.UI.Menu.MultioptionChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Action.BootFromPartyAction;
@@ -82,6 +83,9 @@ import com.SkyIsland.QuestManager.UI.Menu.Action.ChangeTitleAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.PartyInviteAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ShowChatMenuAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.TogglePlayerOptionAction;
+import com.SkyIsland.QuestManager.UI.Menu.Inventory.BasicInventory;
+import com.SkyIsland.QuestManager.UI.Menu.Inventory.BasicInventoryItem;
 import com.SkyIsland.QuestManager.UI.Menu.Message.PlainMessage;
 import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
@@ -1229,6 +1233,26 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		menu.show(getPlayer().getPlayer());
 		
+	}
+	
+	public void showPlayerOptionMenu() {
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		
+		BasicInventory inv = new BasicInventory();
+		
+		for (PlayerOptions.Key key : PlayerOptions.Key.values()) {
+			inv.addInventoryItem(new BasicInventoryItem(key.getIcon(), key.getHint(), 
+					new TogglePlayerOptionAction(this, key)
+					));
+			
+		}
+		
+		InventoryMenu menu = new InventoryMenu(this, inv);
+		QuestManagerPlugin.questManagerPlugin.getInventoryGuiHandler().showMenu(
+				getPlayer().getPlayer(), menu);
 	}
 	
 	public void showSpellAlterMenu(ItemStack holder) {

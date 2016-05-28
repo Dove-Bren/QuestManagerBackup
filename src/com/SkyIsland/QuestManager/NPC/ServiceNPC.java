@@ -19,7 +19,7 @@ import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.BioptionChatMenu;
-import com.SkyIsland.QuestManager.UI.Menu.Action.OpenShopAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.OpenInventoryGuiAction;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.ServiceInventory;
 import com.SkyIsland.QuestManager.UI.Menu.Message.BioptionMessage;
 
@@ -163,7 +163,7 @@ public class ServiceNPC extends SimpleStaticBioptionNPC {
 		
 		
 		ChatMenu messageChat = new BioptionChatMenu(chat, 
-					new OpenShopAction(qp, inventory)
+					new OpenInventoryGuiAction(qp, inventory)
 		, null);			
 
 		messageChat.show(player);

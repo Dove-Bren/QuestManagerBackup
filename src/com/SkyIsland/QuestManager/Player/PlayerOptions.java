@@ -1,12 +1,16 @@
 package com.SkyIsland.QuestManager.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
+import com.google.common.collect.Lists;
 
 /**
  * Stores player options for easier access and modification
@@ -16,21 +20,30 @@ import com.SkyIsland.QuestManager.QuestManagerPlugin;
 public class PlayerOptions implements ConfigurationSerializable {
 	
 	public enum Key {
-		CHAT_COMBAT_DAMAGE("chat.combat.damage"),
-		CHAT_COMBAT_RESULT("chat.combat.result"),
-		CHAT_PET_DISMISSAL("chat.summon.dismissal");
+		CHAT_COMBAT_DAMAGE("chat.combat.damage", new ItemStack(Material.IRON_SWORD), 
+				Lists.newArrayList("Displays damage information in chat,", "like how much damage you did")),
+		CHAT_COMBAT_RESULT("chat.combat.result", new ItemStack(Material.BOOK), 
+				Lists.newArrayList("Shows spell failures, melee", "misses, etc in chat")),
+		CHAT_PET_DISMISSAL("chat.summon.dismissal", new ItemStack(Material.APPLE), 
+				Lists.newArrayList("Lets you know when your", "summon has died or expired"));
 		
 		private String key;
 		
 		private Boolean def;
 		
-		private Key(String key, Boolean def) {
+		private ItemStack icon;
+		
+		private List<String> hint;
+		
+		private Key(String key, ItemStack icon, List<String> hint, Boolean def) {
 			this.key = key;
 			this.def = def;
+			this.icon = icon;
+			this.hint = hint;
 		}
 		
-		private Key(String key) {
-			this(key, true);
+		private Key(String key, ItemStack icon, List<String> hint) {
+			this(key, icon, hint, true);
 		}
 		
 		public String getKey() {
@@ -44,6 +57,14 @@ public class PlayerOptions implements ConfigurationSerializable {
 		
 		public Boolean getDefault() {
 			return def;
+		}
+		
+		public ItemStack getIcon() {
+			return icon;
+		}
+		
+		public List<String> getHint() {
+			return hint;
 		}
 		
 	}

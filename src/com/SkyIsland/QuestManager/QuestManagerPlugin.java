@@ -680,6 +680,11 @@ public class QuestManagerPlugin extends JavaPlugin {
 				qp.showTitleMenu();
 				return true;
 			}
+			
+			if (args[0].equals("options")) {
+				qp.showPlayerOptionMenu();
+				return true;
+			}
 		}
 		
 		return false;
