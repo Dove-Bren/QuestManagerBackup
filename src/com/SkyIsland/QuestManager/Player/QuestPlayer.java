@@ -52,6 +52,7 @@ import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
+import com.SkyIsland.QuestManager.Magic.Imbuement;
 import com.SkyIsland.QuestManager.Magic.MagicRegenEvent;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
@@ -59,6 +60,7 @@ import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
@@ -174,6 +176,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	private Map<Material, String> storedSpells;
 	
+	private Map<Short, List<ImbuementEffect>> storedImbuements;
+	
 	private List<SpellPylon> pylons;
 	
 	private List<String> spells;
@@ -187,6 +191,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	private Party party;
 	
 	private CompassTrackable compassTarget;
+	
+	private Imbuement currentImbuement;
 	
 	private Map<Skill, Integer> skillLevels;
 	
@@ -243,6 +249,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		this.journalNotes = new LinkedList<String>();
 		this.spells = new LinkedList<>();
 		this.storedSpells = new HashMap<>();
+		this.storedImbuements = new HashMap<>();
 		this.pylons = new LinkedList<SpellPylon>();
 		this.skillLevels = new HashMap<>();
 		this.skillXP = new HashMap<>();
@@ -2074,7 +2081,14 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		//TODO
 		return null;
 	}
-	
+
+	public Imbuement getCurrentImbuement() {
+		return currentImbuement;
+	}
+
+	public void setCurrentImbuement(Imbuement currentImbuement) {
+		this.currentImbuement = currentImbuement;
+	}
 	
 	
 	

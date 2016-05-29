@@ -1,21 +1,19 @@
 package com.SkyIsland.QuestManager.Player.Skill.Default;
 
 import java.io.File;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
+import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
-import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
-import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
-import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent.MagicType;
 import com.google.common.collect.Lists;
 
 /**
@@ -70,7 +68,23 @@ public class ImbuementSkill extends Skill implements Listener {
 	 */
 	private double slashDiscountRate;
 	
-	private double castingTime;////////////////
+	/**
+	 * How much, per level, is taken off of the time to apply
+	 */
+	private double applyDiscountRate;
+	
+	/**
+	 * The base amount of time it takes to apply
+	 */
+	private double applyTime;
+	
+	private double applyCost;
+	
+	private double slashCost;
+	
+	private double slashAspectPenalty;
+	
+	private boolean enabled;
 	
 	public ImbuementSkill() {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
@@ -78,14 +92,18 @@ public class ImbuementSkill extends Skill implements Listener {
 		YamlConfiguration config = createConfig(configFile);
 		
 		if (!config.getBoolean("enabled", true)) {
+			enabled = false;
 			return;
 		}
+		enabled = true;
 		
 		this.startingLevel = config.getInt("startingLevel", 0);
-		this.levelRate = config.getDouble("bonusDamagePerLevel", 0.01);
-		this.difficultyRatio = config.getDouble("difficultyRatio", 1.0);
-		this.levelGrace = config.getInt("levelGrace", 5);
-		this.rateDecrease = config.getDouble("hitchancePenalty", 3.0);
+		this.applyTime = config.getDouble("applyTime", 5.0);
+		this.applyDiscountRate = config.getDouble("applyDiscountRate", 0.0075);
+		this.applyCost = config.getDouble("applyCost", 0.0);
+		this.slashCost = config.getDouble("slashBaseCost", 10.0);
+		this.slashAspectPenalty = config.getDouble("slashAspectPenalty", 1.25);
+		this.slashDiscountRate = config.getDouble("slashDiscountRate", 0.008);
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
@@ -94,12 +112,14 @@ public class ImbuementSkill extends Skill implements Listener {
 		if (!configFile.exists()) {
 			YamlWriter writer = new YamlWriter();
 			
-			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "true | false"))
+			writer.addLine("enabled", true, Lists.newArrayList("Whether or not this skill is allowed to be used.", "Note: To turn off imbueing altogether, see the imbument config", "in folder defaultly one up from here: imbuement.yml", "true | false"))
 				.addLine("startingLevel", 0, Lists.newArrayList("The level given to players who don't have this skill yet", "[int]"))
-				.addLine("bonusDamagePerLevel", 0.01, Lists.newArrayList("How many damage is added per level, as a % (0.5 is 50%)", "[double]"))
-				.addLine("difficultyRatio", 1.0, Lists.newArrayList("How many player spellwaving levels correspond to 1 difficulty level?", "In other words, at what spellweaving level should a player be able to cast a", "level x spell? n*x, where n is the ratio. If spellweaving goes from 0-100", "and difficulty goes from 0-100, then 1 is perfect. If spellweaving goes from 0-100 and difficulty", "goes from 0-10, a ratio of 10 is perfect. (10 spellweaving levels per difficulty)", "[double] "))
-				.addLine("levelGrace", 5, Lists.newArrayList("How many levels over the appropriate level (according to the", "difficulty ratio) a player must be to no longer make", "checks on spell failure", "[int]"))
-				.addLine("hitchancePenalty", 3.0, Lists.newArrayList("The penalty per level under apprentiveLevel given to the", "chance to hit. Penalty is", "(  ([calculated spell level] + levelGrace) * hitchancePenalty )", "[double]"));
+				.addLine("applyTime", 5.0, Lists.newArrayList("How long it takes for an imbuement to be applied and ready", "to use. This is in seconds. Rounded to nearest 0.05 seconds (tick)", "[double]"))
+				.addLine("applyDiscountRate", 0.0075, Lists.newArrayList("How much of the apply time is taken off per level", "[double] 0.01 is 1%"))
+				.addLine("applyCost", 0.0, Lists.newArrayList("Decides how much it is to apply an imbuement. If set to 0, the", "cost is calculated as the cost per slash. If greater then", "0, it is multiplied by the number of aspects to get the cost", "[double] 0, or some positive number"))
+				.addLine("slashBaseCost", 10.0, Lists.newArrayList("Base cost per mana cost per imbuement slash. This is multiplied", "by the potency of each effect per effect on the imbuement.", "so an imbuement at potency 0.45 would contribute (0.45*base) to the slash cost", "[double]"))
+				.addLine("slashAspectPenalty", 1.25, Lists.newArrayList("Penalty multiplied in after getting a total from the", "base cost calculation. Each effect beyond 1 results in", "the cost being multiplied by this number. In other words,", "total cost = (base total) * (penalty ^ (#effects - 1))", "[double] 1 is no penalty. 0 through 1 decrease cost. Neg unsupported"))
+				.addLine("slashDiscountRate", 0.008, Lists.newArrayList("The penalty per level under apprentiveLevel given to the", "chance to hit. Penalty is", "(  ([calculated spell level] + levelGrace) * hitchancePenalty )", "[double]"));
 			
 			try {
 				writer.save(configFile);
@@ -114,51 +134,66 @@ public class ImbuementSkill extends Skill implements Listener {
 		return config;
 	}
 	
-	@EventHandler
-	public void onMagicCast(MagicCastEvent e) {
-		if (e.getType() != MagicType.SPELLWEAVING) {
-			return;
+	/**
+	 * returns the configed apply time<br />
+	 * If not enabled, returns 0.
+	 * @return
+	 */
+	public double getApplyTime(QuestPlayer player) {
+		if (!enabled) {
+			return 0;
 		}
 		
-		QuestPlayer player = e.getPlayer();
+		double bonus = 1 - (player.getSkillLevel(this) * applyDiscountRate);
+		bonus = Math.max(0, bonus);
 		
-		if (e.getCastSpell() == null) {
-			return;
-		}
-		
-		int difficultylevel = (int) (e.getCastSpell().getDifficulty() * this.difficultyRatio);
-		int levelDifference = difficultylevel - player.getSkillLevel(this);
-		boolean causeMiss = false;
-		
-		if (levelDifference > -levelGrace) {
-			int chance = (int) (levelDifference * rateDecrease), 
-					roll = Skill.random.nextInt(100);
-			if (roll < chance) {
-				e.setFail(true);
-				causeMiss = true;
-			}
-			
-		}
-		
-		//give xp for the cast (success, fail)
-		this.perform(player, difficultylevel, causeMiss);
+		return applyTime * bonus;
 	}
 	
-	@EventHandler
-	public void onMagicHit(MagicApplyEvent e) {
+	/**
+	 * Calculates the apply cost from config variables.<br />
+	 * If not enabled, returns 0.
+	 * @return
+	 */
+	public double getApplyCost(QuestPlayer player, List<ImbuementEffect> effects) {
+		if (!enabled || effects == null || effects.isEmpty()) {
+			return 0;
+		}
 		
-		QuestPlayer player = e.getPlayer();
+		if (applyCost <= 0) {
+			return getSlashCost(player, effects);
+		}
 		
-		double adjustment = this.levelRate * player.getSkillLevel(this);
-		
-		e.setEfficiency(e.getEfficiency() + adjustment);
-		
-		//don't do perform, as that's handled on-cast
-		
-		
+		return applyCost * effects.size();
 	}
 	
-	public ImbuementSkill() {
+	/**
+	 * Calculates the per-slash cost from config variables. This includes calculating any player 
+	 * bonuses<br />
+	 * If not enabled, returns 0.
+	 * @return
+	 */
+	public double getSlashCost(QuestPlayer player, List<ImbuementEffect> effects) {
+		if (!enabled || effects == null || effects.isEmpty()) {
+			return 0;
+		}
 		
+		double total = 0;
+		
+		for (ImbuementEffect ef : effects) {
+			total += (ef.getPotency() * slashCost);
+		}
+		
+		total *= Math.pow(slashAspectPenalty, effects.size() - 1);
+		
+		int lvl = player.getSkillLevel(this);
+		double bonus = 1 - (lvl * slashDiscountRate);
+		
+		bonus = Math.max(0, bonus);
+		
+		return total * bonus;
 	}
+	
+	
+	
 }

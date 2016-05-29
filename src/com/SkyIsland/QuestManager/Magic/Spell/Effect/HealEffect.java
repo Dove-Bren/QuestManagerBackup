@@ -72,6 +72,8 @@ public class HealEffect extends SpellEffect implements ImbuementEffect {
 	
 	private double amount;
 	
+	private double potency;
+	
 	public HealEffect(double amount) {
 		this.amount = amount;
 	}
@@ -158,7 +160,19 @@ public class HealEffect extends SpellEffect implements ImbuementEffect {
 	
 	@Override
 	public HealEffect getCopyAtPotency(double potency) {
-		return new HealEffect(amount * potency);
+		HealEffect effect = new HealEffect(amount * potency);
+		effect.potency = potency;
+		return effect;
+	}
+
+	@Override
+	public double getPotency() {
+		return potency;
+	}
+
+	@Override
+	public void setPotency(double potency) {
+		this.potency = potency;
 	}
 	
 }

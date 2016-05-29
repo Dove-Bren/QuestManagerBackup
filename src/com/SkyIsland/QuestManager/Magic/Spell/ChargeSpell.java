@@ -205,6 +205,7 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 		effects.get(caster).play(caster.getEntity());
 		reminders.put(caster, new Reminder(this, caster, castingTime));
 		
+		caster.getEntity().getWorld().playSound(caster.getEntity().getLocation(), castSound, 1, 1);
 		
 	}
 	
