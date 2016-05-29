@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -94,9 +95,12 @@ public class TacticsSkill extends LogReducedSkill implements Listener {
 		return config;
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onCombat(CombatEvent e) {		
-				
+		if (e.isMiss()) {
+			return;
+		}
+		
 		int lvl = e.getPlayer().getSkillLevel(this);
 				
 		//just increase damage based on level

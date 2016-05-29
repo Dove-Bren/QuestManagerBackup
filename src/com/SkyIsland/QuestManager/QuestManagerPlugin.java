@@ -29,6 +29,7 @@ import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
 import com.SkyIsland.QuestManager.Loot.Loot;
+import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
@@ -164,6 +165,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private final static String spellWeavingFileName = "spellWeaving.yml";
 	
+	private final static String imbuementFileName = "imbuement.yml";
+	
 	public static final double version = 1.00;
 	
 	@Override
@@ -290,6 +293,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager = new SkillManager();
 		
 		registerDefaultSkills();
+		
+		new ImbuementHandler(new File(getDataFolder(), imbuementFileName));
 		
 		//preload Player data
 			File playerFile = new File(getDataFolder(), playerConfigFileName);

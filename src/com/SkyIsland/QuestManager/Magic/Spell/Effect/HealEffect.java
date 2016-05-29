@@ -20,7 +20,7 @@ import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
-public class HealEffect extends SpellEffect {
+public class HealEffect extends SpellEffect implements ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -81,7 +81,7 @@ public class HealEffect extends SpellEffect {
 		if (target instanceof LivingEntity) {
 			LivingEntity e = (LivingEntity) target;
 			
-			double curAmount = amount;
+			double curAmount = amount; //Potency update
 			if (cause instanceof QuestPlayer) {
 				QuestPlayer qp = (QuestPlayer) cause;
 				MagicApplyEvent aEvent = new MagicApplyEvent(qp, -curAmount); //negative cause healing
@@ -156,6 +156,9 @@ public class HealEffect extends SpellEffect {
 		;
 	}
 	
-	
+	@Override
+	public HealEffect getCopyAtPotency(double potency) {
+		return new HealEffect(amount * potency);
+	}
 	
 }

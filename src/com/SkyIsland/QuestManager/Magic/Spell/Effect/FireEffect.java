@@ -17,7 +17,7 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
  * @author Skyler
  *
  */
-public class FireEffect extends SpellEffect {
+public class FireEffect extends SpellEffect implements ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -77,7 +77,7 @@ public class FireEffect extends SpellEffect {
 	public void apply(Entity e, MagicUser cause) {
 		if (e instanceof LivingEntity) {
 			LivingEntity targ = (LivingEntity) e;
-			targ.setFireTicks(duration);
+			targ.setFireTicks(duration); 
 			targ.setMetadata(DamageEffect.damageMetaKey, new FixedMetadataValue
 					(QuestManagerPlugin.questManagerPlugin, true));
 			targ.damage(0.0, cause.getEntity());
@@ -93,6 +93,10 @@ public class FireEffect extends SpellEffect {
 		;
 	}
 	
+	@Override
+	public FireEffect getCopyAtPotency(double potency) {
+		return new FireEffect((int) (duration * potency));
+	}
 	
 	
 }
