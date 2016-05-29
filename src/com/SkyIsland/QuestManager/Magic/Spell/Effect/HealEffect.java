@@ -159,6 +159,7 @@ public class HealEffect extends ImbuementEffect {
 	@Override
 	public HealEffect getCopyAtPotency(double potency) {
 		HealEffect effect = new HealEffect(amount * potency);
+		effect.setDisplayName(getDisplayName());
 		return effect;
 	}
 	

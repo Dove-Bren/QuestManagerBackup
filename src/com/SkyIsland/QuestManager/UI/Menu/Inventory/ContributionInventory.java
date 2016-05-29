@@ -18,7 +18,7 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
  * @author Skyler
  *
  */
-public class ContributionInventory extends GuiInventory {
+public class ContributionInventory extends ReturnGuiInventory {
 	
 //	private static final class ContributionAction implements MenuAction {
 //
@@ -197,5 +197,15 @@ public class ContributionInventory extends GuiInventory {
 		for (int i = 0; i < maxItems; i++) {
 			inv.setItem(i, items.get(i));
 		}
+	}
+
+	@Override
+	public ItemStack[] getResult() {
+		ItemStack[] ret = new ItemStack[maxItems];
+		for (int i = 0; i < maxItems; i++) {
+			ret[i] = items.get(i);
+		}
+		
+		return ret;
 	}
 }

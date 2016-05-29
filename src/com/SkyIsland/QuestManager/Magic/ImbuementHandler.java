@@ -73,6 +73,7 @@ public class ImbuementHandler {
 			for (String key : sex.getKeys(false)) {
 				try {
 					effectMap.put(key, (ImbuementEffect) sex.get(key));
+					effectMap.get(key).setDisplayName(YamlWriter.toStandardFormat(key));
 				} catch (ClassCastException e) {
 					QuestManagerPlugin.questManagerPlugin.getLogger()
 						.warning("Failed to register effect " + key + " due to a bad cast");

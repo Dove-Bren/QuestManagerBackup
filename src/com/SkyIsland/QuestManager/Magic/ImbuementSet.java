@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
 
@@ -15,6 +16,39 @@ import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
  */
 public class ImbuementSet implements ConfigurationSerializable {
 
+	/**
+	 * Registers this class as configuration serializable with all defined 
+	 * {@link aliases aliases}
+	 */
+	public static void registerWithAliases() {
+		for (aliases alias : aliases.values()) {
+			ConfigurationSerialization.registerClass(ImbuementSet.class, alias.getAlias());
+		}
+	}
+	
+	/**
+	 * Registers this class as configuration serializable with only the default alias
+	 */
+	public static void registerWithoutAliases() {
+		ConfigurationSerialization.registerClass(ImbuementSet.class);
+	}
+	
+
+	private enum aliases {
+		DEFAULT(ImbuementSet.class.getName()),
+		SHORT("ImbuementSet");
+		
+		private String alias;
+		
+		private aliases(String alias) {
+			this.alias = alias;
+		}
+		
+		public String getAlias() {
+			return alias;
+		}
+	}
+	
 	private Map<ImbuementEffect, Double> effects;
 	
 	public ImbuementSet(Map<ImbuementEffect, Double> effects) {

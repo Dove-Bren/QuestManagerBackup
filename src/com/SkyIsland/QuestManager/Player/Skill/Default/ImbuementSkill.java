@@ -147,7 +147,7 @@ public class ImbuementSkill extends Skill implements Listener {
 		
 		double bonus = 1 - (player.getSkillLevel(this) * applyDiscountRate);
 		bonus = Math.max(0, bonus);
-		
+
 		return applyTime * bonus;
 	}
 	

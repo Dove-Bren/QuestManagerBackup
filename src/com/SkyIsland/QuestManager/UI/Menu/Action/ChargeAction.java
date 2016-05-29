@@ -91,6 +91,10 @@ public class ChargeAction implements Listener, Alarmable<Integer> {
 			return;
 		}
 		
+		if (e.getTo().toVector().equals(e.getPlayer().getLocation().toVector())) {
+			return; //just turned head?
+		}
+		
 		//a current charge has moved, and is not allowed to
 		e.getPlayer().sendMessage(disturbedMessage);
 		doneCasting();

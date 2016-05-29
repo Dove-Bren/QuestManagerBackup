@@ -30,6 +30,7 @@ import com.SkyIsland.QuestManager.Fanciful.MessagePart;
 import com.SkyIsland.QuestManager.Fanciful.TextualComponent;
 import com.SkyIsland.QuestManager.Loot.Loot;
 import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
+import com.SkyIsland.QuestManager.Magic.ImbuementSet;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
 import com.SkyIsland.QuestManager.Magic.Spell.ChargeSpell;
@@ -74,6 +75,7 @@ import com.SkyIsland.QuestManager.Player.Skill.Default.ArcherySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.AxeSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.BowSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.ConcentrationSkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.ImbuementSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagicWeaverSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SorcerySkill;
@@ -288,6 +290,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		ConfigurationSerialization.registerClass(PlayerOptions.class);
 		BankStorageManager.registerSerialization();
 		BankNPC.registerWithAliases();
+		ImbuementSet.registerWithAliases();
 
 		chatGuiHandler = new ChatGuiHandler(this, config.getMenuVerbose());
 		inventoryGuiHandler = new InventoryGuiHandler();
@@ -295,6 +298,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 
 		
 		skillManager = new SkillManager();
+
+		imbuementHandler = new ImbuementHandler(new File(getDataFolder(), imbuementFileName));
 		
 		registerDefaultSkills();
 		
@@ -356,7 +361,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 		spellWeavingManager = new SpellWeavingManager(new File(getDataFolder(), spellWeavingFileName));
 		new SpellWeavingInvoker();
 		
-		imbuementHandler = new ImbuementHandler(new File(getDataFolder(), imbuementFileName));
 		
 //		SpellWeavingSpell spell = new SpellWeavingSpell("Combusion", 0, 15, "Catches stuff on fire");
 //		spell.addSpellEffect(new FireEffect(10));
@@ -431,6 +435,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager.registerSkill(new ArcherySkill());
 		skillManager.registerSkill(new SorcerySkill());
 		skillManager.registerSkill(new ConcentrationSkill());
+		skillManager.registerSkill(new ImbuementSkill());
 	}
 	
 	

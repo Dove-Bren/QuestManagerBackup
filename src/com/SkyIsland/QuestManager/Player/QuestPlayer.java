@@ -183,7 +183,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	private Map<Material, String> storedSpells;
 	
-	private Map<Short, ImbuementSet> storedImbuements;
+	private Map<Integer, ImbuementSet> storedImbuements;
 	
 	private List<SpellPylon> pylons;
 	
@@ -660,8 +660,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		}
 		map.put("storedspells", stored);
 		
-		Map<Short, ImbuementSet> imbs = new TreeMap<>();
-		for (short data : storedImbuements.keySet()) {
+		Map<Integer, ImbuementSet> imbs = new TreeMap<>();
+		for (Integer data : storedImbuements.keySet()) {
 			imbs.put(data, storedImbuements.get(data));
 		}
 		map.put("storedimbuements", imbs);
@@ -795,7 +795,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 
 		
 		if (map.containsKey("storedimbuements")) {
-			qp.storedImbuements = (Map<Short, ImbuementSet>) map.get("storedimbuements");
+			qp.storedImbuements = (Map<Integer, ImbuementSet>) map.get("storedimbuements");
 		}
 		
 		////////////////////////////////
@@ -1007,7 +1007,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 				return;
 			}
 			
-			double applyTime = (skill == null ? 0.0 : skill.getApplyTime(this));
+			double applyTime = (skill == null ? 1.0 : skill.getApplyTime(this));
 			double slashCost = (skill == null ? 0.0 : skill.getSlashCost(this, set));
 
 			Imbuement imb = new Imbuement(this, set.getEffects(), slashCost);
@@ -1405,7 +1405,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	}
 	
 	public void performImbuement(ItemStack holder, ImbuementSet imbuement) {
-		this.storedImbuements.put(holder.getDurability(), imbuement);
+		this.storedImbuements.put(Short.toUnsignedInt(holder.getDurability()), imbuement);
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -2165,11 +2165,14 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	}
 
 	public void setCurrentImbuement(Imbuement currentImbuement) {
+		if (this.currentImbuement != null) {
+			currentImbuement.cancel();
+		}
 		this.currentImbuement = currentImbuement;
 	}
 	
 	public ImbuementSet getStoredImbuement(short data) {
-		return storedImbuements.get(data);
+		return storedImbuements.get(Short.toUnsignedInt(data));
 	}
 	
 }

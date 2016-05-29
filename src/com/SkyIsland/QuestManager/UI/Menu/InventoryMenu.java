@@ -27,7 +27,7 @@ public class InventoryMenu implements Listener {
 	/**
 	 * The background collection of the inventory
 	 */
-	private GuiInventory gui;
+	protected GuiInventory gui;
 	/**
 	 * The QuestPlayer involved with this menu
 	 */

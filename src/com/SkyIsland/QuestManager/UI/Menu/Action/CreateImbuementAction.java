@@ -1,6 +1,8 @@
 package com.SkyIsland.QuestManager.UI.Menu.Action;
 
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -21,7 +23,7 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
  * @author Skyler
  *
  */
-public class CreateImbuementAction implements MenuAction {
+public class CreateImbuementAction implements MenuAction, FillableInventoryAction {
 
 	private QuestPlayer player;
 	
@@ -86,12 +88,27 @@ public class CreateImbuementAction implements MenuAction {
 		p.sendMessage(successMessage);
 		for (Entry<ImbuementEffect, Double> effect : set.getEffectMap().entrySet()) {
 			p.sendMessage(ChatColor.AQUA + "" + ((int) (effect.getValue() * 100)) + "%"
-					+ ChatColor.BLACK + "- " + ChatColor.GOLD
+					+ ChatColor.BLACK + " - " + ChatColor.GOLD
 					+ effect.getKey().getDisplayName()); 
 		}
 		
 		
 		
+	}
+
+	@Override
+	public void provideItems(ItemStack[] objects) {
+		//throw into set, eliminate dups
+		Set<Material> types = new HashSet<>();
+		for (ItemStack item : objects) {
+			if (item == null) {
+				continue;
+			}
+			types.add(item.getType());
+		}
+		
+		Material[] ret = new Material[types.size()];
+		setComponentTypes(types.toArray(ret));
 	}
 
 }

@@ -96,6 +96,7 @@ public class FireEffect extends ImbuementEffect {
 	@Override
 	public FireEffect getCopyAtPotency(double potency) {
 		FireEffect effect = new FireEffect((int) (duration * potency));
+		effect.setDisplayName(getDisplayName());
 		return effect;
 	}
 	

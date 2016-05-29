@@ -6,19 +6,20 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.UI.Menu.Action.FillableInventoryAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.MenuAction;
-import com.SkyIsland.QuestManager.UI.Menu.Inventory.GuiInventory;
+import com.SkyIsland.QuestManager.UI.Menu.Inventory.ReturnGuiInventory;
 
 /**
  * A menu implemented as an inventory that performs some action when closed
  * @author Skyler
  *
  */
-public class ActiveInventoryMenu extends InventoryMenu {
+public class ActiveInventoryMenu extends InventoryMenu implements RespondableMenu {
 	
 	private MenuAction action;
 	
-	public ActiveInventoryMenu(QuestPlayer player, GuiInventory inv, MenuAction closeAction) {
+	public ActiveInventoryMenu(QuestPlayer player, ReturnGuiInventory inv, MenuAction closeAction) {
 		super(player, inv);
 		this.action = closeAction;		
 	}
@@ -37,6 +38,11 @@ public class ActiveInventoryMenu extends InventoryMenu {
 		}
 		
 		super.onInventoryClose(e);
+		
+		if (action instanceof FillableInventoryAction) {
+			((FillableInventoryAction) action).provideItems(((ReturnGuiInventory) this.gui).getResult());
+		}
+		
 		action.onAction();
 		
 	}
