@@ -2169,6 +2169,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			currentImbuement.cancel();
 		}
 		this.currentImbuement = currentImbuement;
+		currentImbuement.start();
 	}
 	
 	public ImbuementSet getStoredImbuement(short data) {
