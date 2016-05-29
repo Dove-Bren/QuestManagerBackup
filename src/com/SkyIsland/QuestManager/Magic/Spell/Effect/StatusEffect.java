@@ -27,7 +27,7 @@ import com.SkyIsland.QuestManager.Player.QuestPlayer;
  * @author Skyler
  *
  */
-public class StatusEffect extends SpellEffect {
+public class StatusEffect extends ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -289,6 +289,15 @@ public class StatusEffect extends SpellEffect {
 		}
 				
 		return false;
+	}
+
+	@Override
+	public ImbuementEffect getCopyAtPotency(double potency) {
+		PotionEffect ef = this.effect;
+		ef = new PotionEffect(ef.getType(), ef.getAmplifier(), (int) (ef.getDuration() * potency));
+		StatusEffect effect = new StatusEffect(ef);
+		effect.setDisplayName(getDisplayName());
+		return effect;		
 	}
 	
 	

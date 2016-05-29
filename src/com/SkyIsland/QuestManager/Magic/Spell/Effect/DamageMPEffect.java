@@ -17,7 +17,7 @@ import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
-public class DamageMPEffect extends SpellEffect {
+public class DamageMPEffect extends ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -141,7 +141,12 @@ public class DamageMPEffect extends SpellEffect {
 		//do nothing 
 		;
 	}
-	
-	
+
+	@Override
+	public ImbuementEffect getCopyAtPotency(double potency) {
+		DamageMPEffect effect = new DamageMPEffect(damage * potency);
+		effect.setDisplayName(getDisplayName());
+		return effect;		
+	}	
 	
 }

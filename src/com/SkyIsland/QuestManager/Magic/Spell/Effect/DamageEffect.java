@@ -19,7 +19,7 @@ import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
-public class DamageEffect extends SpellEffect {
+public class DamageEffect extends ImbuementEffect {
 	
 	public static final String damageMetaKey = "QM_magic_damage";
 	
@@ -123,6 +123,13 @@ public class DamageEffect extends SpellEffect {
 		//can't damage a location
 		//do nothing 
 		;
+	}
+
+	@Override
+	public ImbuementEffect getCopyAtPotency(double potency) {
+		DamageEffect effect = new DamageEffect(damage * potency);
+		effect.setDisplayName(getDisplayName());
+		return effect;		
 	}
 	
 	

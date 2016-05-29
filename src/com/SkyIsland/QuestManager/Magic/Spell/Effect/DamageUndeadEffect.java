@@ -18,7 +18,7 @@ import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
-public class DamageUndeadEffect extends SpellEffect {
+public class DamageUndeadEffect extends ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -129,7 +129,12 @@ public class DamageUndeadEffect extends SpellEffect {
 		//do nothing 
 		;
 	}
-	
-	
+
+	@Override
+	public ImbuementEffect getCopyAtPotency(double potency) {
+		DamageUndeadEffect effect = new DamageUndeadEffect(damage * potency);
+		effect.setDisplayName(getDisplayName());
+		return effect;		
+	}	
 	
 }
