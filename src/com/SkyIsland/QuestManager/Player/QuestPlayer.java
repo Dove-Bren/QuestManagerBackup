@@ -53,6 +53,7 @@ import com.SkyIsland.QuestManager.Configuration.Utils.LocationState;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Magic.Imbuement;
+import com.SkyIsland.QuestManager.Magic.ImbuementSet;
 import com.SkyIsland.QuestManager.Magic.MagicRegenEvent;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
@@ -60,11 +61,12 @@ import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
-import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.ImbuementSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 import com.SkyIsland.QuestManager.Player.Utils.Compass;
 import com.SkyIsland.QuestManager.Player.Utils.CompassTrackable;
+import com.SkyIsland.QuestManager.Player.Utils.ImbuementHolder;
 import com.SkyIsland.QuestManager.Player.Utils.QuestJournal;
 import com.SkyIsland.QuestManager.Player.Utils.QuestLog;
 import com.SkyIsland.QuestManager.Player.Utils.SpellHolder;
@@ -74,6 +76,7 @@ import com.SkyIsland.QuestManager.Quest.History.History;
 import com.SkyIsland.QuestManager.Quest.History.HistoryEvent;
 import com.SkyIsland.QuestManager.Quest.Requirements.Requirement;
 import com.SkyIsland.QuestManager.UI.ChatMenu;
+import com.SkyIsland.QuestManager.UI.Menu.ActiveInventoryMenu;
 import com.SkyIsland.QuestManager.UI.Menu.ChatMenuOption;
 import com.SkyIsland.QuestManager.UI.Menu.InventoryMenu;
 import com.SkyIsland.QuestManager.UI.Menu.MultioptionChatMenu;
@@ -81,12 +84,16 @@ import com.SkyIsland.QuestManager.UI.Menu.SimpleChatMenu;
 import com.SkyIsland.QuestManager.UI.Menu.Action.BootFromPartyAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ChangeSpellHolderAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ChangeTitleAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.ChargeAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.CreateImbuementAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ForgeAction;
+import com.SkyIsland.QuestManager.UI.Menu.Action.ImbueAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.PartyInviteAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.ShowChatMenuAction;
 import com.SkyIsland.QuestManager.UI.Menu.Action.TogglePlayerOptionAction;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.BasicInventory;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.BasicInventoryItem;
+import com.SkyIsland.QuestManager.UI.Menu.Inventory.ContributionInventory;
 import com.SkyIsland.QuestManager.UI.Menu.Message.PlainMessage;
 import com.onarandombox.MultiversePortals.MultiversePortals;
 import com.onarandombox.MultiversePortals.PortalPlayerSession;
@@ -176,7 +183,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	
 	private Map<Material, String> storedSpells;
 	
-	private Map<Short, List<ImbuementEffect>> storedImbuements;
+	private Map<Short, ImbuementSet> storedImbuements;
 	
 	private List<SpellPylon> pylons;
 	
@@ -653,6 +660,12 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		}
 		map.put("storedspells", stored);
 		
+		Map<Short, ImbuementSet> imbs = new TreeMap<>();
+		for (short data : storedImbuements.keySet()) {
+			imbs.put(data, storedImbuements.get(data));
+		}
+		map.put("storedimbuements", imbs);
+		
 		Map<String, Map<String, Object>> skillMap = new TreeMap<>();
 		if (!skillLevels.isEmpty()) {
 			for (Skill skill : skillLevels.keySet()) {
@@ -777,6 +790,12 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		if (map.containsKey("options")) {
 			qp.options = (PlayerOptions) map.get("options");
+		}
+		
+
+		
+		if (map.containsKey("storedimbuements")) {
+			qp.storedImbuements = (Map<Short, ImbuementSet>) map.get("storedimbuements");
 		}
 		
 		////////////////////////////////
@@ -954,6 +973,50 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			}
 			
 			castSpell(SpellHolder.getSpell(this, e.getItem()));
+			e.setCancelled(true);
+			return;
+		}
+		
+		if (ImbuementHolder.ImbuementHolderDefinition.isHolder(e.getItem())) {
+			if (e.getClickedBlock() != null)
+			if (ImbuementHolder.ImbuementAlterTableDefinition.isTable(e.getClickedBlock())) {
+				if (QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getMagicEnabled())
+				showImbuementAlterMenu(e.getItem());
+				e.setCancelled(true);
+				return;
+			}
+			
+			/*
+			 * Calculate apply cost and time.
+			 * Calculate slash cost
+			 * Make imbuement
+			 * start sharging
+			 */
+			ImbuementSkill skill = QuestManagerPlugin.questManagerPlugin.getImbuementHandler().getImbuementSkill();
+			ImbuementSet set = ImbuementHolder.getImbuement(this, e.getItem());
+			
+			if (set == null) {
+				return;
+			}
+			
+			double applyCost = (skill == null ? 0.0 : skill.getApplyCost(this, set));
+			
+			if (!getPlayer().getPlayer().getGameMode().equals(GameMode.CREATIVE) && 
+					mp < applyCost) {
+				getPlayer().getPlayer().playSound(getPlayer().getPlayer().getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);
+				return;
+			}
+			
+			double applyTime = (skill == null ? 0.0 : skill.getApplyTime(this));
+			double slashCost = (skill == null ? 0.0 : skill.getSlashCost(this, set));
+
+			Imbuement imb = new Imbuement(this, set.getEffects(), slashCost);
+			
+			ImbueAction action = new ImbueAction(this, imb);
+			new ChargeAction(action, this, false, false, applyTime);
+			
+			this.addMP(-applyCost);
+			
 			e.setCancelled(true);
 			return;
 		}
@@ -1328,6 +1391,21 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		menu.show(getPlayer().getPlayer());
 				
+	}
+	
+	public void showImbuementAlterMenu(ItemStack holder) {
+		if (!getPlayer().isOnline()) {
+			return;
+		}
+		
+		InventoryMenu menu = new ActiveInventoryMenu(
+				this, new ContributionInventory(getPlayer().getPlayer(), 5, null, "Imbuement Table"),
+				new CreateImbuementAction(this, holder));
+		QuestManagerPlugin.questManagerPlugin.getInventoryGuiHandler().showMenu(getPlayer().getPlayer(), menu);
+	}
+	
+	public void performImbuement(ItemStack holder, ImbuementSet imbuement) {
+		this.storedImbuements.put(holder.getDurability(), imbuement);
 	}
 	
 	public OfflinePlayer getPlayer() {
@@ -2090,6 +2168,8 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		this.currentImbuement = currentImbuement;
 	}
 	
-	
+	public ImbuementSet getStoredImbuement(short data) {
+		return storedImbuements.get(data);
+	}
 	
 }

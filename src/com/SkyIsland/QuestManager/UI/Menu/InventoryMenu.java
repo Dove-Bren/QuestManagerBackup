@@ -22,7 +22,7 @@ public class InventoryMenu implements Listener {
 	/**
 	 * The inventory item to hold onto an manipulate
 	 */
-	private Inventory inventory;
+	protected Inventory inventory;
 	
 	/**
 	 * The background collection of the inventory
@@ -31,7 +31,7 @@ public class InventoryMenu implements Listener {
 	/**
 	 * The QuestPlayer involved with this menu
 	 */
-	private QuestPlayer player;
+	protected QuestPlayer player;
 	
 	public InventoryMenu(QuestPlayer player, GuiInventory inv) {
 		this.player = player;

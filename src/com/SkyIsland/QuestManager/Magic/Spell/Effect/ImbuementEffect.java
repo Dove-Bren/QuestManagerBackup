@@ -1,9 +1,5 @@
 package com.SkyIsland.QuestManager.Magic.Spell.Effect;
 
-import org.bukkit.entity.Entity;
-
-import com.SkyIsland.QuestManager.Magic.MagicUser;
-
 /**
  * This effect can be used for imbuement.<br />
  * Compatable effects are able to be scaled up or down on a whim -- as is expected for combining
@@ -12,20 +8,9 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
  * @author Skyler
  *
  */
-public interface ImbuementEffect {
+public abstract class ImbuementEffect extends SpellEffect {
 
-	/**
-	 * Returns the current set potency of the effect. A value of 1.0 determines a full effect (100%). Values
-	 * over 1 indicate a super-charged effect. 
-	 * @return
-	 */
-	public double getPotency();
-	
-	/**
-	 * Sets the potency. A value of 1.0 determines a full effect (100%). Values
-	 * over 1 indicate a super-charged effect. 
-	 */
-	public void setPotency(double potency);
+	private String displayName;
 	
 	/**
 	 * Returns a 'copy' of this effect with parameters tweaked to be at <i>potency</i> potency.<br />
@@ -34,8 +19,14 @@ public interface ImbuementEffect {
 	 * @param potency
 	 * @return
 	 */
-	public ImbuementEffect getCopyAtPotency(double potency);
+	public abstract ImbuementEffect getCopyAtPotency(double potency);
 	
-	public abstract void apply(Entity e, MagicUser cause);
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+	
+	public String getDisplayName() {
+		return displayName;
+	}
 	
 }

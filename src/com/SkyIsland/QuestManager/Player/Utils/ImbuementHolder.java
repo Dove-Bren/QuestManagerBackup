@@ -1,19 +1,16 @@
 package com.SkyIsland.QuestManager.Player.Utils;
 
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import com.SkyIsland.QuestManager.QuestManagerPlugin;
-import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
+import com.SkyIsland.QuestManager.Magic.ImbuementSet;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 
 public class ImbuementHolder {
 
-	public static class SpellHolderDefinition {
+	public static class ImbuementHolderDefinition {
 		
 		private static String displayName = "Imbuement Charm";
 		
@@ -38,20 +35,20 @@ public class ImbuementHolder {
 		}
 
 		public static void setDisplayName(String displayName) {
-			SpellHolderDefinition.displayName = displayName;
+			ImbuementHolderDefinition.displayName = displayName;
 		}
 
 		public static void setEnchant(Enchantment enchant) {
-			SpellHolderDefinition.enchant = enchant;
+			ImbuementHolderDefinition.enchant = enchant;
 		}
 		
 		public static void setType(Material type) {
-			SpellHolderDefinition.type = type;
+			ImbuementHolderDefinition.type = type;
 		}
 		
 	}
 	
-	public static class SpellAlterTableDefinition {
+	public static class ImbuementAlterTableDefinition {
 		
 		private static Material blockType = Material.ENDER_PORTAL_FRAME;
 		
@@ -64,7 +61,7 @@ public class ImbuementHolder {
 		}
 
 		public static void setBlockType(Material blockType) {
-			SpellAlterTableDefinition.blockType = blockType;
+			ImbuementAlterTableDefinition.blockType = blockType;
 		}
 		
 	}
@@ -76,13 +73,12 @@ public class ImbuementHolder {
 	 * @param holder 
 	 * @return The imbuement that is associated with the holder, or null if there is none
 	 */
-	public static List<ImbuementEffect> getImbuement(QuestPlayer player, ItemStack holder) {
+	public static ImbuementSet getImbuement(QuestPlayer player, ItemStack holder) {
 		if (player == null || holder == null) {
 			return null;
 		}
 		
-		return QuestManagerPlugin.questManagerPlugin.getSpellManager().getSpell
-			(player.getStoredImbuements().get(holder.getType()));
+		return player.getStoredImbuement(holder.getDurability());
 		
 	}
 	

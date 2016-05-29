@@ -20,7 +20,7 @@ import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicApplyEvent;
 
-public class HealEffect extends SpellEffect implements ImbuementEffect {
+public class HealEffect extends ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -71,8 +71,6 @@ public class HealEffect extends SpellEffect implements ImbuementEffect {
 	}
 	
 	private double amount;
-	
-	private double potency;
 	
 	public HealEffect(double amount) {
 		this.amount = amount;
@@ -161,18 +159,7 @@ public class HealEffect extends SpellEffect implements ImbuementEffect {
 	@Override
 	public HealEffect getCopyAtPotency(double potency) {
 		HealEffect effect = new HealEffect(amount * potency);
-		effect.potency = potency;
 		return effect;
-	}
-
-	@Override
-	public double getPotency() {
-		return potency;
-	}
-
-	@Override
-	public void setPotency(double potency) {
-		this.potency = potency;
 	}
 	
 }

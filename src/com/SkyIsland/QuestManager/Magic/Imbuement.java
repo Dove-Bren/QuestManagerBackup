@@ -1,6 +1,6 @@
 package com.SkyIsland.QuestManager.Magic;
 
-import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -25,7 +25,7 @@ public class Imbuement implements Listener {
 	
 	public static final Sound defaultSlashSound = Sound.BLOCK_FENCE_GATE_CLOSE;
 	
-	private List<ImbuementEffect> effects;
+	private Set<ImbuementEffect> effects;
 	
 	private QuestPlayer player;
 	
@@ -33,7 +33,7 @@ public class Imbuement implements Listener {
 	
 	private double cost;
 	
-	public Imbuement(QuestPlayer player, List<ImbuementEffect> effects, double cost, Sound hitSound) {
+	public Imbuement(QuestPlayer player, Set<ImbuementEffect> effects, double cost, Sound hitSound) {
 		if (effects == null || player == null || effects.isEmpty()) {
 			return;
 		}
@@ -46,7 +46,7 @@ public class Imbuement implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
 	}
 	
-	public Imbuement(QuestPlayer player, List<ImbuementEffect> effects, double cost) {
+	public Imbuement(QuestPlayer player, Set<ImbuementEffect> effects, double cost) {
 		this(player, effects, cost, defaultSlashSound);
 	}
 	

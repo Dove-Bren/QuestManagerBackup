@@ -1,7 +1,6 @@
 package com.SkyIsland.QuestManager.Player.Skill.Default;
 
 import java.io.File;
-import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +10,7 @@ import org.bukkit.event.Listener;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
-import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
+import com.SkyIsland.QuestManager.Magic.ImbuementSet;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.google.common.collect.Lists;
@@ -90,6 +89,7 @@ public class ImbuementSkill extends Skill implements Listener {
 		File configFile = new File(QuestManagerPlugin.questManagerPlugin.getDataFolder(), 
 				QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillPath() + configName);
 		YamlConfiguration config = createConfig(configFile);
+
 		
 		if (!config.getBoolean("enabled", true)) {
 			enabled = false;
@@ -106,6 +106,7 @@ public class ImbuementSkill extends Skill implements Listener {
 		this.slashDiscountRate = config.getDouble("slashDiscountRate", 0.008);
 		
 		Bukkit.getPluginManager().registerEvents(this, QuestManagerPlugin.questManagerPlugin);
+		QuestManagerPlugin.questManagerPlugin.getImbuementHandler().setImbuementSkill(this);
 	}
 	
 	private YamlConfiguration createConfig(File configFile) {
@@ -155,8 +156,8 @@ public class ImbuementSkill extends Skill implements Listener {
 	 * If not enabled, returns 0.
 	 * @return
 	 */
-	public double getApplyCost(QuestPlayer player, List<ImbuementEffect> effects) {
-		if (!enabled || effects == null || effects.isEmpty()) {
+	public double getApplyCost(QuestPlayer player, ImbuementSet effects) {
+		if (!enabled || effects == null || effects.getEffectMap().isEmpty()) {
 			return 0;
 		}
 		
@@ -164,7 +165,7 @@ public class ImbuementSkill extends Skill implements Listener {
 			return getSlashCost(player, effects);
 		}
 		
-		return applyCost * effects.size();
+		return applyCost * effects.getEffectMap().size();
 	}
 	
 	/**
@@ -173,18 +174,18 @@ public class ImbuementSkill extends Skill implements Listener {
 	 * If not enabled, returns 0.
 	 * @return
 	 */
-	public double getSlashCost(QuestPlayer player, List<ImbuementEffect> effects) {
-		if (!enabled || effects == null || effects.isEmpty()) {
+	public double getSlashCost(QuestPlayer player, ImbuementSet effects) {
+		if (!enabled || effects == null || effects.getEffectMap().isEmpty()) {
 			return 0;
 		}
 		
 		double total = 0;
 		
-		for (ImbuementEffect ef : effects) {
-			total += (ef.getPotency() * slashCost);
+		for (Double potency : effects.getEffectMap().values()) {
+			total += (potency * slashCost);
 		}
 		
-		total *= Math.pow(slashAspectPenalty, effects.size() - 1);
+		total *= Math.pow(slashAspectPenalty, effects.getEffectMap().size() - 1);
 		
 		int lvl = player.getSkillLevel(this);
 		double bonus = 1 - (lvl * slashDiscountRate);

@@ -17,7 +17,7 @@ import com.SkyIsland.QuestManager.Magic.MagicUser;
  * @author Skyler
  *
  */
-public class FireEffect extends SpellEffect implements ImbuementEffect {
+public class FireEffect extends ImbuementEffect {
 	
 	/**
 	 * Registers this class as configuration serializable with all defined 
@@ -69,8 +69,6 @@ public class FireEffect extends SpellEffect implements ImbuementEffect {
 	
 	private int duration;
 	
-	private double potency;
-	
 	public FireEffect(int fireDuration) {
 		this.duration = fireDuration;
 	}
@@ -98,18 +96,7 @@ public class FireEffect extends SpellEffect implements ImbuementEffect {
 	@Override
 	public FireEffect getCopyAtPotency(double potency) {
 		FireEffect effect = new FireEffect((int) (duration * potency));
-		effect.potency = potency;
 		return effect;
-	}
-
-	@Override
-	public double getPotency() {
-		return potency;
-	}
-
-	@Override
-	public void setPotency(double potency) {
-		this.potency = potency;
 	}
 	
 	

@@ -158,6 +158,10 @@ public class ImbuementHandler {
 	public void setImbuementSkill(ImbuementSkill skill) {
 		this.skillLink = skill;
 	}
+	
+	public ImbuementSkill getImbuementSkill() {
+		return skillLink;
+	}
 
 	public double getMinimumPotency() {
 		return minimumPotency;
@@ -208,14 +212,14 @@ public class ImbuementHandler {
 	 * @param types
 	 * @return
 	 */
-	public List<ImbuementEffect> getCombinedEffects(Material ... types) {
+	public ImbuementSet getCombinedEffects(Material ... types) {
 		return getCombinedEffects(0.0, types);
 	}
 	
-	public List<ImbuementEffect> getCombinedEffects(double bonusPotency, Material ... types) {
+	public ImbuementSet getCombinedEffects(double bonusPotency, Material ... types) {
 		Set<Material> applicable = getApplicableMaterials(types);
 		if (applicable.isEmpty()) {
-			return new ArrayList<>(1);
+			return new ImbuementSet(new HashMap<>());
 		}
 		
 		Map<String, Double> totals = new HashMap<>(applicable.size());
@@ -234,17 +238,18 @@ public class ImbuementHandler {
 		}
 		
 		//went thorugh and total'ed each up. Now create effects, return
-		List<ImbuementEffect> effects = new ArrayList<>(applicable.size());
+		//List<ImbuementEffect> effects = new ArrayList<>(applicable.size());
+		Map<ImbuementEffect, Double> effects = new HashMap<>();
 		
 		for (String key : totals.keySet()) {
-			effects.add(effectMap.get(key).getCopyAtPotency(totals.get(key)));
+			effects.put(effectMap.get(key).getCopyAtPotency(totals.get(key)), totals.get(key));
 		}
 		
 		
-		return effects;
+		return new ImbuementSet(effects);
 	}
 	
-	public List<ImbuementEffect> getCombinedEffects(QuestPlayer player, Material ... types) {
+	public ImbuementSet getCombinedEffects(QuestPlayer player, Material ... types) {
 		return getCombinedEffects(getPotencyBonus(player), types);
 	}
 	
