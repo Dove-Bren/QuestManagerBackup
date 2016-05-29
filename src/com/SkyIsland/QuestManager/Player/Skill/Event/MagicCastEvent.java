@@ -16,7 +16,8 @@ public class MagicCastEvent extends Event {
 	
 	public enum MagicType {
 		MAGERY,
-		SPELLWEAVING;
+		SPELLWEAVING,
+		UTILITY;
 	}
 
 	private static final HandlerList handlers = new HandlerList();

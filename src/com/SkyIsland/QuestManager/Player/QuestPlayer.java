@@ -55,11 +55,9 @@ import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Magic.MagicRegenEvent;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
-import com.SkyIsland.QuestManager.Magic.Spell.SelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingManager;
 import com.SkyIsland.QuestManager.Magic.Spell.SpellWeavingSpell;
-import com.SkyIsland.QuestManager.Magic.Spell.TargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
@@ -1663,14 +1661,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			.play(getPlayer().getPlayer(), getPlayer().getPlayer().getLocation());
 		
 		addMP(-spell.getCost());
-		if (spell instanceof TargetSpell) {
-			((TargetSpell) spell).cast(this, getPlayer().getPlayer().getLocation().getDirection());
-			return;
-		}
-		if (spell instanceof SelfSpell) {
-			((SelfSpell) spell).cast(this);
-			return;
-		}
+		spell.cast(this);
 	}
 	
 	public void setSkillLevel(Skill skill, int level) {

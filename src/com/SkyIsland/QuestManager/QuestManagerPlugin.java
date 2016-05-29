@@ -137,6 +137,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	private SpellWeavingManager spellWeavingManager;
 	
+	private ImbuementHandler imbuementHandler;
+	
 	private QuestManager manager;
 	
 	private ChatGuiHandler chatGuiHandler;
@@ -294,8 +296,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		registerDefaultSkills();
 		
-		new ImbuementHandler(new File(getDataFolder(), imbuementFileName));
-		
 		//preload Player data
 			File playerFile = new File(getDataFolder(), playerConfigFileName);
 			if (!playerFile.exists()) {
@@ -353,6 +353,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 		
 		spellWeavingManager = new SpellWeavingManager(new File(getDataFolder(), spellWeavingFileName));
 		new SpellWeavingInvoker();
+		
+		imbuementHandler = new ImbuementHandler(new File(getDataFolder(), imbuementFileName));
 		
 //		SpellWeavingSpell spell = new SpellWeavingSpell("Combusion", 0, 15, "Catches stuff on fire");
 //		spell.addSpellEffect(new FireEffect(10));
@@ -817,5 +819,9 @@ public class QuestManagerPlugin extends JavaPlugin {
 	
 	public SpellWeavingManager getSpellWeavingManager() {
 		return spellWeavingManager;
+	}
+	
+	public ImbuementHandler getImbuementHandler() {
+		return imbuementHandler;
 	}
 }

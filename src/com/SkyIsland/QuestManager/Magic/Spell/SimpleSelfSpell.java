@@ -14,7 +14,6 @@ import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Effects.ChargeEffect;
 import com.SkyIsland.QuestManager.Effects.QuestEffect;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
-import com.SkyIsland.QuestManager.Magic.Spell.Effect.DamageEffect;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
@@ -40,7 +39,7 @@ public class SimpleSelfSpell extends SelfSpell {
 	
 
 	private enum aliases {
-		DEFAULT(DamageEffect.class.getName()),
+		DEFAULT(SimpleSelfSpell.class.getName()),
 		LONG("SimpleSelfSpell"),
 		SHORT("SSelfSpell");
 		
@@ -108,9 +107,9 @@ public class SimpleSelfSpell extends SelfSpell {
 		return map;
 	}
 	
-	private Effect castEffect;
+	protected Effect castEffect;
 	
-	private Sound castSound;
+	protected Sound castSound;
 	
 	/**
 	 * Creates a simple spell made to be cast on the self.<br />

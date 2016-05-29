@@ -298,7 +298,7 @@ public class SpellWeavingSpell extends Spell implements ConfigurationSerializabl
 	}
 	
 	private void applyLocations(MagicUser caster, Collection<Location> targetLocations) {
-Entity entity = caster.getEntity();
+		Entity entity = caster.getEntity();
 		
 		QuestEffect ef = new ChargeEffect(Effect.DRAGON_BREATH);
 		ef.play(entity, null);
@@ -307,5 +307,18 @@ Entity entity = caster.getEntity();
 		for (SpellEffect effect : this.getSpellEffects()) {
 			effect.apply(loc, caster);
 		}
+	}
+	
+	/**
+	 * Does nothing. To cast a spell weaving spell, use
+	 * {@link com.SkyIsland.QuestManager.Magic.MagicUser#castSpellWeavingSpell() MagicUser.castSpellWeavingSpell()}.
+	 * <p>
+	 * This is not a supported action because spell weaving spells are defined by the placement of pylons.
+	 * </p>
+	 * 
+	 */
+	@Override
+	public void cast(MagicUser caster) {
+		
 	}
 }

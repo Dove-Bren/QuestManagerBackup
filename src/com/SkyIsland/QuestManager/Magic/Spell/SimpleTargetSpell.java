@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
@@ -169,7 +168,7 @@ public class SimpleTargetSpell extends TargetSpell {
 	}
 
 	@Override
-	public void cast(MagicUser caster, Vector direction) {
+	public void cast(MagicUser caster) {
 		if (caster instanceof QuestPlayer) {
 			QuestPlayer player = (QuestPlayer) caster;
 			MagicCastEvent event = new MagicCastEvent(player,
