@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -131,7 +132,13 @@ public class YamlWriter {
 			}
 			
 			//write actual entry
-			writer.println(entry.getKey() + ": " + entry.getObj().toString());
+			if (entry.getObj() instanceof Map<?,?>) {
+				YamlConfiguration y = new YamlConfiguration();;
+				y.createSection(entry.getKey(), (Map<?, ?>) entry.getObj());
+				writer.println(y.saveToString());
+			} else {
+				writer.println(entry.getKey() + ": " + entry.getObj().toString());
+			}
 			writer.println();
 			
 		}
