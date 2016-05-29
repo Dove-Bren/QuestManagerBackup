@@ -32,6 +32,7 @@ import com.SkyIsland.QuestManager.Loot.Loot;
 import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
 import com.SkyIsland.QuestManager.Magic.SpellPylon;
 import com.SkyIsland.QuestManager.Magic.SummonManager;
+import com.SkyIsland.QuestManager.Magic.Spell.ChargeSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleSelfSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.SimpleTargetSpell;
 import com.SkyIsland.QuestManager.Magic.Spell.Spell;
@@ -269,6 +270,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		StandardEnemy.registerWithAliases();
 		SimpleSelfSpell.registerWithAliases();
 		SimpleTargetSpell.registerWithAliases();
+		ChargeSpell.registerWithAliases();
 		HealEffect.registerWithAliases();
 		DamageEffect.registerWithAliases();
 		StatusEffect.registerWithAliases();

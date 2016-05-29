@@ -1,7 +1,6 @@
 package com.SkyIsland.QuestManager.Magic.Spell;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -10,6 +9,7 @@ import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Effects.AuraEffect;
 import com.SkyIsland.QuestManager.Magic.MagicUser;
-import com.SkyIsland.QuestManager.Magic.Spell.Effect.SpellEffect;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent;
 import com.SkyIsland.QuestManager.Player.Skill.Event.MagicCastEvent.MagicType;
@@ -80,6 +79,8 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 		
 		public Reminder(ChargeSpell spell, MagicUser user, double duration) {
 			Alarm.getScheduler().schedule(this, 0, duration);
+			this.spell = spell;
+			this.user = user;
 		}
 
 		@Override
@@ -155,7 +156,7 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 	public static ChargeSpell valueOf(Map<String, Object> map) {
 
 		if (!map.containsKey("cost") || !map.containsKey("name") || !map.containsKey("description")
-				|| !map.containsKey("effects") || !map.containsKey("difficulty") || !map.containsKey("castingTime")
+				|| !map.containsKey("difficulty") || !map.containsKey("castingTime")
 				|| !map.containsKey("canMove") || !map.containsKey("canGetHit") || !map.containsKey("spell")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning(
 					"Unable to load spell " 
@@ -175,12 +176,6 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 				(boolean) map.get("canGetHit"),
 				(double) map.get("castingTime")
 				);
-		
-		@SuppressWarnings("unchecked")
-		List<SpellEffect> effects = (List<SpellEffect>) map.get("effects");
-		for (SpellEffect effect : effects) {
-			spell.addSpellEffect(effect);
-		}
 		
 		if (map.containsKey("casteffect")) {
 			spell.setCastEffect(Effect.valueOf((String) map.get("casteffect")));
@@ -234,14 +229,15 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 			stopListening();
 		}
 	}
-	
+
+	@EventHandler
 	public void onEntityMove(PlayerMoveEvent e) {
 		if (canMove) {
 			return;
 		}
 		
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
-				.contains(e.getPlayer().getWorld())) {
+				.contains(e.getPlayer().getWorld().getName())) {
 			return;
 		}
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(e.getPlayer());
@@ -255,6 +251,7 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 		doneCasting(qp);
 	}
 	
+	@EventHandler
 	public void onEntityHurt(EntityDamageEvent e) {
 		if (canGetHit) {
 			return;
@@ -265,7 +262,7 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 		}
 		
 		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
-				.contains(e.getEntity().getWorld())) {
+				.contains(e.getEntity().getWorld().getName())) {
 			return;
 		}
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer((Player) e.getEntity());
@@ -287,7 +284,7 @@ public class ChargeSpell extends SimpleSelfSpell implements Listener {
 		}
 	}
 	
-	private void finishCharge(MagicUser caster) {
+	protected void finishCharge(MagicUser caster) {
 		doneCasting(caster);
 		heldSpell.cast(caster);
 	}

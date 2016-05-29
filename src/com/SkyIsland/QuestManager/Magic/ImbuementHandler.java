@@ -67,6 +67,7 @@ public class ImbuementHandler {
 		this.skillSlotRate = config.getInt("skillSlotRate", 25);
 		this.bonusPotency = config.getDouble("bonusPotency", 0.01);
 		this.effectMap = new HashMap<>();
+		this.materialMap = new HashMap<>();
 		if (config.contains("effects")) {
 			ConfigurationSection sex = config.getConfigurationSection("effects");
 			for (String key : sex.getKeys(false)) {
