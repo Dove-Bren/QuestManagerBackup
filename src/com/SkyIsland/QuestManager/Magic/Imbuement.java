@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Magic.Spell.Effect.ImbuementEffect;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.Default.ImbuementSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Event.CombatEvent;
 
 /**
@@ -82,6 +83,12 @@ public class Imbuement implements Listener {
 				&& player.getMP() < cost) {
 			player.getPlayer().getPlayer().playSound(player.getPlayer().getPlayer().getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1.0f, 0.5f);
 			return;
+		}
+		
+		ImbuementSkill skill = QuestManagerPlugin.questManagerPlugin.getImbuementHandler().getImbuementSkill();
+		
+		if (skill != null) {
+			skill.performMinor(player, player.getSkillLevel(skill), true);
 		}
 		
 		player.addMP(-cost);

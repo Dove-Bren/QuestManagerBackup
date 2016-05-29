@@ -36,7 +36,7 @@ public class MagerySkill extends Skill implements Listener {
 		
 		int lvl = player.getSkillLevel(this);
 		int mastery = Math.max(0, (int) ((difficultyRatio * lvl) - levelGrace));
-		ret += ChatColor.GOLD + "\n\nCurrent Mastery Level: " + mastery;
+		ret += "\n\n" + ChatColor.GOLD + "Current Mastery Level: " + mastery;
 		
 		ret += "\n" + ChatColor.GREEN + "Spell Efficiency: " + ((int) (100 + (100 * lvl * levelRate))) + "%" + ChatColor.RESET;
 		

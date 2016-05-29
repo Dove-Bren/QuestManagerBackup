@@ -63,6 +63,8 @@ public class CreateImbuementAction implements MenuAction, FillableInventoryActio
 		
 		if (set == null || set.getEffectMap().isEmpty()) {
 			//failure
+			player.performImbuement(holder, null);
+			
 			if (!player.getPlayer().isOnline()) {
 				return;
 			}

@@ -1026,7 +1026,7 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 			Imbuement imb = new Imbuement(this, set.getEffects(), slashCost);
 			
 			ImbueAction action = new ImbueAction(this, imb);
-			new ChargeAction(action, this, false, false, applyTime);
+			new ChargeAction(action, this, false, false, false, applyTime);
 			
 			this.addMP(-applyCost);
 			
@@ -1417,7 +1417,18 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		QuestManagerPlugin.questManagerPlugin.getInventoryGuiHandler().showMenu(getPlayer().getPlayer(), menu);
 	}
 	
+	/**
+	 * Finalizes a calculated imbuement creation. If imbuement is null, considered a failure and does not
+	 * replace currently held imbuement
+	 * @param holder
+	 * @param imbuement
+	 */
 	public void performImbuement(ItemStack holder, ImbuementSet imbuement) {
+		ImbuementSkill skill = QuestManagerPlugin.questManagerPlugin.getImbuementHandler().getImbuementSkill();
+		
+		if (skill != null) {
+			skill.perform(this, imbuement == null);
+		}
 		this.storedImbuements.put(Short.toUnsignedInt(holder.getDurability()), imbuement);
 	}
 	
@@ -2178,6 +2189,12 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 	}
 
 	public void setCurrentImbuement(Imbuement currentImbuement) {
+		ImbuementSkill skill = QuestManagerPlugin.questManagerPlugin.getImbuementHandler().getImbuementSkill();
+		
+		if (skill != null) {
+			skill.perform(this, true);
+		}
+		
 		if (this.currentImbuement != null) {
 			currentImbuement.cancel();
 		}

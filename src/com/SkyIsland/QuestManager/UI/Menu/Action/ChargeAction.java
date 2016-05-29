@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
@@ -36,18 +37,21 @@ public class ChargeAction implements Listener, Alarmable<Integer> {
 	
 	private boolean canGetHit;
 	
+	private boolean canChangeItems;
+	
 	private MenuAction action;
 	
 	private QuestPlayer player;
 	
 	private AuraEffect effect;
 	
-	public ChargeAction(MenuAction action, QuestPlayer player, boolean canMove, boolean canGetHit, double chargingTime) {
-		this(action, player, defaultEffect, defaultSound, canMove, canGetHit, chargingTime);
+	public ChargeAction(MenuAction action, QuestPlayer player, boolean canMove, boolean canGetHit, 
+			boolean canChangeItems, double chargingTime) {
+		this(action, player, defaultEffect, defaultSound, canMove, canGetHit, canChangeItems, chargingTime);
 	}
 	
 	public ChargeAction(MenuAction action, QuestPlayer player, Effect effect, Sound sound, boolean canMove, 
-			boolean canGetHit, double chargingTime) {
+			boolean canGetHit, boolean canChangeItems, double chargingTime) {
 		if (!player.getPlayer().isOnline()) {
 			return;
 		}
@@ -55,6 +59,7 @@ public class ChargeAction implements Listener, Alarmable<Integer> {
 		this.action = action;
 		this.canMove = canMove;
 		this.canGetHit = canGetHit;
+		this.canChangeItems = canChangeItems;
 		this.player = player;
 		this.effect = new AuraEffect(effect);
 		this.effect.play(player.getEntity());
@@ -123,6 +128,30 @@ public class ChargeAction implements Listener, Alarmable<Integer> {
 		//a current charge has moved, and is not allowed to
 		((Player) e.getEntity()).sendMessage(disturbedMessage);
 		doneCasting();
+	}
+	
+	@EventHandler
+	public void onItemSwitch(PlayerItemHeldEvent e) {
+		if (canChangeItems) {
+			return;
+		}
+		
+		if (!player.getPlayer().isOnline()) {
+			return;
+		}
+		
+		if (!e.getPlayer().getUniqueId().equals(player.getPlayer().getUniqueId())) {
+			return;
+		}
+		
+		if (!(QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+				.contains(e.getPlayer().getWorld().getName()))) {
+			return;
+		}
+		
+		//not allowed to switch weapons, cheater!
+		doneCasting();
+		e.getPlayer().sendMessage(disturbedMessage);
 	}
 	
 	public void alarm(Integer a) {

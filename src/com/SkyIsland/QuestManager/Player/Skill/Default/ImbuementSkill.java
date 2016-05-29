@@ -12,6 +12,7 @@ import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
 import com.SkyIsland.QuestManager.Magic.ImbuementSet;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.LogReducedSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.google.common.collect.Lists;
 
@@ -20,7 +21,7 @@ import com.google.common.collect.Lists;
  * @author Skyler
  *
  */
-public class ImbuementSkill extends Skill implements Listener {
+public class ImbuementSkill extends LogReducedSkill implements Listener {
 	
 	public static final String configName = "Imbuement.yml";
 
@@ -37,10 +38,13 @@ public class ImbuementSkill extends Skill implements Listener {
 				+ "imbuement altar. More skill means better results and potentially more imbuement slots";
 		
 		ImbuementHandler handler = QuestManagerPlugin.questManagerPlugin.getImbuementHandler();
-		ret += ChatColor.GOLD + "\n\nImbuement Slots: " + handler.getImbuementSlots(player);
+		ret += "\n\n" + ChatColor.GOLD + "Imbuement Slots: " + handler.getImbuementSlots(player);
 		
-		ret += "\n" + ChatColor.GREEN + "Spell Efficiency: " 
+		ret += "\n" + ChatColor.GREEN + "Imbuement Potency: " 
 				+ ((int) (100 + (100 * handler.getPotencyBonus(player)))) + "%" + ChatColor.RESET;
+		ret += "\n" + ChatColor.DARK_BLUE + "Imbue Time: " + ((float) this.getApplyTime(player));
+		ret += "\n" + ChatColor.DARK_BLUE + "Mana Discount: " 
+				+ ((float) (100 * player.getSkillLevel(this) * slashDiscountRate) + "%");
 		
 		return ret;
 	}
