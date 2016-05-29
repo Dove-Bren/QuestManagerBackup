@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -984,6 +985,18 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 				showImbuementAlterMenu(e.getItem());
 				e.setCancelled(true);
 				return;
+			}
+			
+			//final check; do they have a weapon in offhand?
+			ItemStack otherItem;
+			if (e.getHand().equals(EquipmentSlot.HAND)) {
+				otherItem = e.getPlayer().getInventory().getItemInOffHand();
+			} else {
+				otherItem = e.getPlayer().getInventory().getItemInMainHand();
+			}
+			
+			if (otherItem == null || !ForgeAction.Repairable.isRepairable(otherItem.getType())) {
+				return; //can only imbue equipment
 			}
 			
 			/*
