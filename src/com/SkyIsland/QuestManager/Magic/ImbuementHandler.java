@@ -309,6 +309,6 @@ public class ImbuementHandler {
 		}
 		
 		int lvl = player.getSkillLevel(skillLink);
-		return lvl / skillSlotRate;
+		return 1 + (lvl / skillSlotRate);
 	}
 }

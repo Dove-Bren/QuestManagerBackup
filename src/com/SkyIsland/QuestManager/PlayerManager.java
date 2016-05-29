@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.SkyIsland.QuestManager.Configuration.PluginConfiguration;
 import com.SkyIsland.QuestManager.Configuration.Utils.GUID;
+import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.Participant;
 import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
@@ -101,6 +103,17 @@ public class PlayerManager implements Tickable {
 		//initialize a player!
 		QuestPlayer player = new QuestPlayer(Bukkit.getOfflinePlayer(id));
 		players.put(id, player);
+			
+		if (player.getPlayer() != null && player.getPlayer().isOnline()) {
+			FancyMessage msg = new FancyMessage("Welcome! Please take a moment to review your ")
+					.color(ChatColor.GOLD)
+					.then("Player Options")
+					.color(ChatColor.GREEN)
+					.command("/player options")
+					.tooltip(ChatColor.AQUA + "Click here to open player options");
+			msg.send(player.getPlayer().getPlayer());
+		}
+		
 		return player;
 	}
 	

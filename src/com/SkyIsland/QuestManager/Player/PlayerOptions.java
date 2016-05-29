@@ -25,7 +25,10 @@ public class PlayerOptions implements ConfigurationSerializable {
 		CHAT_COMBAT_RESULT("chat.combat.result", new ItemStack(Material.BOOK), 
 				Lists.newArrayList("Shows spell failures, melee", "misses, etc in chat")),
 		CHAT_PET_DISMISSAL("chat.summon.dismissal", new ItemStack(Material.APPLE), 
-				Lists.newArrayList("Lets you know when your", "summon has died or expired"));
+				Lists.newArrayList("Lets you know when your", "summon has died or expired")),
+		SKILL_REVEAL("skill.showAll", new ItemStack(Material.EMPTY_MAP),
+				Lists.newArrayList("Displays all skills in the", "skill table regardless of if", 
+						"you've experienced the skill yet", "(spoilers)"), false);
 		
 		private String key;
 		

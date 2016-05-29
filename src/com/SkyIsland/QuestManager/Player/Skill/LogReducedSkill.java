@@ -62,7 +62,7 @@ public abstract class LogReducedSkill extends Skill implements StagedIncreaseSki
 	
 	@Override
 	public void performMinor(QuestPlayer participant, int actionLevel, boolean fail) {
-PluginConfiguration config = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
+		PluginConfiguration config = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
 		
 		int levelDifference = participant.getSkillLevel(this) - actionLevel;
 		//negative means the skill's a higher level than the player

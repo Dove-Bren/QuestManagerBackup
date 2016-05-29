@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
+import com.SkyIsland.QuestManager.Player.PlayerOptions;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.SkyIsland.QuestManager.Quest.Quest;
@@ -169,11 +170,18 @@ public class QuestLog {
 		
 		//combat skills
 		for (Skill.Type type : Skill.Type.values()) {
+			
 			title.then("\n\n" + toNormalCase(type.name()))
 				.color(ChatColor.DARK_RED).style(ChatColor.BOLD);
 			lines += 2;
+			boolean spoil = qp.getOptions().getOption(PlayerOptions.Key.SKILL_REVEAL);
 			for (Skill s : QuestManagerPlugin.questManagerPlugin.getSkillManager().getSkills(type)) {
 				//get a formatted description. (Code from QuestPlayer's magic menu)
+				
+				if (!spoil && qp.getSkillLevel(s) <= 0) {
+					continue;
+				}
+				
 				List<String> descList = new LinkedList<>();
 				String desc;
 				desc = s.getDescription(qp);

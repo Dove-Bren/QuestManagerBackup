@@ -791,6 +791,16 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		
 		if (map.containsKey("options")) {
 			qp.options = (PlayerOptions) map.get("options");
+		} else {
+			if (player != null && player.isOnline()) {
+				FancyMessage msg = new FancyMessage("Welcome! Please take a moment to review your ")
+						.color(ChatColor.GOLD)
+						.then("Player Options")
+						.color(ChatColor.GREEN)
+						.command("/player options")
+						.tooltip(ChatColor.AQUA + "Click here to open player options");
+				msg.send(player.getPlayer());
+			}
 		}
 		
 
@@ -1412,7 +1422,9 @@ public class QuestPlayer implements Participant, Listener, MagicUser, Comparable
 		}
 		
 		InventoryMenu menu = new ActiveInventoryMenu(
-				this, new ContributionInventory(getPlayer().getPlayer(), 5, null, "Imbuement Table"),
+				this, new ContributionInventory(getPlayer().getPlayer(), 
+						QuestManagerPlugin.questManagerPlugin.getImbuementHandler().getImbuementSlots(this),
+						null, "Imbuement Table"),
 				new CreateImbuementAction(this, holder));
 		QuestManagerPlugin.questManagerPlugin.getInventoryGuiHandler().showMenu(getPlayer().getPlayer(), menu);
 	}

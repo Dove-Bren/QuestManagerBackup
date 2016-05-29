@@ -12,7 +12,7 @@ import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Magic.ImbuementHandler;
 import com.SkyIsland.QuestManager.Magic.ImbuementSet;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
-import com.SkyIsland.QuestManager.Player.Skill.LogReducedSkill;
+import com.SkyIsland.QuestManager.Player.Skill.LogSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Skill;
 import com.google.common.collect.Lists;
 
@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
  * @author Skyler
  *
  */
-public class ImbuementSkill extends LogReducedSkill implements Listener {
+public class ImbuementSkill extends LogSkill implements Listener {
 	
 	public static final String configName = "Imbuement.yml";
 
