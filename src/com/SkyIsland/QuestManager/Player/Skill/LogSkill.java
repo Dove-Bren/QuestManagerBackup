@@ -60,8 +60,7 @@ public abstract class LogSkill extends Skill implements StagedIncreaseSkill {
 		
 		//lulz now just add it to player xp
 		participant.setSkillExperience(this, participant.getSkillExperience(this) + xp);
-	}
-	
+	}	
 
 	@Override
 	public void performMinor(QuestPlayer participant, int actionLevel, boolean fail) {
@@ -95,6 +94,39 @@ public abstract class LogSkill extends Skill implements StagedIncreaseSkill {
 		
 		//further reduce xp
 		xp /= 4f;
+		participant.setSkillExperience(this, participant.getSkillExperience(this) + xp);
+	}
+
+	@Override
+	public void performMajor(QuestPlayer participant, int actionLevel, boolean fail) {
+		PluginConfiguration config = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration();
+		
+		int levelDifference = participant.getSkillLevel(this) - actionLevel;
+		//negative means the skill's a higher level than the player
+		
+		if (levelDifference > config.getSkillCutoff()) {
+			return; //no xp, too far below the player's level!
+		}
+		
+		if (fail && levelDifference < -config.getSkillUpperCutoff()) {
+			//skill level is higher than the config's upper skill fail limit cutoff
+			return;
+		}
+		
+		double base;
+		if (fail) {
+			base = config.getSkillGrowthOnFail();
+		} else {
+			base = config.getSkillGrowthOnSuccess();
+		}
+		
+		//every level difference between skill and player decreases xp. Each level differene is 
+		//1/[cutoff] reduction. That way, we get a nice approach towards 0 at the cutoff
+		float xp = (float) (4f * base * (1-(Math.abs((double) levelDifference) / (double) config.getSkillCutoff())));
+		
+		//Apply log dropoff as skill level increases
+		xp = (float) (xp / (Math.max(1, Math.log10(Math.max(1, participant.getSkillLevel(this))))));
+		
 		participant.setSkillExperience(this, participant.getSkillExperience(this) + xp);
 	}
 }
