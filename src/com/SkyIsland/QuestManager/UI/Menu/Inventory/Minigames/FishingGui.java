@@ -21,6 +21,7 @@ import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Configuration.Utils.YamlWriter;
 import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.QualityItem;
 import com.SkyIsland.QuestManager.Player.Skill.Default.FishingSkill;
 import com.SkyIsland.QuestManager.Scheduling.Alarm;
 import com.SkyIsland.QuestManager.Scheduling.Alarmable;
@@ -188,7 +189,7 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 	
 	private boolean isStuck;
 	
-	private ItemStack result;
+	private QualityItem result;
 	
 	private ItemStack obstacleIcon;
 	
@@ -210,13 +211,13 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 	
 	private ReelTimer reel;
 	
-	public FishingGui(Player player, ItemStack result, int skillLevel, int waterRows, float reelDifficulty, 
+	public FishingGui(Player player, QualityItem result, int skillLevel, int waterRows, float reelDifficulty, 
 			float reelDeviation, double obstacleTime, double obstacleDeviation, double completionTime) {
 		this(player, result, skillLevel, waterRows, reelDifficulty, reelDeviation, obstacleTime, obstacleDeviation, 
 				completionTime, "Fishing - " + player.getUniqueId().toString().substring(0, 8));
 	}
 	
-	public FishingGui(Player player, ItemStack result, int skillLevel, int waterRows, float reelDifficulty, 
+	public FishingGui(Player player, QualityItem result, int skillLevel, int waterRows, float reelDifficulty, 
 			float reelDeviation, double obstacleTime, double obstacleDeviation, double completionTime, 
 			String name) {
 		this.player = player;
@@ -230,6 +231,9 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 		this.completionTime = completionTime;
 		this.maxCompletionTime = this.completionTime;
 		this.skillLevel = skillLevel;
+		
+		System.out.println("rdifficulty: " + reelDifficulty);
+		System.out.println("rdeviation: " + reelDeviation);
 		
 		this.isStuck = false;
 		this.isReeling = false;
@@ -484,7 +488,8 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
 		
 		if (skillLink != null) {
-			skillLink.perform(qp, skillLevel, true);
+			int range = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillCutoff();
+			skillLink.perform(qp, Math.max(qp.getSkillLevel(skillLink) - range, Math.min(qp.getSkillLevel(skillLink) + range, skillLevel)), true);
 		}
 		
 		//player.sendMessage(loseMessage);
@@ -505,7 +510,8 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
 		
 		if (skillLink != null) {
-			skillLink.perform(qp, skillLevel, false);
+			int range = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillCutoff();
+			skillLink.perform(qp, Math.max(qp.getSkillLevel(skillLink) - range, Math.min(qp.getSkillLevel(skillLink) + range, skillLevel)), false);
 		}
 		
 		FancyMessage msg;
@@ -514,23 +520,23 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 					.color(ChatColor.YELLOW);
 		} else {
 			String name;
-			if (result.getItemMeta() == null || result.getItemMeta().getDisplayName() == null) {
-				name = YamlWriter.toStandardFormat(result.getType().toString());
+			if (result.getItem().getItemMeta() == null || result.getItem().getItemMeta().getDisplayName() == null) {
+				name = YamlWriter.toStandardFormat(result.getItem().getType().toString());
 			} else {
-				name = result.getItemMeta().getDisplayName();
+				name = result.getItem().getItemMeta().getDisplayName();
 			}
 			
 			msg = new FancyMessage(winMessage)
 					.color(ChatColor.GREEN)
-				.then(result.getAmount() > 1 ? result.getAmount() + "x " : "a ")
+				.then(result.getItem().getAmount() > 1 ? result.getItem().getAmount() + "x " : "a ")
 				.then("[" + name + "]")
 					.color(ChatColor.DARK_PURPLE)
-					.itemTooltip(result);
+					.itemTooltip(result.getItem());
 		}
 		
 		msg.send(player);
 		player.getWorld().playSound(player.getEyeLocation(), winSound, 1, 1);
-		player.getInventory().addItem(this.result);
+		player.getInventory().addItem(this.result.getItem());
 		
 		this.result = null;
 		
@@ -546,7 +552,7 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 	@Override
 	public ItemStack[] getResult() {
 		//return result. If null, already was given
-		ItemStack[] ret = (result == null ? null : new ItemStack[]{result});
+		ItemStack[] ret = (result == null ? null : new ItemStack[]{result.getItem()});
 		Alarm.getScheduler().unregister(this);
 		
 		loseGame();

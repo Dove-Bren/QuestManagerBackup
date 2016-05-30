@@ -178,7 +178,7 @@ public class QuestLog {
 			for (Skill s : QuestManagerPlugin.questManagerPlugin.getSkillManager().getSkills(type)) {
 				//get a formatted description. (Code from QuestPlayer's magic menu)
 				
-				if (!spoil && qp.getSkillLevel(s) <= 0) {
+				if (!spoil && qp.getSkillLevel(s) <= 0 && qp.getSkillExperience(s) <= 0) {
 					continue;
 				}
 				
