@@ -11,6 +11,10 @@ import org.bukkit.inventory.ItemStack;
 
 import com.SkyIsland.QuestManager.QuestManagerPlugin;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.UI.Menu.ActiveInventoryMenu;
+import com.SkyIsland.QuestManager.UI.Menu.InventoryMenu;
+import com.SkyIsland.QuestManager.UI.Menu.Action.CollectFishAction;
+import com.SkyIsland.QuestManager.UI.Menu.Inventory.Minigames.FishingGui;
 
 
 /**
@@ -87,6 +91,13 @@ public class SpellWeavingInvoker implements Listener {
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(e.getPlayer());
 		
 		qp.castSpellWeavingSpell();
+		
+		FishingGui gui = new FishingGui(e.getPlayer(), new ItemStack(Material.ARROW),
+				0, 2, .02f, 
+				.01f, 2.0, 1.0, 20.0);
+		InventoryMenu menu = new ActiveInventoryMenu(qp, gui, new CollectFishAction(qp));
+		QuestManagerPlugin.questManagerPlugin.getInventoryGuiHandler().showMenu(e.getPlayer(), menu);
+		gui.start();
 	}
 	
 }

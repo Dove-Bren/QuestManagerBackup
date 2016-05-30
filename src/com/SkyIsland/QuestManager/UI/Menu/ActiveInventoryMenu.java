@@ -43,7 +43,8 @@ public class ActiveInventoryMenu extends InventoryMenu implements RespondableMen
 			((FillableInventoryAction) action).provideItems(((ReturnGuiInventory) this.gui).getResult());
 		}
 		
-		action.onAction();
+		if (action != null)
+			action.onAction();
 		
 	}
 	
