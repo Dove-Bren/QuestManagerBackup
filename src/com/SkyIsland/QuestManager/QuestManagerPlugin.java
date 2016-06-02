@@ -79,6 +79,7 @@ import com.SkyIsland.QuestManager.Player.Skill.Default.FishingSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.ImbuementSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagicWeaverSkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.MiningSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SorcerySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SpellWeavingSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.SwordAndShieldSkill;
@@ -438,6 +439,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager.registerSkill(new ConcentrationSkill());
 		skillManager.registerSkill(new ImbuementSkill());
 		skillManager.registerSkill(new FishingSkill());
+		skillManager.registerSkill(new MiningSkill());
 	}
 	
 	

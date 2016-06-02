@@ -153,6 +153,7 @@ public class FishingSkill extends LogSkill implements Listener {
 		if (!config.contains("fish")) {
 			QuestManagerPlugin.questManagerPlugin.getLogger().warning("Didn't find any fish table"
 					+ "for FishingSkill even though it's enabled!");
+			return;
 		} else {
 			ConfigurationSection sex = config.getConfigurationSection("fish");
 			for (String key : sex.getKeys(false)) {

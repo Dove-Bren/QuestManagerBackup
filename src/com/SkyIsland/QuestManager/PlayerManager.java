@@ -85,7 +85,7 @@ public class PlayerManager implements Tickable {
 	 * @return
 	 */	
 	public QuestPlayer getPlayer(OfflinePlayer player) {
-		return getPlayer(player.getUniqueId());
+		return (player == null ? null : getPlayer(player.getUniqueId()));
 	}
 	
 	/**

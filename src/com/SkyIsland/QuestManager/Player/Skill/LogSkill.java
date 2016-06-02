@@ -48,15 +48,12 @@ public abstract class LogSkill extends Skill implements StagedIncreaseSkill {
 			base = config.getSkillGrowthOnSuccess();
 		}
 
-		System.out.println("under cuttof: " + levelDifference);
 		//every level difference between skill and player decreases xp. Each level differene is 
 		//1/[cutoff] reduction. That way, we get a nice approach towards 0 at the cutoff
 		float xp = (float) (base * Math.max(1, 1-(Math.abs((double) levelDifference) / (double) config.getSkillCutoff())));
-		System.out.println("first round: " + xp);
 		
 		//Apply log dropoff as skill level increases
 		xp = (float) (xp / (Math.max(1, Math.log10(Math.max(1, participant.getSkillLevel(this))))));
-		System.out.println("final: " + xp);
 		
 		//lulz now just add it to player xp
 		participant.setSkillExperience(this, participant.getSkillExperience(this) + xp);

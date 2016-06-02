@@ -232,9 +232,6 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 		this.maxCompletionTime = this.completionTime;
 		this.skillLevel = skillLevel;
 		
-		System.out.println("rdifficulty: " + reelDifficulty);
-		System.out.println("rdeviation: " + reelDeviation);
-		
 		this.isStuck = false;
 		this.isReeling = false;
 		this.obstacles = new HashMap<>();
@@ -511,7 +508,7 @@ public class FishingGui extends ReturnGuiInventory implements Alarmable<Integer>
 		
 		if (skillLink != null) {
 			int range = QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getSkillCutoff();
-			skillLink.perform(qp, Math.max(qp.getSkillLevel(skillLink) - range, Math.min(qp.getSkillLevel(skillLink) + range, skillLevel)), false);
+			skillLink.performMajor(qp, Math.max(qp.getSkillLevel(skillLink) - range, Math.min(qp.getSkillLevel(skillLink) + range, skillLevel)), false);
 		}
 		
 		FancyMessage msg;
