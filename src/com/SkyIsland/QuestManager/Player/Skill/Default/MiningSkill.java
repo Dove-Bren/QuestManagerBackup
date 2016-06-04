@@ -349,13 +349,6 @@ public class MiningSkill extends LogSkill implements Listener {
 		reward.getUnderlyingItem().setAmount(amount);
 		reward.setQuality(reward.getQuality() * event.getQualityModifier());
 		
-		System.out.println("rows: " + rows);
-		System.out.println("oreCount: " + record.oreCount);
-		System.out.println("startingSlots: " + startingSlots);
-		System.out.println("iconCount: " + iconCount);
-		System.out.println("averageHardness: " + averageHardness);
-		System.out.println("hits: " + hits);
-		
 		//Player player, QualityItem result, int skillLevel, int oreCount, int depth, int blockHits,
 		//double averageHardness,	double hardnessDeviation, int startingSpots, double bonusQuality, ItemStack oreIcon
 		MiningGui gui = new MiningGui(e.getPlayer(), reward, record.difficulty, iconCount, rows,

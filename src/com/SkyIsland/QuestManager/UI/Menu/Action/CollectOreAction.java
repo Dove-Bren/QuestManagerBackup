@@ -1,5 +1,6 @@
 package com.SkyIsland.QuestManager.UI.Menu.Action;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +38,10 @@ public class CollectOreAction implements MenuAction, FillableInventoryAction {
 			failEffect.play(p, null);
 		} else {
 			successEffect.play(p, null);
-			p.getInventory().addItem(ret);
+			if (!(p.getInventory().addItem(ret)).isEmpty()) {
+				p.sendMessage(ChatColor.RED + "There is no space left in your inventory");
+				p.getWorld().dropItem(p.getEyeLocation(), ret);
+			}
 		}
 		
 		

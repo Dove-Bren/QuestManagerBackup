@@ -30,10 +30,19 @@ import com.SkyIsland.QuestManager.Fanciful.FancyMessage;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
 import com.SkyIsland.QuestManager.Player.Skill.QualityItem;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MiningSkill;
+import com.SkyIsland.QuestManager.Scheduling.Alarm;
+import com.SkyIsland.QuestManager.Scheduling.Alarmable;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.InventoryItem;
 import com.SkyIsland.QuestManager.UI.Menu.Inventory.ReturnGuiInventory;
 
-public class MiningGui extends ReturnGuiInventory {
+public class MiningGui extends ReturnGuiInventory implements Alarmable<Integer> {
+	
+	private enum State {
+		STOPPED,
+		STARTING,
+		RUNNING,
+		ENDED;
+	}
 	
 	public static MiningSkill skillLink = null;
 	
@@ -64,6 +73,16 @@ public class MiningGui extends ReturnGuiInventory {
 	public static final String tooLittleMessage = ChatColor.RED + "You didn't find enough material to be worth anything";
 	
 	public static final String winMessage = "Success!" + ChatColor.RESET + " You successfully mined ";
+	
+	public static final Sound startSound = Sound.ITEM_ARMOR_EQUIP_IRON;
+	
+	public static final Sound hitSoundStone = Sound.BLOCK_IRON_DOOR_CLOSE;
+	
+	public static final Sound hitSoundDirt = Sound.BLOCK_GRAVEL_BREAK;
+	
+	public static final Sound hitSoundObsidian = Sound.BLOCK_ANVIL_PLACE;
+	
+	public static final Sound oreBreakSound = Sound.BLOCK_GLASS_BREAK;
 	
 	private enum BlockMaterial {
 		AIR(null),
@@ -125,6 +144,8 @@ public class MiningGui extends ReturnGuiInventory {
 	
 	private int oreCount;
 	
+	private State gameState;
+	
 	public MiningGui(Player player, QualityItem result, int skillLevel, int oreCount, int depth, int blockHits,
 			double averageHardness,	double hardnessDeviation, int startingSpots, double bonusQuality, ItemStack oreIcon) {
 		this(player, result, skillLevel, oreCount, depth, blockHits, averageHardness, hardnessDeviation, 
@@ -157,6 +178,8 @@ public class MiningGui extends ReturnGuiInventory {
 		int size = 9 * this.depth;
 		this.inv = Bukkit.createInventory(null, size, invName);
 		
+		this.gameState = State.STOPPED;
+		
 	}
 	
 	@Override
@@ -173,6 +196,10 @@ public class MiningGui extends ReturnGuiInventory {
 	@Override
 	public InventoryItem getItem(int pos) {
 		if (this.backend == null) {
+			return null;
+		}
+		
+		if (this.gameState != State.RUNNING) {
 			return null;
 		}
 		
@@ -210,6 +237,22 @@ public class MiningGui extends ReturnGuiInventory {
 		//inv.setItem(pos, null);
 		
 		int cache;
+		
+		if (player.isOnline())
+		switch (backend.get(pos)) {
+		case AIR:
+		case DIRT:
+		case ORE:
+			player.playSound(player.getLocation(), hitSoundDirt, 1, 1);
+			break;
+		case STONE:
+			player.playSound(player.getLocation(), hitSoundStone, 1, 1);
+			break;
+		case OBSIDIAN:
+		default:
+			player.playSound(player.getLocation(), hitSoundObsidian, 1, 1);
+		}
+		
 		hitBlock(pos);
 		for (int i = 1; i < 10; i += 8)
 		for (int j = -1; j < 2; j += 2) {
@@ -234,8 +277,12 @@ public class MiningGui extends ReturnGuiInventory {
 		switch (backend.get(pos)) {
 		case AIR:
 		case DIRT:
+			backend.put(pos, BlockMaterial.AIR);
+			break;
 		case ORE:
 			backend.put(pos, BlockMaterial.AIR);
+			if (player.isOnline())
+				player.playSound(player.getLocation(), oreBreakSound, 1, 1);
 			break;
 		case STONE:
 			backend.put(pos, BlockMaterial.DIRT);
@@ -267,6 +314,9 @@ public class MiningGui extends ReturnGuiInventory {
 	}
 	
 	public void start() {
+		if (gameState != State.STOPPED) {
+			return;
+		}
 
 		//initialize blocks
 		int max = depth * 9, cur;
@@ -325,23 +375,11 @@ public class MiningGui extends ReturnGuiInventory {
 			newSpots.addAll(dump);
 		}
 		
-		//finally, pick some spots to reveal
-		for (int i = 0; i < startingSpots; i++) {
-			cur = random.nextInt(max);
-			if (backend.get(cur) == BlockMaterial.ORE || backend.get(cur) == BlockMaterial.AIR) {
-				i--;
-				continue;
-			}
-			
-			//else reveal it
-			for (int j = 0; j < 3; j++)
-				hitBlock(cur);
-		}
+		Alarm.getScheduler().schedule(this, 0, 1);
+		player.getPlayer().sendMessage(ChatColor.RED + "Get ready...");
+		player.playSound(player.getLocation(), startSound, 1, 1);
 		
-		
-		displayBar = Bukkit.createBossBar("Ore Stability", BarColor.BLUE, BarStyle.SEGMENTED_20, new BarFlag[0]);
-		displayBar.setProgress(1f);
-		displayBar.addPlayer(player);
+		this.gameState = State.STARTING;
 		
 	}
 	
@@ -437,6 +475,8 @@ public class MiningGui extends ReturnGuiInventory {
 			return;
 		}
 		
+		this.gameState = State.STOPPED;
+		
 		
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
 		
@@ -469,7 +509,8 @@ public class MiningGui extends ReturnGuiInventory {
 			loseGame();
 			return;
 		}
-		
+
+		this.gameState = State.STOPPED;
 		QuestPlayer qp = QuestManagerPlugin.questManagerPlugin.getPlayerManager().getPlayer(player);
 		
 		
@@ -557,6 +598,38 @@ public class MiningGui extends ReturnGuiInventory {
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public void alarm(Integer key) {
+		if (gameState == State.STARTING) {
+			if (key >= startingSpots) {
+				if (player.isOnline())
+					player.sendMessage(ChatColor.GREEN + "Go!");
+				this.gameState = State.RUNNING;
+				displayBar = Bukkit.createBossBar("Ore Stability", BarColor.BLUE, BarStyle.SEGMENTED_20, new BarFlag[0]);
+				displayBar.setProgress(1f);
+				displayBar.addPlayer(player);
+				return;
+			}
+				
+				
+			//pick a spots to reveal
+			
+			int cur = random.nextInt(depth * 9);
+			if (backend.get(cur) == BlockMaterial.ORE || backend.get(cur) == BlockMaterial.AIR) {
+				alarm(key);
+			} else {
+				//else reveal it
+				if (player.isOnline())
+					player.playSound(player.getLocation(), hitSoundStone, 1, 1.5f);
+				for (int j = 0; j < 3; j++)
+					hitBlock(cur);
+			}
+			
+			Alarm.getScheduler().schedule(this, key + 1, .5);
+			
+		}
 	}
 	
 }
