@@ -30,6 +30,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -37,6 +38,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 
 import com.SkyIsland.QuestManager.Configuration.QuestConfiguration;
@@ -45,6 +47,7 @@ import com.SkyIsland.QuestManager.Configuration.State.QuestState;
 import com.SkyIsland.QuestManager.NPC.NPC;
 import com.SkyIsland.QuestManager.Player.Party;
 import com.SkyIsland.QuestManager.Player.QuestPlayer;
+import com.SkyIsland.QuestManager.Player.Skill.QualityItem;
 import com.SkyIsland.QuestManager.Quest.Quest;
 
 public class QuestManager implements Listener {
@@ -796,6 +799,53 @@ public class QuestManager implements Listener {
 				return;
 			}
 		}
+	}
+	
+	@EventHandler
+	public void onCraftPerfer(PrepareItemCraftEvent e) {
+		System.out.println("Crafting?");
+		Material type = null;
+		short data = 0;
+		for (ItemStack item : e.getInventory().getMatrix()) {
+			if (item == null)
+				continue;
+			if (!item.hasItemMeta())
+				return;
+			
+			System.out.println("Meta GET");
+			ItemMeta meta = item.getItemMeta();
+			if (!meta.getLore().get(0).contains("Quality: ")) {
+				return;
+			}
+			
+			System.out.println("Quality GET");
+			if (type == null) {
+				type = item.getType();
+				data = item.getDurability();
+			} else {
+				if (item.getType() != type || item.getDurability() != data) {
+					return;
+				}
+			}
+			System.out.println("Good Item GET");
+		}
+		
+		//same item, all have quality
+		double sum = 0;
+		int count = 0;
+		String cache;
+		for (ItemStack item : e.getInventory().getMatrix()) {
+			if (item == null)
+				continue;
+			cache = item.getItemMeta().getLore().get(0);
+			sum += Double.valueOf(cache.substring(cache.indexOf(":")).trim());
+			count++;
+		}
+		
+
+		System.out.println("Replace result?");
+		QualityItem result = new QualityItem(new ItemStack(type, count, data), (sum / count));
+		e.getInventory().setResult(result.getItem());
 	}
 	
 }

@@ -93,7 +93,7 @@ public class MiningSkill extends LogSkill implements Listener {
 	
 	@Override
 	public String getConfigKey() {
-		return "Fishing";
+		return "Mining";
 	}
 
 	@Override

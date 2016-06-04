@@ -57,6 +57,7 @@ public class PluginConfiguration {
 		INVOKERNAME("interface.spellweaving.invokerName"),
 		INVOKERTYPE("interface.spellweaving.invokerType"),
 		ALTERTYPE("interface.magic.alterBlockType"),
+		COMBINEQUALITY("interface.crafting.combineQuality"),
 		WORLDS("questWorlds"),
 		//QUESTS("quests"),
 		QUESTDIR("questDir"),
@@ -443,6 +444,15 @@ public class PluginConfiguration {
 	}
 	
 	/**
+	 * Should players be able to combine items to get all the items and quality combined and averaged?
+	 * For example, coal wih quality 2.0 and coal with quality 1.0 would make 2 x coal with quality 1.5
+	 * @return
+	 */
+	public boolean getCombineQualityItems() {
+		return config.getBoolean(PluginConfigurationKey.COMBINEQUALITY.key, true);
+	}
+	
+	/**
 	 * Sets up a default configuration file with blank values
 	 * @param configFile
 	 */
@@ -484,6 +494,7 @@ public class PluginConfiguration {
 		
 		config.set(PluginConfigurationKey.HOLDERNAME.key, "Magic Scroll");
 		config.set(PluginConfigurationKey.ALTERTYPE.key, "ENCHANTING_TABLE");
+		config.set(PluginConfigurationKey.COMBINEQUALITY.key, true);
 		
 		//magic options
 		config.set(PluginConfigurationKey.ALLOWMAGIC.key, true);
