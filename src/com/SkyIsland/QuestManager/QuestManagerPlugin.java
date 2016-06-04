@@ -77,6 +77,7 @@ import com.SkyIsland.QuestManager.Player.Skill.Default.BowSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.ConcentrationSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.FishingSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.ImbuementSkill;
+import com.SkyIsland.QuestManager.Player.Skill.Default.LumberjackSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagerySkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MagicWeaverSkill;
 import com.SkyIsland.QuestManager.Player.Skill.Default.MiningSkill;
@@ -303,6 +304,8 @@ public class QuestManagerPlugin extends JavaPlugin {
 
 		imbuementHandler = new ImbuementHandler(new File(getDataFolder(), imbuementFileName));
 		
+		regionManager = new RegionManager(enemyDirectory, 3);
+		
 		registerDefaultSkills();
 		
 		//preload Player data
@@ -351,8 +354,6 @@ public class QuestManagerPlugin extends JavaPlugin {
 				saveDirectory);
 		
 		manager.init();
-		
-		regionManager = new RegionManager(enemyDirectory, 3);
 
 		spellManager = new SpellManager(spellDirectory);
 		
@@ -440,6 +441,7 @@ public class QuestManagerPlugin extends JavaPlugin {
 		skillManager.registerSkill(new ImbuementSkill());
 		skillManager.registerSkill(new FishingSkill());
 		skillManager.registerSkill(new MiningSkill());
+		skillManager.registerSkill(new LumberjackSkill());
 	}
 	
 	

@@ -111,4 +111,8 @@ public class WeightedList<T>  {
 		
 		list.clear();
 	}
+	
+	public boolean isEmpty() {
+		return list.isEmpty();
+	}
 }

@@ -88,7 +88,7 @@ public class FishingSkill extends LogSkill implements Listener {
 
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof ImbuementSkill);
+		return (o instanceof FishingSkill);
 	}
 	
 	private int startingLevel;

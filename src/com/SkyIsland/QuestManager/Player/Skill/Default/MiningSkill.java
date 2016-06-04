@@ -60,7 +60,6 @@ public class MiningSkill extends LogSkill implements Listener {
 			this.oreCount = oreCount;
 			this.iconCount = iconCount;
 			this.rows = rows;
-			System.out.println("i have " + rows + " rows");
 		}
 		
 	}
@@ -101,7 +100,7 @@ public class MiningSkill extends LogSkill implements Listener {
 
 	@Override
 	public boolean equals(Object o) {
-		return (o instanceof ImbuementSkill);
+		return (o instanceof MiningSkill);
 	}
 	
 	private int startingLevel;
@@ -186,7 +185,6 @@ public class MiningSkill extends LogSkill implements Listener {
 				subsex = sex.getConfigurationSection(key);
 				list = new LinkedList<>();
 				for (String name : subsex.getKeys(false)) {
-					System.out.println("Doing " + name);
 					try {
 						list.add(new OreRecord(
 								subsex.getInt(name + ".difficulty"), subsex.getItemStack(name + ".item", new ItemStack(Material.COAL_ORE)),
@@ -274,7 +272,7 @@ public class MiningSkill extends LogSkill implements Listener {
 			typeList.put("Iron Ore", sub);
 			map.put("IRON_ORE", typeList);
 			
-			writer.addLine("ore", map, Lists.newArrayList("List of ore and their difficulties", "Note: IconCount is how many pieces", "of ore are in the game; oreCount is", "the amount of the ore the player gets", "Plan difficulties carefully, as players that are", "at a level with no fish in range (maxDifficultyRange)", "are stuck forever!", "[Material]: -name: {difficulty: [int], icon: [itemstack], iconCount: [int], oreCount: [int], rows: [int]}"));
+			writer.addLine("ore", map, Lists.newArrayList("List of ore and their difficulties", "Note: IconCount is how many pieces", "of ore are in the game; oreCount is", "the amount of the ore the player gets", "Plan difficulties carefully, as players that are", "at a level with no ore in range (maxDifficultyRange)", "are stuck forever!", "[Material]: -name: {difficulty: [int], icon: [itemstack], iconCount: [int], oreCount: [int], rows: [int]}"));
 			
 			try {
 				writer.save(configFile);

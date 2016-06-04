@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -193,6 +194,8 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 	 * @param region
 	 */
 	private void spawnInRegion(Region region) {
+		if (regionMap.get(region).enemies == null || regionMap.get(region).enemies.isEmpty()) 
+			return;
 		Enemy e;
 		WeightedList<Enemy> l = (regionMap.get(region)).enemies;
 		
@@ -262,6 +265,7 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 			}
 			
 			registerRegion(region);
+			if (enemies != null && !enemies.isEmpty())
 			for (Enemy e : enemies) {
 				addEnemy(region, e);
 			}
@@ -273,6 +277,28 @@ public final class RegionManager implements Alarmable<EnemyAlarms> {
 			}
 			//TODO add enemy weights?
 		}
+	}
+	
+	/**
+	 * Attempts to find a registered region that the given location falls in
+	 * @param location
+	 * @return The region the location lies in, or null if none were found
+	 */
+	public Region getRegion(Location location) {
+		if (regionMap.isEmpty())
+			return null;
+		
+		if (location == null) {
+			return null;
+		}
+		
+		for (Region region : regionMap.keySet()) {
+			if (region.isIn(location)) {
+				return region;
+			}
+		}
+		
+		return null;
 	}
 	
 }
