@@ -1,6 +1,7 @@
 package com.SkyIsland.QuestManager.UI.Menu.Action;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
@@ -24,6 +25,8 @@ public class QuestStartAction implements MenuAction {
 	private FancyMessage acceptMessage;
 	
 	private Player player;
+	
+	private static final Sound questAcceptSound = Sound.ENTITY_PLAYER_LEVELUP;
 	
 	private static final String partyDenial = ChatColor.YELLOW + "This quest requires a party..." + ChatColor.RESET;
 	
@@ -88,6 +91,9 @@ public class QuestStartAction implements MenuAction {
 				(new TitleObject(ChatColor.DARK_RED + template.getName(),
 						ChatColor.GOLD + template.getDescription()))
 				.setFadeIn(30).setFadeOut(30).setStay(80).send(qpe.getPlayer().getPlayer());
+				
+				qpe.getPlayer().getPlayer().playSound(qpe.getPlayer().getPlayer().getLocation(),
+						questAcceptSound, 2, 1);
 			}
 		}
 		

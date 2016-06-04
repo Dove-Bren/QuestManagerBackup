@@ -85,6 +85,7 @@ public class QuestLog {
 					+ "Quest Log" + ChatColor.GRAY + " has been added to your inventory."
 					 + ChatColor.RESET);
 		}
+
 		
 		updateQuestlog(qp, true);
 	}
@@ -277,6 +278,7 @@ public class QuestLog {
 			play.sendMessage(ChatColor.GRAY + "Your "
 					+ ChatColor.DARK_GREEN + "Quest Log" + ChatColor.GRAY + " has been"
 					+ " updated!" + ChatColor.RESET);
+
 			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.D));
 			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.G));
 			play.playNote(play.getLocation(), Instrument.PIANO, Note.natural(1, Tone.B));
