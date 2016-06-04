@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
@@ -127,6 +130,10 @@ public class MiningSkill extends LogSkill implements Listener {
 	
 	private double qualityRate;
 	
+	private double smeltPenalty;
+	
+	private boolean smeltingEnabled;
+	
 	private Map<Material, List<OreRecord>> oreRecords;
 	
 	public MiningSkill() {
@@ -152,6 +159,8 @@ public class MiningSkill extends LogSkill implements Listener {
 		this.extraOrePerLevel = config.getDouble("extraOrePerLevel", 0.05);
 		this.maxDifficultyRange = config.getInt("maxDifficultyRange", 20);
 		this.qualityRate = config.getDouble("qualityRate", 0.01);
+		this.smeltingEnabled = config.getBoolean("smeltingEnabled", true);
+		this.smeltPenalty = config.getDouble("smeltPenalty", 0.05);
 		
 		this.oreRecords = new HashMap<>();
 		if (!config.contains("ore")) {
@@ -215,7 +224,10 @@ public class MiningSkill extends LogSkill implements Listener {
 				.addLine("hitBonus", .25, Lists.newArrayList("Extra hits given per skill level", "[double] hits per level"))
 				.addLine("extraOrePerLevel", 0.05, Lists.newArrayList("Extra pieces of ore given to a player", "per level over difficulty level", "[double] 1.0 is a whole extra piece"))
 				.addLine("maxDifficultyRange", 20, Lists.newArrayList("Biggest gap between player and ore difficulty", "that will be allowed through random ore", "algorithm", "[int] larger than 0"))
-				.addLine("qualityRate", 0.01, Lists.newArrayList("Bonus to quality per mining skill level", "[double] .01 is 1%"));
+				.addLine("qualityRate", 0.01, Lists.newArrayList("Bonus to quality per mining skill level", "[double] .01 is 1%"))
+				.addLine("smeltingEnabled", true, Lists.newArrayList("Can players use ores on lava to combine it with another", "and get a single item stack of average quality", "[true|false]"))
+				.addLine("smeltPenalty", 0.05, Lists.newArrayList("If smelting two items, how much of the sum quality", "is lost in the process?", "[double] .01 is 1%"));
+			
 			
 			Map<String, Map<String, Map<String, Object>>> map = new HashMap<>();
 			Map<String, Map<String, Object>> typeList = new HashMap<>();
@@ -280,6 +292,7 @@ public class MiningSkill extends LogSkill implements Listener {
 	@EventHandler
 	public void onPlayerMine(PlayerInteractEvent e) {
 		if (e.getAction() != Action.RIGHT_CLICK_BLOCK) {
+			playerSmeltEvent(e);
 			return;
 		}
 		
@@ -289,6 +302,7 @@ public class MiningSkill extends LogSkill implements Listener {
 		}
 		
 		if (e.getItem() == null || !e.getItem().getType().name().contains("PICKAXE")) {
+			playerSmeltEvent(e);
 			return;
 		}
 		
@@ -383,6 +397,99 @@ public class MiningSkill extends LogSkill implements Listener {
 		}
 		
 		return null;
+	}
+	
+	private void playerSmeltEvent(PlayerInteractEvent e) {
+		if (!smeltingEnabled) {
+			return;
+		}
+		
+		Set<Material> s = null;
+		List<Block> sight = e.getPlayer().getLineOfSight(s, 4);
+		boolean trip = false;
+		for (Block block : sight) {
+			if (block.getType() == Material.LAVA || block.getType() == Material.STATIONARY_LAVA) {
+				trip = true;
+				break;
+			}
+		}
+		
+		
+		if (!trip) {
+			return;
+		}
+		
+		if (!QuestManagerPlugin.questManagerPlugin.getPluginConfiguration().getWorlds()
+				.contains(e.getPlayer().getWorld().getName())) {
+			return;
+		}
+		
+		ItemStack smeltItem = e.getItem();
+		if (smeltItem == null || !smeltItem.hasItemMeta()) {
+			return;
+		}
+		
+		if (smeltItem.getItemMeta().getLore() == null
+				|| !smeltItem.getItemMeta().getLore().get(0).contains("Quality: ")) {
+			return;
+		}
+		
+		ItemStack match = null;
+		int slot = -1;
+		for (Entry<Integer, ? extends ItemStack> item : e.getPlayer().getInventory().all(smeltItem.getType()).entrySet()) {
+			
+			if (!item.getValue().hasItemMeta())
+				continue;
+			
+			ItemMeta meta = item.getValue().getItemMeta();
+			if (meta.getLore() == null || !meta.getLore().get(0).contains("Quality: ")) {
+				continue;
+			}
+			
+			if (item.getValue().getDurability() != smeltItem.getDurability()
+					|| !meta.getDisplayName().equals(smeltItem.getItemMeta().getDisplayName()))
+				continue;
+			
+			if (item.getValue().equals(smeltItem)) 
+				continue;
+			
+			match = item.getValue();
+			slot = item.getKey();
+			break;
+		}
+		
+		if (match == null) {
+			e.getPlayer().sendMessage(ChatColor.YELLOW + "Unable to find matching ore in inventory to combine with");
+			return;
+		}
+		
+		//same item,both have quality
+		double sum = 0, quality;
+		String cache = ChatColor.stripColor(match.getItemMeta().getLore().get(0));
+		quality = Double.valueOf(cache.substring(cache.indexOf(":") + 1).trim());
+		sum += (quality * match.getAmount());
+		
+		
+		cache = ChatColor.stripColor(smeltItem.getItemMeta().getLore().get(0));
+		quality = Double.valueOf(cache.substring(cache.indexOf(":") + 1).trim());
+		sum += (quality * smeltItem.getAmount());
+		
+		sum *= 1 - smeltPenalty;
+		int quantity = match.getAmount() + smeltItem.getAmount();
+		sum /= quantity;
+		
+		
+
+		e.getPlayer().getInventory().setItem(e.getPlayer().getInventory().getHeldItemSlot(), null);
+		e.getPlayer().getInventory().setItem(slot, null);
+		smeltItem.setAmount(quantity);
+		List<String> lore = smeltItem.getItemMeta().getLore();
+		lore.remove(0);
+		ItemMeta meta = smeltItem.getItemMeta();
+		meta.setLore(lore);
+		smeltItem.setItemMeta(meta);
+		QualityItem result = new QualityItem(smeltItem.clone(), sum);
+		e.getPlayer().getInventory().addItem(result.getItem());
 	}
 	
 }

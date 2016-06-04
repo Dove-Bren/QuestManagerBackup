@@ -533,18 +533,18 @@ public class MiningGui extends ReturnGuiInventory implements Alarmable<Integer> 
 				msg = new FancyMessage(tooLittleMessage);
 			else {
 				String name;
-				if (inputOre.getItem().getItemMeta() == null || inputOre.getItem().getItemMeta().getDisplayName() == null) {
-					name = YamlWriter.toStandardFormat(inputOre.getItem().getType().toString());
+				if (inputOre.getItem().getItemMeta() == null || result.getItem().getItemMeta().getDisplayName() == null) {
+					name = YamlWriter.toStandardFormat(result.getItem().getType().toString());
 				} else {
-					name = inputOre.getItem().getItemMeta().getDisplayName();
+					name = result.getItem().getItemMeta().getDisplayName();
 				}
 				
 				msg = new FancyMessage(winMessage)
 						.color(ChatColor.GREEN)
-					.then(inputOre.getItem().getAmount() > 1 ? inputOre.getItem().getAmount() + "x " : "a ")
+					.then(result.getItem().getAmount() > 1 ? result.getItem().getAmount() + "x " : "a ")
 					.then("[" + name + "]")
 						.color(ChatColor.DARK_PURPLE)
-						.itemTooltip(inputOre.getItem());
+						.itemTooltip(result.getItem());
 			}
 		}
 		
